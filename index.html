@@ -11,16 +11,16 @@
 <div class="app" id="app">
 <aside class="sidebar">
   <div class="brand"><span class="mark"><i class="leaf a"></i><i class="leaf b"></i><i class="leaf c"></i></span><span>Finanzas<br>en Orden</span></div>
-  <a class="nav-item active" href="#"><span class="ico">⌂</span>Inicio</a>
+  <a class="nav-item active" href="#" data-section="inicio"><span class="ico">⌂</span>Inicio</a>
   <div class="nav-section">PERSONAL</div>
-  <a class="nav-item"><span class="ico">⇧</span>Ingresos</a><a class="nav-item"><span class="ico">▣</span>Gastos</a><a class="nav-item"><span class="ico">▤</span>Deudas</a><a class="nav-item"><span class="ico">◯</span>Ahorros</a><a class="nav-item"><span class="ico">✓</span>Metas</a><a class="nav-item"><span class="ico">⌂</span>Activos</a><a class="nav-item"><span class="ico">◇</span>Patrimonio</a><a class="nav-item"><span class="ico">◉</span>Diagnóstico</a><a class="nav-item"><span class="ico">▷</span>Aprende</a>
+  <a class="nav-item" data-section="ingresos" data-section="gastos" data-section="deudas" data-section="ahorros" data-section="metas" data-section="activos" data-section="patrimonio" data-section="diagnostico" data-section="aprende"><span class="ico">⇧</span>Ingresos</a><a class="nav-item"><span class="ico">▣</span>Gastos</a><a class="nav-item"><span class="ico">▤</span>Deudas</a><a class="nav-item"><span class="ico">◯</span>Ahorros</a><a class="nav-item"><span class="ico">✓</span>Metas</a><a class="nav-item"><span class="ico">⌂</span>Activos</a><a class="nav-item"><span class="ico">◇</span>Patrimonio</a><a class="nav-item"><span class="ico">◉</span>Diagnóstico</a><a class="nav-item"><span class="ico">▷</span>Aprende</a>
   <div class="nav-section">NEGOCIO</div>
-  <a class="nav-item"><span class="ico">⌂</span>Ventas</a><a class="nav-item"><span class="ico">⊕</span>Costos</a><a class="nav-item"><span class="ico">✓</span>Gastos</a><a class="nav-item"><span class="ico">▣</span>Flujo de caja</a><a class="nav-item"><span class="ico">◉</span>Punto de equilibrio</a><a class="nav-item"><span class="ico">◉</span>Resultado</a>
-  <div class="spacer"></div><a class="nav-item"><span class="ico">⚙</span>Configuración</a>
+  <a class="nav-item" data-section="gastos" data-section="ventas" data-section="costos" data-section="flujo" data-section="equilibrio" data-section="resultado"><span class="ico">⌂</span>Ventas</a><a class="nav-item"><span class="ico">⊕</span>Costos</a><a class="nav-item"><span class="ico">✓</span>Gastos</a><a class="nav-item"><span class="ico">▣</span>Flujo de caja</a><a class="nav-item"><span class="ico">◉</span>Punto de equilibrio</a><a class="nav-item"><span class="ico">◉</span>Resultado</a>
+  <div class="spacer"></div><a class="nav-item" data-section="configuracion"><span class="ico">⚙</span>Configuración</a>
 </aside>
 <main class="main">
   <div class="topbar"><div><div class="hello">Hola,</div><div class="date">Lunes, 28 de septiembre de 2026</div><div class="mode-switch"><button class="mode-btn active" data-mode="personal">Personal</button><button class="mode-btn" data-mode="business">Negocio</button></div></div><div class="month">▣ &nbsp; Septiembre 2026 &nbsp;⌄</div><div class="quote">“Pequeñas decisiones hoy,<br>grandes resultados mañana.”</div></div>
-  <div class="personal-only">
+  <div class="personal-only dashboard-surface" id="personalDashboard">
   <section class="hero"><h1>Tu situación financiera, en una mirada.</h1><p id="personalSummary">Tienes $1,730 disponibles. Vas en buen camino, pero hay 2 áreas que requieren tu atención.</p></section><div class="quick-actions"><button class="action-btn primary" data-open-form="income">+ Nuevo ingreso</button><button class="action-btn" data-open-form="expense">+ Nuevo gasto</button></div>
   <section class="kpis">
     <div class="card kpi"><div class="kicon">↗</div><div><div class="label">Ingresos</div><div class="value" id="personalIncome">$ 4,850</div><div class="delta"><span class="up">↑ 12%</span> vs. mes anterior</div></div><div class="spark"><i style="height:14px"></i><i style="height:21px"></i><i style="height:28px"></i><i style="height:37px"></i><i style="height:46px"></i></div></div>
@@ -35,7 +35,7 @@
   </section>
   <section class="card attention"><h2>Presta atención</h2><div class="attention-grid"><div class="alert"><div class="aicon">▥</div><div><strong>Tus gastos de alimentación aumentaron 28%.</strong><small>Revisa tus hábitos y establece un límite.</small></div><div class="pill">▶ &nbsp; Cómo controlarlos · 3 min</div><div>›</div></div><div class="alert"><div class="aicon amber">▣</div><div><strong>Tienes 2 pagos importantes esta semana por $1,150.</strong><small>Organiza tu caja y evita recargos.</small></div><div class="pill">▶ &nbsp; Cómo organizarlos · 4 min</div><div>›</div></div></div></section>
 </div>
-  <div class="business-only">
+  <div class="business-only dashboard-surface" id="businessDashboard">
     <section class="hero"><h1>Tu negocio, en una mirada.</h1><p>Las ventas avanzan, pero tu caja necesita atención antes de los próximos compromisos.</p></section><div class="quick-actions"><button class="action-btn primary" data-open-form="sale">+ Nueva venta</button><button class="action-btn" data-open-form="business-expense">+ Nuevo gasto</button></div>
     <section class="kpis">
       <div class="card kpi"><div class="kicon">↗</div><div><div class="label">Ventas</div><div class="value">$ 12,800</div><div class="delta"><span class="up">↑ 14%</span> vs. mes anterior</div></div><div class="spark"><i style="height:14px"></i><i style="height:20px"></i><i style="height:29px"></i><i style="height:37px"></i><i style="height:46px"></i></div></div>
@@ -50,6 +50,12 @@
     </section>
     <section class="card attention"><h2>Presta atención</h2><div class="attention-grid"><div class="alert"><div class="aicon">▥</div><div><strong>Tus gastos operativos crecieron más que tus ventas.</strong><small>Revisa las partidas que más aumentaron.</small></div><div class="pill">▶ &nbsp; Entender mis gastos · 3 min</div><div>›</div></div><div class="alert"><div class="aicon amber">▣</div><div><strong>Tienes $2,400 por cobrar en los próximos días.</strong><small>Dar seguimiento mejorará tu caja.</small></div><div class="pill">▶ &nbsp; Gestionar cobros · 4 min</div><div>›</div></div></div></section>
   </div>
+
+<section class="module-view" id="moduleView" hidden>
+  <div class="module-head"><div><button class="back-home" id="backHome">← Inicio</button><div class="eyebrow" id="moduleEyebrow">PERSONAL</div><h1 id="moduleTitle">Ingresos</h1><p id="moduleSubtitle">Registra y revisa tus movimientos.</p></div><button class="action-btn primary" id="moduleAdd">+ Nuevo</button></div>
+  <div class="module-kpis" id="moduleKpis"></div>
+  <div class="card module-card"><div class="panel-head"><h2 id="moduleListTitle">Movimientos</h2><span class="small-link" id="moduleCount"></span></div><div class="records" id="moduleRecords"></div></div>
+</section>
   <div class="bottom-note">Prototipo visual HTML · Finanzas en Orden</div>
 </main></div>
 
