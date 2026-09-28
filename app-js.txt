@@ -1,0 +1,23 @@
+const app=document.getElementById('app');
+const buttons=document.querySelectorAll('.mode-btn,.mobile-mode-btn');
+function setMode(mode){buttons.forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));app.classList.toggle('mode-business',mode==='business');localStorage.setItem('feo-mode',mode)}
+buttons.forEach(btn=>btn.addEventListener('click',()=>setMode(btn.dataset.mode)));
+setMode(localStorage.getItem('feo-mode')||'personal');
+document.querySelectorAll('.nav-item').forEach(el=>el.addEventListener('click',e=>{if(el.getAttribute('href')==='#')e.preventDefault();document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));el.classList.add('active');if(innerWidth<=760)document.querySelector('.sidebar').classList.remove('open')}));
+const menuBtn=document.getElementById('menuBtn'); if(menuBtn) menuBtn.addEventListener('click',()=>document.querySelector('.sidebar').classList.toggle('open'));
+document.addEventListener('click',e=>{if(innerWidth<=760&&!e.target.closest('.sidebar')&&!e.target.closest('#menuBtn'))document.querySelector('.sidebar').classList.remove('open')});
+
+const seed={income:4850,expense:3120,sale:12800,'business-expense':8450};
+const movements=JSON.parse(localStorage.getItem('feo-movements')||'[]');
+const money=n=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(n).replace('$','$ ');
+function total(type){return seed[type]+movements.filter(x=>x.type===type).reduce((a,x)=>a+Number(x.amount),0)}
+function refresh(){const income=total('income'),expense=total('expense'),available=income-expense;document.getElementById('personalIncome').textContent=money(income);document.getElementById('personalExpenses').textContent=money(expense);document.getElementById('personalAvailable').textContent=money(available);document.getElementById('personalSummary').textContent=`Tienes ${money(available)} disponibles. Mantén el control de lo que entra y sale para decidir tu próximo paso.`}
+refresh();
+
+const modal=document.getElementById('movementModal'),form=document.getElementById('movementForm'),title=document.getElementById('modalTitle'),toast=document.getElementById('toast');let currentType='income';
+const titles={income:'Nuevo ingreso',expense:'Nuevo gasto',sale:'Nueva venta','business-expense':'Nuevo gasto del negocio'};
+function openModal(type){currentType=type;title.textContent=titles[type];form.reset();document.getElementById('movementDate').value=new Date().toISOString().slice(0,10);modal.classList.add('open');modal.setAttribute('aria-hidden','false');setTimeout(()=>document.getElementById('movementName').focus(),0)}
+function closeModal(){modal.classList.remove('open');modal.setAttribute('aria-hidden','true')}
+document.querySelectorAll('[data-open-form]').forEach(b=>b.addEventListener('click',()=>openModal(b.dataset.openForm)));
+document.getElementById('closeModal').addEventListener('click',closeModal);document.getElementById('cancelModal').addEventListener('click',closeModal);modal.addEventListener('click',e=>{if(e.target===modal)closeModal()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+form.addEventListener('submit',e=>{e.preventDefault();const data=Object.fromEntries(new FormData(form));movements.push({...data,type:currentType,amount:Number(data.amount),id:Date.now()});localStorage.setItem('feo-movements',JSON.stringify(movements));refresh();closeModal();toast.textContent=`${titles[currentType]} guardado`;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),1800)});
