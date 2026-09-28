@@ -1,0 +1,51 @@
+const app=document.getElementById('app');
+const modeButtons=document.querySelectorAll('.mode-btn,.mobile-mode-btn');
+const sidebar=document.querySelector('.sidebar');
+const moduleView=document.getElementById('moduleView');
+const dashboards=document.querySelectorAll('.dashboard-surface');
+const $=id=>document.getElementById(id);
+const money=n=>new Intl.NumberFormat('es-EC',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(Number(n)||0);
+const today=()=>new Date().toISOString().slice(0,10);
+const storeKey='feo-v2-data';
+const defaultData={
+ income:[{id:1,name:'Salario',amount:3000,date:'2026-09-01',category:'Trabajo'},{id:2,name:'Freelance',amount:1200,date:'2026-09-10',category:'Trabajo'},{id:3,name:'Ingresos extra',amount:650,date:'2026-09-20',category:'Otros'}],
+ expense:[{id:11,name:'Alquiler',amount:800,date:'2026-09-04',category:'Vivienda'},{id:12,name:'Alimentación',amount:970,date:'2026-09-12',category:'Alimentación'},{id:13,name:'Otros gastos',amount:1350,date:'2026-09-19',category:'General'}],
+ debt:[{id:21,name:'Tarjeta de crédito',amount:2350,date:'2026-09-05',category:'Cuota $350'},{id:22,name:'Préstamo',amount:4200,date:'2026-09-18',category:'Cuota $280'}],
+ saving:[{id:31,name:'Ahorro mensual',amount:650,date:'2026-09-22',category:'Fondo general'}],
+ goal:[{id:41,name:'Fondo de emergencia',amount:1000,date:'2026-12-31',category:'Meta mensual'}],
+ asset:[{id:51,name:'Cuenta de ahorro',amount:5200,date:'2026-09-01',category:'Efectivo'},{id:52,name:'Vehículo',amount:8500,date:'2026-09-01',category:'Bien'}],
+ sale:[{id:61,name:'Ventas del mes',amount:12800,date:'2026-09-25',category:'Ventas'}],
+ cost:[{id:71,name:'Costos variables',amount:5100,date:'2026-09-20',category:'Costos'}],
+ 'business-expense':[{id:81,name:'Gastos operativos',amount:3350,date:'2026-09-22',category:'Operación'}]
+};
+let data; try{data=JSON.parse(localStorage.getItem(storeKey))||structuredClone(defaultData)}catch{data=structuredClone(defaultData)}
+const save=()=>localStorage.setItem(storeKey,JSON.stringify(data));
+const sum=t=>(data[t]||[]).reduce((a,x)=>a+Number(x.amount),0);
+let mode=localStorage.getItem('feo-mode')||'personal'; let section='inicio'; let currentType='income';
+const configs={
+ personal:{ingresos:['Ingresos','Todo lo que entra a tus finanzas.','income','Nuevo ingreso'],gastos:['Gastos','Controla a dónde se está yendo tu dinero.','expense','Nuevo gasto'],deudas:['Deudas','Saldos y compromisos que debes vigilar.','debt','Nueva deuda'],ahorros:['Ahorros','Dinero que estás separando para tu futuro.','saving','Nuevo ahorro'],metas:['Metas','Convierte tus objetivos en cifras concretas.','goal','Nueva meta'],activos:['Activos','Recursos que forman parte de tu patrimonio.','asset','Nuevo activo']},
+ business:{ventas:['Ventas','Registra las ventas de tu negocio.','sale','Nueva venta'],costos:['Costos','Controla los costos asociados a vender.','cost','Nuevo costo'],gastos:['Gastos del negocio','Gastos operativos de tu actividad.','business-expense','Nuevo gasto']}
+};
+function setMode(next){mode=next;localStorage.setItem('feo-mode',mode);modeButtons.forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));app.classList.toggle('mode-business',mode==='business');if(section!=='inicio') openSection(section);refreshDashboard()}
+modeButtons.forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.mode)));
+function refreshDashboard(){const inc=sum('income'),exp=sum('expense'),avail=inc-exp;if($('personalIncome'))$('personalIncome').textContent=money(inc);if($('personalExpenses'))$('personalExpenses').textContent=money(exp);if($('personalAvailable'))$('personalAvailable').textContent=money(avail);if($('personalSummary'))$('personalSummary').textContent=`Tienes ${money(avail)} disponibles. Mantén el control de lo que entra y sale para decidir tu próximo paso.`}
+function home(){section='inicio';moduleView.hidden=true;dashboards.forEach(x=>x.hidden=false);document.querySelectorAll('.nav-item').forEach(x=>x.classList.toggle('active',x.dataset.section==='inicio'));sidebar.classList.remove('open');}
+function special(section){
+ const personal=mode==='personal'; const inc=sum('income'),exp=sum('expense'),debt=sum('debt'),assets=sum('asset'); const sales=sum('sale'),cost=sum('cost'),bexp=sum('business-expense');
+ const map={patrimonio:['Patrimonio','Lo que tienes menos lo que debes.',[['Activos',assets],['Deudas',debt],['Patrimonio neto',assets-debt]]],diagnostico:['Diagnóstico','Lectura rápida de tu situación financiera.',[['Disponible',inc-exp],['Carga de deuda',debt],['Ahorro',sum('saving')]]],aprende:['Aprende','Píldoras breves para entender la decisión que tienes delante.',[]],flujo:['Flujo de caja','Entradas y salidas de efectivo del negocio.',[['Ventas registradas',sales],['Salidas',cost+bexp],['Flujo estimado',sales-cost-bexp]]],equilibrio:['Punto de equilibrio','La cifra mínima que tu negocio necesita cubrir.',[['Costos + gastos',cost+bexp],['Ventas',sales],['Margen actual',sales-cost-bexp]]],resultado:['Resultado','Ventas menos costos y gastos.',[['Ventas',sales],['Costos + gastos',cost+bexp],['Resultado operativo',sales-cost-bexp]]],configuracion:['Configuración','Preferencias básicas del sistema.',[]]};
+ return map[section];
+}
+function openSection(next){section=next;if(next==='inicio')return home();dashboards.forEach(x=>x.hidden=true);moduleView.hidden=false;document.querySelectorAll('.nav-item').forEach(x=>x.classList.toggle('active',x.dataset.section===next));sidebar.classList.remove('open');const cfg=configs[mode][next];if(cfg){renderRecords(cfg)}else{renderSpecial(special(next)||['Próximamente','Este módulo se está consolidando.',[]])}}
+function renderRecords(cfg){const [title,subtitle,type,addLabel]=cfg;currentType=type;$('moduleEyebrow').textContent=mode==='personal'?'PERSONAL':'NEGOCIO';$('moduleTitle').textContent=title;$('moduleSubtitle').textContent=subtitle;$('moduleAdd').hidden=false;$('moduleAdd').textContent=`+ ${addLabel}`;const rows=data[type]||[];$('moduleKpis').innerHTML=`<div class="mini-kpi"><span>Total registrado</span><strong>${money(sum(type))}</strong></div><div class="mini-kpi"><span>Registros</span><strong>${rows.length}</strong></div>`;$('moduleListTitle').textContent=title;$('moduleCount').textContent=`${rows.length} registros`;$('moduleRecords').innerHTML=rows.length?rows.slice().reverse().map(x=>`<div class="record"><div><strong>${esc(x.name)}</strong><small>${esc(x.category||'General')} · ${formatDate(x.date)}</small></div><div class="record-amount">${money(x.amount)}</div><button class="delete-btn" data-delete="${x.id}" data-type="${type}" aria-label="Eliminar">×</button></div>`).join(''):`<div class="empty">Todavía no hay registros. Pulsa “+ ${addLabel}” para crear el primero.</div>`}
+function renderSpecial(cfg){const [title,subtitle,kpis]=cfg;$('moduleEyebrow').textContent=mode==='personal'?'PERSONAL':'NEGOCIO';$('moduleTitle').textContent=title;$('moduleSubtitle').textContent=subtitle;$('moduleAdd').hidden=true;$('moduleKpis').innerHTML=kpis.map(([a,b])=>`<div class="mini-kpi"><span>${a}</span><strong>${money(b)}</strong></div>`).join('');$('moduleListTitle').textContent=title==='Aprende'?'Biblioteca breve':'Lectura del sistema';$('moduleCount').textContent='';$('moduleRecords').innerHTML=title==='Aprende'?`<div class="learning-grid"><button>Cómo priorizar tus deudas <small>3 min</small></button><button>Cómo controlar tus gastos <small>3 min</small></button><button>Cómo crear un fondo de emergencia <small>4 min</small></button></div>`:`<div class="insight-box">La complejidad financiera vive detrás. Aquí verás la interpretación y la siguiente decisión, no fórmulas innecesarias.</div>`}
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const formatDate=d=>{if(!d)return'';const [y,m,day]=d.split('-');return `${day}/${m}/${y}`};
+document.querySelectorAll('.nav-item[data-section]').forEach(el=>el.addEventListener('click',e=>{e.preventDefault();const target=el.dataset.section;if(['ventas','costos','flujo','equilibrio','resultado'].includes(target)&&mode!=='business')setMode('business');if(['ingresos','deudas','ahorros','metas','activos','patrimonio','diagnostico','aprende'].includes(target)&&mode!=='personal')setMode('personal');openSection(target)}));
+$('backHome').addEventListener('click',home);$('menuBtn')?.addEventListener('click',()=>sidebar.classList.toggle('open'));document.addEventListener('click',e=>{if(innerWidth<=760&&!e.target.closest('.sidebar')&&!e.target.closest('#menuBtn'))sidebar.classList.remove('open')});
+const modal=$('movementModal'),form=$('movementForm'),modalTitle=$('modalTitle'),toast=$('toast');const titles={income:'Nuevo ingreso',expense:'Nuevo gasto',debt:'Nueva deuda',saving:'Nuevo ahorro',goal:'Nueva meta',asset:'Nuevo activo',sale:'Nueva venta',cost:'Nuevo costo','business-expense':'Nuevo gasto del negocio'};
+function openModal(type){currentType=type;modalTitle.textContent=titles[type]||'Nuevo movimiento';form.reset();$('movementDate').value=today();modal.classList.add('open');modal.setAttribute('aria-hidden','false')}
+function closeModal(){modal.classList.remove('open');modal.setAttribute('aria-hidden','true')}
+document.querySelectorAll('[data-open-form]').forEach(b=>b.addEventListener('click',()=>openModal(b.dataset.openForm)));$('moduleAdd').addEventListener('click',()=>openModal(currentType));$('closeModal').addEventListener('click',closeModal);$('cancelModal').addEventListener('click',closeModal);modal.addEventListener('click',e=>{if(e.target===modal)closeModal()});
+form.addEventListener('submit',e=>{e.preventDefault();const f=Object.fromEntries(new FormData(form));(data[currentType]??=[]).push({...f,id:Date.now(),amount:Number(f.amount)});save();refreshDashboard();closeModal();if(section!=='inicio')openSection(section);toast.textContent=`${titles[currentType]} guardado`;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),1600)});
+$('moduleRecords').addEventListener('click',e=>{const b=e.target.closest('[data-delete]');if(!b)return;data[b.dataset.type]=(data[b.dataset.type]||[]).filter(x=>String(x.id)!==b.dataset.delete);save();refreshDashboard();openSection(section)});
+setMode(mode);home();refreshDashboard();
