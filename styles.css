@@ -71,3 +71,54 @@ linear-gradient(145deg,#061816 0%,#082B28 56%,#0B6965 100%)}
   .authBenefits span{font-size:8px;padding:6px 8px}
   .authCard h1{font-size:30px}
 }
+
+/* FINORVE DASHBOARD POLISH */
+main{background:
+radial-gradient(circle at 84% 4%,rgba(120,215,196,.07),transparent 22%),
+var(--bg)}
+header{padding-bottom:18px;border-bottom:1px solid rgba(11,105,101,.07)}
+header h1{font-size:29px;font-weight:720;letter-spacing:-.045em}
+header .eyebrow{color:#0B6965}
+[data-theme="dark"] header .eyebrow{color:#78D7C4}
+.scoreCard,.priorityCard,.triadCard,.dashboardGrid .card{transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+.scoreCard{background:
+radial-gradient(circle at 88% 18%,rgba(120,215,196,.23),transparent 28%),
+linear-gradient(145deg,#E8F6F2,#F9FCFB 72%);
+border-color:rgba(11,105,101,.10);
+box-shadow:0 14px 38px rgba(7,31,29,.055)}
+[data-theme="dark"] .scoreCard{background:
+radial-gradient(circle at 88% 18%,rgba(120,215,196,.10),transparent 28%),
+linear-gradient(145deg,#103631,#0A2421 72%)}
+.scoreLine strong{color:#0B6965}
+[data-theme="dark"] .scoreLine strong{color:#78D7C4}
+.scoreProgress{height:6px;background:rgba(11,105,101,.10)}
+.scoreProgress i{background:linear-gradient(90deg,#0B6965,#2FAE9B 58%,#78D7C4)}
+.priorityCard{border-color:rgba(11,105,101,.08);box-shadow:0 14px 38px rgba(7,31,29,.04)}
+.priorityIcon{background:linear-gradient(145deg,#DDF3ED,#EEF9F6);color:#0B6965}
+[data-theme="dark"] .priorityIcon{background:#153D38;color:#78D7C4}
+.priorityCard .primary{background:#071F1D}
+.priorityCard .primary:hover{background:#0B6965}
+[data-theme="dark"] .priorityCard .primary{background:#2FAE9B;color:#071F1D}
+.triadCard{border-color:rgba(11,105,101,.08);box-shadow:0 8px 24px rgba(7,31,29,.028)}
+.triadCard:hover{transform:translateY(-1px);border-color:rgba(47,174,155,.30)}
+.triadIcon{background:#EEF6F4;color:#0B6965}
+[data-theme="dark"] .triadIcon{background:#12322E;color:#78D7C4}
+.triadCard strong{font-size:19px}
+.dashboardGrid .card{border-color:rgba(11,105,101,.08);box-shadow:0 12px 34px rgba(7,31,29,.035)}
+.cardHead h3{font-size:16px}
+.microBars{background:
+linear-gradient(to top,rgba(47,174,155,.045),transparent 70%)}
+.microBars i{background:#E0EAE7;border-radius:10px 10px 4px 4px}
+.microBars i.active{background:linear-gradient(180deg,#78D7C4,#2FAE9B 52%,#0B6965)}
+.compactList .metricRow b{font-size:15px;letter-spacing:-.02em}
+.sidebar{background:
+radial-gradient(circle at 15% 5%,rgba(120,215,196,.08),transparent 22%),
+linear-gradient(180deg,#071F1D,#051715)}
+.sidebar .brand small{color:#8FAAA5}
+.sidebar nav button.active:before{background:linear-gradient(#78D7C4,#2FAE9B)}
+.sidebar nav button.active{background:rgba(120,215,196,.07)}
+@media(max-width:760px){
+  header{padding-bottom:12px}
+  header h1{font-size:23px}
+  .scoreCard,.priorityCard,.triadCard,.dashboardGrid .card{box-shadow:none}
+}
