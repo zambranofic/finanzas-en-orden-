@@ -64,6 +64,7 @@ export async function adminAddNote(userId,note){const s=getSession(),u=await cur
 
 export async function createPublicCheckout(email){return jsonFetch('/functions/v1/paypal-create-checkout',{method:'POST',headers:headers(null),body:JSON.stringify({email})})}
 export async function capturePublicCheckout(checkoutId,checkoutSecret,orderId){return jsonFetch('/functions/v1/paypal-capture-checkout',{method:'POST',headers:headers(null),body:JSON.stringify({checkout_id:checkoutId,checkout_secret:checkoutSecret,order_id:orderId})})}
+export async function cancelPublicCheckout(checkoutId,checkoutSecret){return jsonFetch('/functions/v1/paypal-cancel-checkout',{method:'POST',headers:headers(null),body:JSON.stringify({checkout_id:checkoutId,checkout_secret:checkoutSecret})})}
 export async function createPaidAccount(email,password,claimToken){return jsonFetch('/functions/v1/create-paid-account-finorve',{method:'POST',headers:headers(null),body:JSON.stringify({email,password,claim_token:claimToken})})}
 
 export async function claimPaidAccess(claimToken){const ses=getSession();if(!ses?.access_token)throw new Error('AUTH_REQUIRED');return jsonFetch('/functions/v1/claim-paid-access',{method:'POST',headers:headers(ses.access_token),body:JSON.stringify({claim_token:claimToken})})}
