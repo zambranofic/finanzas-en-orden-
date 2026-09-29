@@ -64,6 +64,21 @@ export function businessMonth(data,month){
   return {sales,collections,variableCosts,operatingExpenses,cashPayments,debtPrincipal,debtInterest,operatingResult,cashFlow,contribution,contributionMarginBp:pctBasisPoints(contribution,sales)};
 }
 
+export function businessBreakEvenSummary(monthData){
+  const sales=assertInt(monthData.sales||0,'sales');
+  const variableCosts=assertInt(monthData.variableCosts||0,'variableCosts');
+  const operatingExpenses=assertInt(monthData.operatingExpenses||0,'operatingExpenses');
+  const debtInterest=assertInt(monthData.debtInterest||0,'debtInterest');
+  const contribution=sales-variableCosts;
+  const fixedCosts=operatingExpenses+debtInterest;
+  if(sales<=0||contribution<=0)return {possible:false,revenueMinor:null,contributionMarginBp:pctBasisPoints(contribution,sales),fixedCostsMinor:fixedCosts,currentSalesDeltaMinor:null};
+  const num=BigInt(fixedCosts)*BigInt(sales), den=BigInt(contribution);
+  const revenueBig=(num+den-1n)/den;
+  if(revenueBig>BigInt(Number.MAX_SAFE_INTEGER))throw new Error('punto de equilibrio excede entero seguro');
+  const revenueMinor=Number(revenueBig);
+  return {possible:true,revenueMinor,contributionMarginBp:pctBasisPoints(contribution,sales),fixedCostsMinor:fixedCosts,currentSalesDeltaMinor:sales-revenueMinor};
+}
+
 export function breakEven({fixedCostsMinor,unitPriceMinor,unitVariableCostMinor}){
   [fixedCostsMinor,unitPriceMinor,unitVariableCostMinor].forEach((n,i)=>assertInt(n,['fixedCostsMinor','unitPriceMinor','unitVariableCostMinor'][i]));
   const contributionPerUnit=unitPriceMinor-unitVariableCostMinor;
