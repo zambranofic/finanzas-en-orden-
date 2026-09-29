@@ -1,3 +1,4 @@
+import { validatePassword, PASSWORD_POLICY_MESSAGE } from './password-policy.js';
 import { shouldRefreshSession, createSingleFlight } from './auth-session-utils.js';
 const URL='https://euqhrqsatbhnxgohbild.supabase.co';
 const KEY='sb_publishable_Ltn-8m11gMlS2AY14k8nfA_hcJ3Izjl';
@@ -19,7 +20,7 @@ async function activeSession(){
 }
 async function jsonFetch(path,opts={},retry=true){const r=await fetch(URL+path,opts);const text=await r.text();let body=null;try{body=text?JSON.parse(text):null}catch{body=text}if(r.status===401&&retry&&opts?.headers?.Authorization&&getSession()?.refresh_token){const next=await refreshStoredSession();const nextHeaders={...opts.headers,Authorization:`Bearer ${next.access_token}`};return jsonFetch(path,{...opts,headers:nextHeaders},false)}if(!r.ok)throw new Error(body?.msg||body?.message||body?.error||body?.error_description||`HTTP ${r.status}`);return body}
 export async function signIn(email,password){const s=await jsonFetch('/auth/v1/token?grant_type=password',{method:'POST',headers:headers(null),body:JSON.stringify({email,password})});setSession(s);return s}
-export async function signUp(email,password){const redirectTo=location.origin+location.pathname;const s=await jsonFetch('/auth/v1/signup?redirect_to='+encodeURIComponent(redirectTo),{method:'POST',headers:headers(null),body:JSON.stringify({email,password})});if(s?.access_token)setSession(s);return s}
+export async function signUp(email,password){if(!validatePassword(password))throw new Error(PASSWORD_POLICY_MESSAGE);const redirectTo=location.origin+location.pathname;const s=await jsonFetch('/auth/v1/signup?redirect_to='+encodeURIComponent(redirectTo),{method:'POST',headers:headers(null),body:JSON.stringify({email,password})});if(s?.access_token)setSession(s);return s}
 export function signOut(){setSession(null)}
 export function session(){return getSession()}
 export async function currentUser(){try{const s=await activeSession();return await jsonFetch('/auth/v1/user',{headers:headers(s.access_token)})}catch{setSession(null);return null}}
@@ -53,7 +54,7 @@ export async function avatarObjectUrl(path){
  if(!path)return '';
  try{const r=await storageFetch(`/storage/v1/object/authenticated/avatars/${encodeURI(path)}`);if(!r.ok)throw new Error(`No se pudo cargar la foto (${r.status})`);return URL.createObjectURL(await r.blob())}catch{return ''}
 }
-export async function changePassword(password){if(String(password).length<8)throw new Error('La contraseña debe tener al menos 8 caracteres.');const s=getSession();if(!s?.access_token)throw new Error('AUTH_REQUIRED');return jsonFetch('/auth/v1/user',{method:'PUT',headers:headers(s.access_token),body:JSON.stringify({password})})}
+export async function changePassword(password){if(!validatePassword(password))throw new Error(PASSWORD_POLICY_MESSAGE);const s=getSession();if(!s?.access_token)throw new Error('AUTH_REQUIRED');return jsonFetch('/auth/v1/user',{method:'PUT',headers:headers(s.access_token),body:JSON.stringify({password})})}
 export async function requestPasswordReset(email){if(!email)throw new Error('Escribe tu correo.');const redirectTo=`${location.origin}${location.pathname}`;return jsonFetch('/auth/v1/recover?redirect_to='+encodeURIComponent(redirectTo),{method:'POST',headers:headers(null),body:JSON.stringify({email})})}
 export function acceptAuthFromUrl(){const h=new URLSearchParams(location.hash.replace(/^#/,''));const type=h.get('type');const token=h.get('access_token');if(!token||!['signup','recovery','email_change','magiclink'].includes(type||''))return null;setSession({access_token:token,refresh_token:h.get('refresh_token')||'',token_type:'bearer',expires_in:Number(h.get('expires_in')||3600)});history.replaceState(null,'',location.pathname+location.search);return type}
 export async function resendSignupConfirmation(email){if(!email)throw new Error('Escribe tu correo.');const redirectTo=`${location.origin}${location.pathname}`;return jsonFetch('/auth/v1/resend?redirect_to='+encodeURIComponent(redirectTo),{method:'POST',headers:headers(null),body:JSON.stringify({type:'signup',email})})}
@@ -83,7 +84,7 @@ export async function adminAddNote(userId,note){const s=getSession(),u=await cur
 export async function createPublicCheckout(email){return jsonFetch('/functions/v1/paypal-create-checkout',{method:'POST',headers:headers(null),body:JSON.stringify({email})})}
 export async function capturePublicCheckout(checkoutId,checkoutSecret,orderId){return jsonFetch('/functions/v1/paypal-capture-checkout',{method:'POST',headers:headers(null),body:JSON.stringify({checkout_id:checkoutId,checkout_secret:checkoutSecret,order_id:orderId})})}
 export async function cancelPublicCheckout(checkoutId,checkoutSecret){return jsonFetch('/functions/v1/paypal-cancel-checkout',{method:'POST',headers:headers(null),body:JSON.stringify({checkout_id:checkoutId,checkout_secret:checkoutSecret})})}
-export async function createPaidAccount(email,password,claimToken){return jsonFetch('/functions/v1/create-paid-account-finorve',{method:'POST',headers:headers(null),body:JSON.stringify({email,password,claim_token:claimToken})})}
+export async function createPaidAccount(email,password,claimToken){if(!validatePassword(password))throw new Error(PASSWORD_POLICY_MESSAGE);return jsonFetch('/functions/v1/create-paid-account-finorve',{method:'POST',headers:headers(null),body:JSON.stringify({email,password,claim_token:claimToken})})}
 
 export async function claimPaidAccess(claimToken){const ses=getSession();if(!ses?.access_token)throw new Error('AUTH_REQUIRED');return jsonFetch('/functions/v1/claim-paid-access',{method:'POST',headers:headers(ses.access_token),body:JSON.stringify({claim_token:claimToken})})}
 
