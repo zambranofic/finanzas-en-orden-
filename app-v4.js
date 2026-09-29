@@ -120,22 +120,36 @@ async function submitRecoveryPassword(){
   }catch(e){msg.textContent=authMessage(e);btn.disabled=false;btn.textContent=old}
 }
 function showPaidSignup(email,claim){hideEntryGates();$('#shell').classList.add('hidden');$('#mobileNav').classList.add('hidden');$('#paidSignupGate').classList.remove('hidden');$('#paidEmail').value=email;sessionStorage.setItem('feo-paid-claim',claim);sessionStorage.setItem('feo-paid-email',email)}
+function showCheckoutRecovery(message){showCheckout(message);const b=$('#retryCheckoutCapture');b?.classList.remove('hidden')}
+async function retryCheckoutCapture(){
+  const raw=sessionStorage.getItem('feo-checkout-recovery'),btn=$('#retryCheckoutCapture'),msg=$('#checkoutMsg');
+  if(!raw){btn?.classList.add('hidden');if(msg)msg.textContent='No encontramos una confirmación pendiente. Si ya pagaste, inicia sesión o revisa tu recibo de PayPal.';return}
+  let ctx;try{ctx=JSON.parse(raw)}catch{sessionStorage.removeItem('feo-checkout-recovery');return}
+  if(btn){btn.disabled=true;btn.textContent='Confirmando…'}if(msg)msg.textContent='Confirmando tu pago con PayPal…';
+  try{
+    const r=await cloud.capturePublicCheckout(ctx.cid,ctx.cs,ctx.token);
+    if(!r?.claim_token)throw new Error('PAYMENT_CAPTURE_PENDING');
+    sessionStorage.removeItem('feo-checkout-recovery');
+    if(btn){btn.classList.add('hidden');btn.disabled=false;btn.textContent='Reintentar confirmación'}
+    showPaidSignup(r.email,r.claim_token);
+  }catch(e){
+    if(msg)msg.textContent='Aún no pudimos confirmar el acceso. No realices otro pago; puedes reintentar en esta misma pantalla.';
+    if(btn){btn.disabled=false;btn.textContent='Reintentar confirmación'}
+  }
+}
 async function boot(){
  const authType=cloud.acceptAuthFromUrl();
  const qp=new URLSearchParams(location.search);
  if(qp.get('checkout')==='cancelled'){history.replaceState(null,'',location.pathname);showCheckout('El pago fue cancelado. No se creó ninguna cuenta.');return}
  if(qp.get('checkout')==='approved'&&qp.get('cid')&&qp.get('cs')&&qp.get('token')){
+   sessionStorage.setItem('feo-checkout-recovery',JSON.stringify({cid:qp.get('cid'),cs:qp.get('cs'),token:qp.get('token')}));
+   history.replaceState(null,'',location.pathname);
    hideEntryGates();$('#checkoutGate').classList.remove('hidden');$('#checkoutMsg').textContent='Confirmando tu pago…';
-   try{
-     const r=await cloud.capturePublicCheckout(qp.get('cid'),qp.get('cs'),qp.get('token'));
-     history.replaceState(null,'',location.pathname);
-     showPaidSignup(r.email,r.claim_token);
-   }catch(e){
-     history.replaceState(null,'',location.pathname);
-     showCheckout('No pudimos confirmar el pago: '+e.message);
-   }
+   await retryCheckoutCapture();
    return;
  }
+ const pendingCheckout=sessionStorage.getItem('feo-checkout-recovery');
+ if(pendingCheckout){showCheckoutRecovery('Hay una confirmación de pago pendiente. No vuelvas a pagar; reintenta la confirmación.');return}
  if(authType==='recovery'){showRecoveryPassword();return}
  const pendingClaim=sessionStorage.getItem('feo-paid-claim'), pendingEmail=sessionStorage.getItem('feo-paid-email');
  if(pendingClaim&&pendingEmail){showPaidSignup(pendingEmail,pendingClaim);return}
@@ -214,9 +228,17 @@ async function createEmbeddedOrder(){
 }
 async function approveEmbeddedOrder(data){
   if(!paypalCheckoutContext)throw new Error('No encontramos el checkout activo.');
-  const c=await cloud.capturePublicCheckout(paypalCheckoutContext.checkout_id,paypalCheckoutContext.checkout_secret,data.orderID);
-  if(!c?.claim_token)throw new Error('El pago se realizó, pero no pudimos preparar el acceso.');
-  showPaidSignup(c.email,c.claim_token);
+  const ctx={cid:paypalCheckoutContext.checkout_id,cs:paypalCheckoutContext.checkout_secret,token:data.orderID};
+  sessionStorage.setItem('feo-checkout-recovery',JSON.stringify(ctx));
+  try{
+    const c=await cloud.capturePublicCheckout(ctx.cid,ctx.cs,ctx.token);
+    if(!c?.claim_token)throw new Error('El pago se realizó, pero no pudimos preparar el acceso.');
+    sessionStorage.removeItem('feo-checkout-recovery');
+    showPaidSignup(c.email,c.claim_token);
+  }catch(e){
+    showCheckoutRecovery('Tu pago puede estar aprobado, pero FINORVE todavía no pudo confirmar el acceso. No vuelvas a pagar; usa Reintentar confirmación.');
+    throw e;
+  }
 }
 async function initEmbeddedPayPal(){
   if(paypalEmbeddedReady)return;
@@ -249,6 +271,7 @@ async function payEmbeddedCard(){
 }
 function bindAuthActions(){
   $('#payWithCard')?.addEventListener('click',payEmbeddedCard);
+  $('#retryCheckoutCapture')?.addEventListener('click',retryCheckoutCapture);
   initEmbeddedPayPal();
   $('#startCheckout')?.addEventListener('click',async()=>{
     const email=$('#checkoutEmail').value.trim().toLowerCase(),msg=$('#checkoutMsg'),btn=$('#startCheckout');
