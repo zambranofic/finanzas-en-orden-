@@ -29,4 +29,5 @@ jobs:
           node --check profile-utils.js
           node --check auth-session-utils.js
           node --check password-policy.js
+          node --check checkout-security-utils.js
           node --check app-v4.js
