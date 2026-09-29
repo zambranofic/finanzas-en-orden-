@@ -241,7 +241,15 @@ function bindAuthActions(){
       sessionStorage.removeItem('feo-paid-claim');sessionStorage.removeItem('feo-paid-email');
       await enterApp();
     }catch(e){
-      msg.textContent=e.message==='ACCOUNT_EXISTS'?'Ya existe una cuenta con este correo. Usa “Ya tengo una cuenta”.':e.message;
+      if(e.message==='ACCOUNT_EXISTS'){
+        const email=$('#paidEmail').value.trim().toLowerCase();
+        showExistingLogin('Ya tienes una cuenta. Inicia sesión para activar automáticamente esta compra.');
+        $('#authEmail').value=email;
+        $('#authEmail').readOnly=true;
+        $('#authPassword').focus();
+      }else{
+        msg.textContent=e.message;
+      }
       btn.disabled=false;btn.textContent=old;
     }
   });
