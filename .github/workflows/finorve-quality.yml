@@ -27,4 +27,5 @@ jobs:
           node --check supabase-store.js
           node --check sync-utils.js
           node --check profile-utils.js
+          node --check auth-session-utils.js
           node --check app-v4.js
