@@ -350,3 +350,24 @@ button:disabled{opacity:.58;cursor:not-allowed;transform:none!important}
 .adminUsersCard{padding-top:20px}
 @media(max-width:900px){.adminOpsGrid{grid-template-columns:1fr 1fr}.adminOpsDetail{grid-template-columns:1fr}}
 @media(max-width:520px){.adminOpsGrid{grid-template-columns:1fr}}
+
+/* FINORVE MOBILE QUALITY PASS */
+:root{--visual-viewport-height:100dvh}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+.shell,.authGate,.onboardingGate{min-height:var(--visual-viewport-height)}
+.info,.modalClose,.scoreArrow,.circle,.avatar,.mobileMenu,.sectionHead .primary{width:44px;height:44px;min-width:44px;min-height:44px}
+.mobileNav button{min-height:52px}
+@media(max-width:760px){
+  body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
+  main{padding-top:calc(18px + env(safe-area-inset-top));padding-left:max(15px,env(safe-area-inset-left));padding-right:max(15px,env(safe-area-inset-right))}
+  .authGate,.onboardingGate{padding-top:env(safe-area-inset-top);padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
+  .modalWrap{height:var(--visual-viewport-height);padding-top:max(12px,env(safe-area-inset-top));padding-bottom:max(12px,env(safe-area-inset-bottom))}
+  .mobileNav{padding-left:max(6px,env(safe-area-inset-left));padding-right:max(6px,env(safe-area-inset-right))}
+}
+html[data-keyboard-open="true"] .mobileNav{transform:translateY(120%);pointer-events:none}
+html[data-keyboard-open="true"] body{padding-bottom:0}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto!important}
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+  button:active{transform:none}
+}
