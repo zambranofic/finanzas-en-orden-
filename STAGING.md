@@ -10,3 +10,6 @@ Flow:
 5. Merge to `main` only after validation.
 
 Production remains `main` and https://finorve.com.
+
+## Production deploy trigger policy
+If a merged hotfix is not picked up by Vercel Git integration, a documentation-only main commit may be used to retrigger the deployment. The production artifact must still match the tested main application tree.
