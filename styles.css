@@ -318,3 +318,10 @@ linear-gradient(145deg,#103631,#0A2421)}
  .cashActions{width:100%}
  .cashActions button{flex:1}
 }
+
+/* FINORVE FUNCTIONAL STATES */
+button:disabled{opacity:.58;cursor:not-allowed;transform:none!important}
+.modalActions{display:flex;justify-content:flex-end;gap:8px;margin-top:20px}
+.modalMsg{margin-top:14px;padding:11px 13px;border-radius:12px;background:rgba(173,80,73,.08);border:1px solid rgba(173,80,73,.18);color:#94443E;font-size:11px;line-height:1.45}
+[data-theme="dark"] .modalMsg{color:#F0A59F;background:rgba(173,80,73,.10)}
+.field input.fieldError,.field select.fieldError{border-color:#AD5049;box-shadow:0 0 0 3px rgba(173,80,73,.08)}
