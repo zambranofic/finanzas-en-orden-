@@ -240,3 +240,43 @@ linear-gradient(145deg,#103631,#0A2421)}
  .diagnosticLead{grid-template-columns:1fr}
  .diagnosticGrid{grid-template-columns:1fr}
 }
+
+/* FINORVE PROFILE + SETTINGS POLISH */
+.profileLayout{display:grid;grid-template-columns:.82fr 1.18fr;gap:15px}
+.profileIdentity{padding:24px}
+.profileCard{align-items:flex-start}
+.profileCard h2{margin:6px 0 5px;font-size:23px;letter-spacing:-.04em}
+.profileCard .ghost{margin-top:12px}
+.profilePhoto{background:linear-gradient(145deg,#0B6965,#071F1D);box-shadow:0 14px 34px rgba(7,31,29,.16)}
+.profileMeta{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:24px;padding-top:18px;border-top:1px solid var(--line)}
+.profileMeta small{display:block;font-size:8px;letter-spacing:.12em;color:var(--muted);font-weight:800;margin-bottom:5px}
+.profileMeta b{font-size:12px}
+.profileFormCard{padding:24px}
+.profileFormCard .formGrid{margin-top:18px}
+.profileNote{margin-top:18px;padding:12px 14px;border-radius:14px;background:var(--surface2);color:var(--muted);font-size:10px;line-height:1.5}
+.settingsGrid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.settingsCard{padding:22px}
+.settingsCard.demoCard{grid-column:1/-1}
+.settingsTitle{display:flex;gap:12px;align-items:center;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.settingsTitle h3{margin:4px 0 0;font-size:16px}
+.settingsIcon{width:38px;height:38px;border-radius:12px;background:#DDF3ED;color:#0B6965;display:grid;place-items:center;font-weight:800}
+[data-theme="dark"] .settingsIcon{background:#153D38;color:#78D7C4}
+.settingsRow{padding:16px 0}
+.settingsRow .ghost{min-width:92px}
+.settingsIntro{color:var(--muted);font-size:11px;line-height:1.5;margin:15px 0 2px}
+.dangerRow{margin-top:6px;padding:15px 0 4px;border-top:1px solid rgba(173,80,73,.16)}
+.dangerRow b{color:#8F403A}
+[data-theme="dark"] .dangerRow b{color:#E58D86}
+.dangerButton{border:1px solid rgba(173,80,73,.20);color:#9A4741;background:rgba(173,80,73,.06)}
+.dangerButton:hover{background:rgba(173,80,73,.11)}
+.modal h2{padding-right:44px}
+.modal .field input,.modal .field select{min-height:48px}
+@media(max-width:900px){
+ .profileLayout,.settingsGrid{grid-template-columns:1fr}
+ .settingsCard.demoCard{grid-column:auto}
+}
+@media(max-width:520px){
+ .profileMeta{grid-template-columns:1fr}
+ .settingsRow{align-items:flex-start}
+ .settingsRow .ghost{min-width:auto}
+}
