@@ -1,0 +1,28 @@
+name: FINORVE Quality Gate
+
+on:
+  push:
+    branches: [staging]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Financial engine tests
+        run: npm test
+      - name: JavaScript syntax checks
+        run: |
+          node --check financial-engine.js
+          node --check certification-fixtures.js
+          node --check supabase-store.js
+          node --check app-v4.js
