@@ -1,1 +1,7 @@
-{"type":"module","scripts":{"test":"node engine-tests.mjs && node certification-tests.mjs","certify":"node certification-tests.mjs"}}
+{
+  "type": "module",
+  "scripts": {
+    "test": "node engine-tests.mjs && node certification-tests.mjs && node sync-tests.mjs",
+    "certify": "node certification-tests.mjs"
+  }
+}
