@@ -1,7 +1,7 @@
 {
   "type": "module",
   "scripts": {
-    "test": "node engine-tests.mjs && node certification-tests.mjs && node sync-tests.mjs && node profile-tests.mjs && node auth-session-tests.mjs && node password-policy-tests.mjs && node checkout-security-tests.mjs",
+    "test": "node engine-tests.mjs && node certification-tests.mjs && node sync-tests.mjs && node profile-tests.mjs && node auth-session-tests.mjs && node password-policy-tests.mjs && node checkout-security-tests.mjs && node navigation-tests.mjs",
     "certify": "node certification-tests.mjs"
   }
 }
