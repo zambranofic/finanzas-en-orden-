@@ -105,7 +105,7 @@ async function openAdmin(){
 function showAuth(message=''){const gate=$('#authGate');gate?.classList.remove('hidden');$('#shell').classList.add('hidden');$('#mobileNav').classList.add('hidden');if(message&&$('#authMsg'))$('#authMsg').textContent=message}
 function authMessage(error){const m=String(error?.message||error||'').toLowerCase();if(m.includes('anonymous sign-ins are disabled'))return 'Escribe tu correo electrónico para crear la cuenta.';if(m.includes('invalid login credentials'))return 'Correo o contraseña incorrectos.';if(m.includes('email not confirmed'))return 'Confirma tu correo antes de iniciar sesión.';if(m.includes('user already registered'))return 'Ya existe una cuenta con ese correo. Inicia sesión.';if(m.includes('password'))return 'La contraseña debe tener al menos 8 caracteres.';if(m.includes('email'))return 'Revisa que el correo electrónico sea válido.';return 'No pudimos completar la solicitud. Inténtalo nuevamente.'}
 function validateAuth(mode){const email=$('#authEmail').value.trim(),password=$('#authPassword').value,msg=$('#authMsg');msg.textContent='';if(!email){msg.textContent='Escribe tu correo electrónico.';$('#authEmail').focus();return null}if(!email.includes('@')||email.startsWith('@')||!email.slice(email.indexOf('@')+1).includes('.')||email.endsWith('.')){msg.textContent='Escribe un correo electrónico válido.';$('#authEmail').focus();return null}if(!password){msg.textContent='Escribe tu contraseña.';$('#authPassword').focus();return null}if(password.length<8){msg.textContent='La contraseña debe tener al menos 8 caracteres.';$('#authPassword').focus();return null}return {email,password,msg}}
-window.feoAuth={async forgot(){const email=$('#authEmail').value.trim(),msg=$('#authMsg');msg.textContent='';if(!email||!email.includes('@')||email.startsWith('@')||!email.slice(email.indexOf('@')+1).includes('.')||email.endsWith('.')){msg.textContent='Escribe un correo electrónico válido.';$('#authEmail').focus();return}try{await cloud.requestPasswordReset(email);msg.textContent='Si existe una cuenta con ese correo, recibirás instrucciones para restablecer la contraseña.'}catch(e){msg.textContent=authMessage(e)}},async submit(mode){const v=validateAuth(mode);if(!v)return;const {email,password,msg}=v;const btn=mode==='signup'?$('#authSignup'):$('#authSignin');const original=btn?.textContent;if(btn){btn.disabled=true;btn.textContent=mode==='signup'?'Creando cuenta…':'Ingresando…'}try{if(mode==='signup'){const s=await cloud.signUp(email,password);if(!s?.access_token){msg.textContent='Cuenta creada. Revisa tu correo para confirmar el acceso.';return}}else await cloud.signIn(email,password);await enterApp()}catch(e){msg.textContent=authMessage(e)}finally{if(btn){btn.disabled=false;btn.textContent=original}}},logout(){cloud.signOut();location.reload()}};
+window.feoAuth={async forgot(){const email=$('#authEmail').value.trim(),msg=$('#authMsg');msg.textContent='';if(!email||!email.includes('@')||email.startsWith('@')||!email.slice(email.indexOf('@')+1).includes('.')||email.endsWith('.')){msg.textContent='Escribe un correo electrónico válido.';$('#authEmail').focus();return}try{await cloud.requestPasswordReset(email);msg.textContent='Si existe una cuenta con ese correo, recibirás instrucciones para restablecer la contraseña.'}catch(e){msg.textContent=authMessage(e)}},async submit(mode){const v=validateAuth(mode);if(!v)return;const {email,password,msg}=v;const btn=mode==='signup'?$('#authSignup'):$('#authSignin');const original=btn?.textContent;if(btn){btn.disabled=true;btn.textContent=mode==='signup'?'Creando cuenta…':'Ingresando…'}try{if(mode==='signup'){const s=await cloud.signUp(email,password);if(!s?.access_token){showSignupSuccess(email);return}}else await cloud.signIn(email,password);await enterApp()}catch(e){msg.textContent=authMessage(e)}finally{if(btn){btn.disabled=false;btn.textContent=original}}},logout(){cloud.signOut();location.reload()}};
 let authMode='signin';
 function setAuthMode(mode){
   authMode=mode;
@@ -120,6 +120,13 @@ function setAuthMode(mode){
   $('#authPassword').setAttribute('autocomplete',signup?'new-password':'current-password');
   $('#authMsg').textContent='';
 }
+function showSignupSuccess(email){
+  $('#authEmail').closest('.authCard').querySelectorAll('label,input,#authSignin,#authSignup,#forgotPassword,#authMsg').forEach(el=>el.classList.add('hidden'));
+  $('#authKicker').textContent='REVISA TU CORREO';
+  $('#authTitle').textContent='Confirma tu cuenta';
+  $('#authCopy').textContent='Hemos enviado un enlace de confirmación a '+email+'.';
+  $('#signupSuccess').classList.remove('hidden');
+}
 function bindAuthActions(){
   $('#authSignin')?.addEventListener('click',()=>{
     if(authMode==='signup'){
@@ -132,6 +139,7 @@ function bindAuthActions(){
   $('#authSignup')?.addEventListener('click',()=>setAuthMode(authMode==='signup'?'signin':'signup'));
   $('#forgotPassword')?.addEventListener('click',()=>window.feoAuth.forgot());
   $('#accessLogout')?.addEventListener('click',()=>window.feoAuth.logout());
+  $('#backToLogin')?.addEventListener('click',()=>location.reload());
 }
 bindAuthActions();
 boot();
