@@ -1,18 +1,20 @@
+import { shouldRefreshSession, createSingleFlight } from './auth-session-utils.js';
 const URL='https://euqhrqsatbhnxgohbild.supabase.co';
 const KEY='sb_publishable_Ltn-8m11gMlS2AY14k8nfA_hcJ3Izjl';
 const SESSION='feo-supabase-session';
 const headers=(token,extra={})=>({'apikey':KEY,'Content-Type':'application/json',...(token?{'Authorization':`Bearer ${token}`}:{ }),...extra});
 const getSession=()=>{try{return JSON.parse(localStorage.getItem(SESSION))}catch{return null}};
 const setSession=s=>s?localStorage.setItem(SESSION,JSON.stringify({...s,expires_at:s.expires_at||Math.floor(Date.now()/1000)+Number(s.expires_in||3600)})):localStorage.removeItem(SESSION);
-let refreshPromise=null;
-async function refreshStoredSession(){
- if(refreshPromise)return refreshPromise;
- refreshPromise=(async()=>{const current=getSession();if(!current?.refresh_token)throw new Error('AUTH_REQUIRED');const r=await fetch(URL+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:headers(null),body:JSON.stringify({refresh_token:current.refresh_token})});const text=await r.text();let body=null;try{body=text?JSON.parse(text):null}catch{body=text}if(!r.ok){setSession(null);throw new Error(body?.msg||body?.message||body?.error_description||'AUTH_REQUIRED')}setSession(body);return body})();
- try{return await refreshPromise}finally{refreshPromise=null}
-}
+const refreshStoredSession=createSingleFlight(async()=>{
+ const current=getSession();if(!current?.refresh_token)throw new Error('AUTH_REQUIRED');
+ const r=await fetch(URL+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:headers(null),body:JSON.stringify({refresh_token:current.refresh_token})});
+ const text=await r.text();let body=null;try{body=text?JSON.parse(text):null}catch{body=text}
+ if(!r.ok){setSession(null);throw new Error(body?.msg||body?.message||body?.error_description||'AUTH_REQUIRED')}
+ setSession(body);return body;
+});
 async function activeSession(){
  let s=getSession();if(!s?.access_token)throw new Error('AUTH_REQUIRED');
- if(s.refresh_token&&Number(s.expires_at||0)<=Math.floor(Date.now()/1000)+30)s=await refreshStoredSession();
+ if(shouldRefreshSession(s))s=await refreshStoredSession();
  return s;
 }
 async function jsonFetch(path,opts={},retry=true){const r=await fetch(URL+path,opts);const text=await r.text();let body=null;try{body=text?JSON.parse(text):null}catch{body=text}if(r.status===401&&retry&&opts?.headers?.Authorization&&getSession()?.refresh_token){const next=await refreshStoredSession();const nextHeaders={...opts.headers,Authorization:`Bearer ${next.access_token}`};return jsonFetch(path,{...opts,headers:nextHeaders},false)}if(!r.ok)throw new Error(body?.msg||body?.message||body?.error||body?.error_description||`HTTP ${r.status}`);return body}
