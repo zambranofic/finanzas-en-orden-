@@ -71,7 +71,7 @@ export async function exportMyData(){
  return {export_version:1,exported_at:new Date().toISOString(),account:{id:u.id,email:u.email||null,created_at:u.created_at||null},profile:profile?.[0]||null,movements:movements||[],license:licenses?.[0]||null,payments:payments||[]};
 }
 
-export async function deleteMyAccount(){const s=getSession();if(!s?.access_token)throw new Error('AUTH_REQUIRED');const r=await fetch(`${URL}/functions/v1/delete-my-account`,{method:'POST',headers:{'apikey':KEY,'Authorization':`Bearer ${s.access_token}`}});const body=await r.json().catch(()=>({}));if(!r.ok)throw new Error(body.error||'No se pudo eliminar la cuenta.');setSession(null);return body}
+export async function deleteMyAccount(confirmation){const s=getSession();if(!s?.access_token)throw new Error('AUTH_REQUIRED');const r=await fetch(`${URL}/functions/v1/delete-my-account`,{method:'POST',headers:{'apikey':KEY,'Authorization':`Bearer ${s.access_token}`,'Content-Type':'application/json'},body:JSON.stringify({confirmation:String(confirmation||'')})});const body=await r.json().catch(()=>({}));if(!r.ok)throw new Error(body.error||'No se pudo eliminar la cuenta.');setSession(null);return body}
 
 export async function myLicense(){const s=getSession();if(!s?.access_token)throw new Error('AUTH_REQUIRED');const rows=await jsonFetch('/rest/v1/licenses?select=status,product_code,access_type,activated_at,revoked_at&limit=1',{headers:headers(s.access_token)});return rows?.[0]||null}
 export async function createPayPalOrder(){const s=getSession();if(!s?.access_token)throw new Error('AUTH_REQUIRED');return jsonFetch('/functions/v1/paypal-create-order',{method:'POST',headers:headers(s.access_token),body:'{}'})}
