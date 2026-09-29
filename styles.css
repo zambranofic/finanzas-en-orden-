@@ -122,3 +122,42 @@ linear-gradient(180deg,#071F1D,#051715)}
   header h1{font-size:23px}
   .scoreCard,.priorityCard,.triadCard,.dashboardGrid .card{box-shadow:none}
 }
+
+/* FINORVE ONBOARDING POLISH */
+.onboardingGate{background:
+radial-gradient(circle at 12% 8%,rgba(120,215,196,.14),transparent 28%),
+var(--bg)}
+.onboardingShell{border-color:rgba(11,105,101,.10);box-shadow:0 32px 90px rgba(7,31,29,.13)}
+.onboardingAside{background:
+radial-gradient(circle at 70% 14%,rgba(120,215,196,.12),transparent 25%),
+linear-gradient(155deg,#061816,#082B28 64%,#0B6965)}
+.onboardingAside .brand b{letter-spacing:.14em}
+.onboardingAsideCopy h2 em{color:#78D7C4}
+.onboardingAsideCopy p{color:#C1D8D3}
+.onboardingTrack span.active{background:#78D7C4;color:#071F1D;border-color:#78D7C4}
+.onboardingTrack i.active{background:linear-gradient(90deg,#2FAE9B,#78D7C4)}
+.onboardingCard .eyebrow{color:#0B6965}
+[data-theme="dark"] .onboardingCard .eyebrow{color:#78D7C4}
+.onboardingCard h1{font-size:38px;max-width:610px}
+.onboardingCard>p{font-size:13px;max-width:600px}
+.choiceGrid{gap:14px}
+.choiceCard{position:relative;min-height:142px;padding:20px;border-color:rgba(11,105,101,.10);box-shadow:0 8px 24px rgba(7,31,29,.025)}
+.choiceCard:hover{transform:translateY(-1px);border-color:rgba(47,174,155,.28)}
+.choiceCard.active{border-color:#78D7C4;background:linear-gradient(145deg,#EDF8F5,#FFFFFF);box-shadow:0 0 0 3px rgba(120,215,196,.11)}
+[data-theme="dark"] .choiceCard.active{background:linear-gradient(145deg,#12322E,#0A211E)}
+.choiceCard span{width:42px;height:42px;background:linear-gradient(145deg,#DDF3ED,#EFF9F6);color:#0B6965;font-size:10px;font-weight:850;letter-spacing:.05em}
+[data-theme="dark"] .choiceCard span{background:#153D38;color:#78D7C4}
+.choiceCard b{font-size:14px}
+.choiceCard small{font-size:11px;max-width:240px}
+.onboardingNext{box-shadow:0 12px 28px rgba(11,105,101,.16)}
+.onboardingModeTag{background:#DDF3ED;color:#0B6965;border:1px solid rgba(11,105,101,.08)}
+[data-theme="dark"] .onboardingModeTag{background:#153D38;color:#78D7C4}
+.onboardingPath{border:1px solid rgba(11,105,101,.08);background:linear-gradient(145deg,#F5FAF8,#EEF5F3)}
+[data-theme="dark"] .onboardingPath{background:#102D2A}
+.onboardingPath span{background:linear-gradient(145deg,#0B6965,#2FAE9B)}
+.onboardingTrust{text-align:center;color:var(--muted);font-size:10px;margin-top:14px}
+@media(max-width:760px){
+  .onboardingCard h1{font-size:29px}
+  .choiceCard{min-height:auto}
+  .onboardingTrust{font-size:9px}
+}
