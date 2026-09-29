@@ -1,0 +1,40 @@
+name: FINORVE encrypted database backup
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '23 8 * * *'
+permissions:
+  contents: read
+concurrency:
+  group: finorve-database-backup
+  cancel-in-progress: false
+jobs:
+  backup:
+    if: github.event_name == 'workflow_dispatch' || vars.FINORVE_BACKUP_ENABLED == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Check configuration
+        env:
+          FINORVE_DB_URL: ${{ secrets.FINORVE_DB_URL }}
+          FINORVE_BACKUP_PASSPHRASE: ${{ secrets.FINORVE_BACKUP_PASSPHRASE }}
+        run: |
+          test -n "$FINORVE_DB_URL" || { echo 'Missing FINORVE_DB_URL'; exit 1; }
+          test "${#FINORVE_BACKUP_PASSPHRASE}" -ge 32 || { echo 'Backup passphrase must have at least 32 characters'; exit 1; }
+      - name: Export and encrypt
+        env:
+          FINORVE_DB_URL: ${{ secrets.FINORVE_DB_URL }}
+          FINORVE_BACKUP_PASSPHRASE: ${{ secrets.FINORVE_BACKUP_PASSPHRASE }}
+        run: bash scripts/backup-database.sh
+      - name: Save encrypted archive only
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: finorve-database-${{ github.run_id }}
+          path: ${{ runner.temp }}/finorve-backup.tar.gz.gpg
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
+      - name: Remove temporary exports
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/finorve-backup-work" "$RUNNER_TEMP/finorve-backup.tar.gz.gpg"
