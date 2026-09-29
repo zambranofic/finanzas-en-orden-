@@ -195,14 +195,14 @@ async function initEmbeddedPayPal(){
       onApprove:approveEmbeddedOrder,
       onError:(err)=>{if(msg)msg.textContent='No pudimos procesar la tarjeta. Revisa los datos o usa PayPal.'}
     });
-    if(!paypalCardFields?.isEligible())throw new Error('CARD_FIELDS_NOT_ELIGIBLE');
+    if(!paypalCardFields?.isEligible()){document.querySelector('.embeddedPay')?.classList.add('hidden');document.querySelector('.payDivider')?.classList.add('hidden');throw new Error('CARD_FIELDS_NOT_ELIGIBLE')}
     await paypalCardFields.NumberField({style:{input:{'font-size':'16px','font-family':'Arial, sans-serif',color:'#102927'}}}).render('#paypal-card-number');
     await paypalCardFields.ExpiryField({style:{input:{'font-size':'16px','font-family':'Arial, sans-serif',color:'#102927'}}}).render('#paypal-card-expiry');
     await paypalCardFields.CVVField({style:{input:{'font-size':'16px','font-family':'Arial, sans-serif',color:'#102927'}}}).render('#paypal-card-cvv');
     fields?.classList.remove('hidden');loading?.classList.add('hidden');paypalEmbeddedReady=true;
   }catch(e){
     loading?.classList.add('hidden');unavailable?.classList.remove('hidden');
-    if(msg&&String(e?.message||e)!=='CARD_FIELDS_NOT_ELIGIBLE')msg.textContent='No pudimos preparar el pago con tarjeta. Puedes continuar con PayPal.';
+    if(msg&&String(e?.message||e)!=='CARD_FIELDS_NOT_ELIGIBLE')msg.textContent='No pudimos preparar el pago seguro. Inténtalo nuevamente.';
   }
 }
 async function payEmbeddedCard(){
