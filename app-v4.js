@@ -227,8 +227,9 @@ function bindAuthActions(){
   $('#existingLogin')?.addEventListener('click',()=>showExistingLogin());
   $('#paidExistingLogin')?.addEventListener('click',()=>showExistingLogin());
   $('#createPaidAccount')?.addEventListener('click',async()=>{
-    const email=$('#paidEmail').value.trim().toLowerCase(),password=$('#paidPassword').value,confirm=$('#paidPasswordConfirm').value,msg=$('#paidSignupMsg'),btn=$('#createPaidAccount'),claim=sessionStorage.getItem('feo-paid-claim');
+    const name=$('#paidName').value.trim(),email=$('#paidEmail').value.trim().toLowerCase(),password=$('#paidPassword').value,confirm=$('#paidPasswordConfirm').value,msg=$('#paidSignupMsg'),btn=$('#createPaidAccount'),claim=sessionStorage.getItem('feo-paid-claim');
     msg.textContent='';
+    if(name.length<2){msg.textContent='Escribe tu nombre.';$('#paidName').focus();return}
     if(password.length<8){msg.textContent='La contraseña debe tener al menos 8 caracteres.';return}
     if(password!==confirm){msg.textContent='Las contraseñas no coinciden.';return}
     if(!claim){msg.textContent='El comprobante de pago ya no está disponible. Contacta soporte con tu recibo de PayPal.';return}
@@ -236,6 +237,7 @@ function bindAuthActions(){
     try{
       await cloud.createPaidAccount(email,password,claim);
       await cloud.signIn(email,password);
+      await cloud.saveProfile({name,country:'Ecuador',personalCurrency:'USD',businessCurrency:'USD',theme:'system',tutorialCompleted:false});
       sessionStorage.removeItem('feo-paid-claim');sessionStorage.removeItem('feo-paid-email');
       await enterApp();
     }catch(e){
