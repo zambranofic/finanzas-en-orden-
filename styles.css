@@ -280,3 +280,41 @@ linear-gradient(145deg,#103631,#0A2421)}
  .settingsRow{align-items:flex-start}
  .settingsRow .ghost{min-width:auto}
 }
+
+/* FINORVE SECONDARY BUSINESS SCREENS */
+.moreIntro{margin-bottom:15px;padding:22px 24px;border-radius:24px;background:linear-gradient(145deg,#F0F8F5,#FFFFFF);border:1px solid rgba(11,105,101,.09)}
+[data-theme="dark"] .moreIntro{background:linear-gradient(145deg,#102D2A,#0A211E)}
+.moreIntro h3{font-size:20px;letter-spacing:-.035em;margin:7px 0 6px}
+.moreIntro p{color:var(--muted);font-size:11px;margin:0}
+.moreGrid{grid-template-columns:repeat(3,1fr)}
+.breakEvenHero,.resultHero{display:flex;justify-content:space-between;gap:24px;align-items:flex-end;padding:28px;border-radius:28px;background:radial-gradient(circle at 88% 20%,rgba(120,215,196,.18),transparent 28%),linear-gradient(145deg,#071F1D,#0B6965);color:white}
+.breakEvenHero h2,.resultHero h2{font-size:44px;letter-spacing:-.05em;margin:8px 0 5px}
+.breakEvenHero p,.resultHero p{color:#C7DED9;font-size:11px;max-width:570px;line-height:1.55}
+.breakEvenStatus,.resultMargin{min-width:170px;padding:17px 18px;border-radius:18px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.10)}
+.breakEvenStatus small,.resultMargin small{display:block;color:#B9D3CE;font-size:8px;letter-spacing:.12em}
+.breakEvenStatus strong,.resultMargin strong{display:block;font-size:23px;margin:6px 0 2px}
+.breakEvenStatus span{font-size:9px;color:#A8C5BF}
+.insightGrid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:15px}
+.insightCard{min-height:190px}
+.insightCard h3{font-size:19px;margin:10px 0 8px}
+.insightCard p{color:var(--muted);font-size:11px;line-height:1.55}
+.insightCard .primary{margin-top:14px}
+.cashActions{display:flex;gap:8px}
+.cashSummary,.resultGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:15px}
+.cashSummary>div,.resultGrid>div{background:var(--surface);border:1px solid rgba(11,105,101,.09);border-radius:18px;padding:17px 19px}
+.cashSummary small,.resultGrid small{display:block;font-size:8px;letter-spacing:.13em;color:var(--muted);font-weight:800;margin-bottom:6px}
+.cashSummary strong,.resultGrid strong{font-size:19px;letter-spacing:-.03em}
+.resultGrid{margin-top:15px}
+.resultNote{margin-top:15px}
+.resultNote h3{font-size:17px;margin:8px 0}
+.resultNote p{color:var(--muted);font-size:11px;line-height:1.55}
+.resultNote .ghost{margin-top:10px}
+@media(max-width:760px){
+ .moreGrid{grid-template-columns:1fr}
+ .breakEvenHero,.resultHero{display:block}
+ .breakEvenStatus,.resultMargin{margin-top:18px;min-width:0}
+ .insightGrid{grid-template-columns:1fr}
+ .cashSummary,.resultGrid{grid-template-columns:1fr}
+ .cashActions{width:100%}
+ .cashActions button{flex:1}
+}
