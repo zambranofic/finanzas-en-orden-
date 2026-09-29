@@ -4,7 +4,7 @@ const SESSION='feo-supabase-session';
 const headers=(token,extra={})=>({'apikey':KEY,'Content-Type':'application/json',...(token?{'Authorization':`Bearer ${token}`}:{ }),...extra});
 const getSession=()=>{try{return JSON.parse(localStorage.getItem(SESSION))}catch{return null}};
 const setSession=s=>s?localStorage.setItem(SESSION,JSON.stringify(s)):localStorage.removeItem(SESSION);
-async function jsonFetch(path,opts={}){const r=await fetch(URL+path,opts);const text=await r.text();let body=null;try{body=text?JSON.parse(text):null}catch{body=text}if(!r.ok)throw new Error(body?.msg||body?.message||body?.error_description||`HTTP ${r.status}`);return body}
+async function jsonFetch(path,opts={}){const r=await fetch(URL+path,opts);const text=await r.text();let body=null;try{body=text?JSON.parse(text):null}catch{body=text}if(!r.ok)throw new Error(body?.msg||body?.message||body?.error||body?.error_description||`HTTP ${r.status}`);return body}
 export async function signIn(email,password){const s=await jsonFetch('/auth/v1/token?grant_type=password',{method:'POST',headers:headers(null),body:JSON.stringify({email,password})});setSession(s);return s}
 export async function signUp(email,password){const redirectTo=location.origin+location.pathname;const s=await jsonFetch('/auth/v1/signup?redirect_to='+encodeURIComponent(redirectTo),{method:'POST',headers:headers(null),body:JSON.stringify({email,password})});if(s?.access_token)setSession(s);return s}
 export function signOut(){setSession(null)}
