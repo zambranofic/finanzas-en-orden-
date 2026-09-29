@@ -161,3 +161,37 @@ linear-gradient(155deg,#061816,#082B28 64%,#0B6965)}
   .choiceCard{min-height:auto}
   .onboardingTrust{font-size:9px}
 }
+
+/* FINORVE MOVEMENTS + PLAN POLISH */
+.sectionHead{gap:18px}
+.sectionHead>div:first-child{max-width:760px}
+.sectionHead .eyebrow{display:block;margin-bottom:7px}
+.moduleGrid{gap:15px}
+.moduleCard{min-height:112px;border-color:rgba(11,105,101,.09);box-shadow:0 10px 28px rgba(7,31,29,.035);transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+.moduleCard:hover{transform:translateY(-2px);border-color:rgba(47,174,155,.32);box-shadow:0 16px 34px rgba(7,31,29,.06)}
+.moduleCard>span{background:linear-gradient(145deg,#DDF3ED,#EFF9F6);color:#0B6965}
+[data-theme="dark"] .moduleCard>span{background:#153D38;color:#78D7C4}
+.moduleCard b{font-size:14px}
+.moduleCard small{font-size:11px;max-width:360px}
+.moduleCard i{width:34px;height:34px;border-radius:50%;background:var(--surface2);display:grid;place-items:center}
+.recordSummary{display:grid;grid-template-columns:1.5fr .75fr .75fr;gap:12px;margin:2px 0 18px}
+.recordSummary>div{background:var(--surface);border:1px solid rgba(11,105,101,.09);border-radius:20px;padding:18px 20px;box-shadow:0 8px 24px rgba(7,31,29,.025)}
+.recordSummary small{display:block;font-size:8px;letter-spacing:.14em;color:var(--muted);font-weight:800;margin-bottom:7px}
+.recordSummary strong{font-size:21px;letter-spacing:-.035em}
+.recordListCard{padding-top:20px}
+.recordListHead{display:flex;justify-content:space-between;align-items:end;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.recordListHead h3{margin-top:5px}
+.recordListHead>small{color:var(--muted);font-size:9px}
+.recordRow .ico{background:#EEF6F4;color:#0B6965}
+[data-theme="dark"] .recordRow .ico{background:#153D38;color:#78D7C4}
+.recordRow .deleteRecord{padding:5px 9px!important;margin-left:8px!important;border-radius:10px}
+.emptyState{text-align:center;padding:42px 20px 34px}
+.emptyState>span{width:48px;height:48px;border-radius:15px;background:#DDF3ED;color:#0B6965;display:grid;place-items:center;margin:0 auto 13px;font-size:22px}
+[data-theme="dark"] .emptyState>span{background:#153D38;color:#78D7C4}
+.emptyState h3{font-size:16px;margin:0 0 7px}
+.emptyState p{color:var(--muted);font-size:11px;max-width:380px;margin:0 auto 16px;line-height:1.5}
+@media(max-width:760px){
+ .recordSummary{grid-template-columns:1fr 1fr}
+ .recordSummary>div:first-child{grid-column:1/-1}
+ .moduleCard{min-height:auto}
+}
