@@ -196,14 +196,40 @@ function showAccessPending(lic,message=''){ hideEntryGates();$('#shell').classLi
 function injectAdminButton(){const b=document.createElement('button');b.id='adminOpen';b.innerHTML='▦ <span>Admin</span>';b.onclick=()=>openAdmin();document.querySelector('.sideBottom')?.prepend(b)}
 async function openAdmin(){
  try{
-  const d=await cloud.adminDashboard();
-  const rows=(d.users||[]).map(u=>{
-   const l=u.license, pay=u.last_payment;
+  const [d,ops]=await Promise.all([cloud.adminDashboard(),cloud.adminOpsSummary()]);
+  const users=d.users||[],checkout=ops.checkouts||{},payments=ops.payments||{},licenses=ops.licenses||{};
+  const cAll=checkout.all||{},pAll=payments.all||{},lAll=licenses.all||{};
+  const riskCount=Number(checkout.stale||0)+Number(cAll.failed||0)+Number(pAll.denied||0)+Number(pAll.reversed||0);
+  const rows=users.map(u=>{
+   const l=u.license,pay=u.last_payment;
    const payText=pay?`${esc(pay.status)} · ${esc(pay.currency)} ${(Number(pay.amount_minor)/100).toFixed(2)}`:'Sin pago registrado';
    const action=l?`<button class="ghost adminLicense" data-user="${u.id}" data-status="${l.status==='active'?'revoked':'active'}">${l.status==='active'?'Desactivar':'Activar'}</button>`:'—';
    return `<div class="adminRow"><div><b>${esc(u.full_name||u.email||'Usuario')}</b><small>${esc(u.country||'—')} · ${esc(u.email||'Sin correo')}</small></div><div><b>${esc(l?.status||'sin licencia')}</b><small>${payText}</small></div><div>${action}</div><div><button class="ghost adminNote" data-user="${u.id}">Nota</button></div></div>`;
   }).join('');
-  $('#content').innerHTML=`<div class="sectionHead"><div><h2>Administración</h2><p>Acceso, pagos y soporte. Los movimientos financieros no están disponibles aquí.</p></div></div><div class="card"><div class="adminTable">${rows||'<p class="sub">Aún no hay usuarios.</p>'}</div></div>`;
+  $('#content').innerHTML=`<div class="sectionHead"><div><span class="eyebrow">FINORVE · OPERACIÓN</span><h2>Administración</h2><p>Acceso, pagos y soporte. Los movimientos financieros no están disponibles aquí.</p></div><button class="ghost" id="adminRefresh">Actualizar</button></div>
+  <div class="adminOpsGrid">
+    <div class="adminOpsCard"><small>USUARIOS</small><strong>${users.length}</strong><span>cuentas visibles</span></div>
+    <div class="adminOpsCard"><small>LICENCIAS ACTIVAS</small><strong>${Number(lAll.active||0)}</strong><span>${Number(lAll.revoked||0)+Number(lAll.refunded||0)} revocadas/reembolsadas</span></div>
+    <div class="adminOpsCard ${riskCount?'warn':''}"><small>ATENCIÓN</small><strong>${riskCount}</strong><span>${Number(checkout.stale||0)} checkout(s) atascado(s)</span></div>
+    <div class="adminOpsCard"><small>EVENTOS 24H</small><strong>${Number(ops.payment_events_last24h||0)}</strong><span>webhooks procesados</span></div>
+  </div>
+  <div class="adminOpsDetail">
+    <div class="card"><span class="eyebrow">CHECKOUT</span><div class="opsRows">
+      <div><span>Creados</span><b>${Number(cAll.created||0)}</b></div>
+      <div><span>Completados</span><b>${Number(cAll.completed||0)}</b></div>
+      <div><span>Reclamados</span><b>${Number(cAll.claimed||0)}</b></div>
+      <div><span>Cancelados</span><b>${Number(cAll.cancelled||0)}</b></div>
+      <div><span>Fallidos</span><b>${Number(cAll.failed||0)}</b></div>
+    </div></div>
+    <div class="card"><span class="eyebrow">PAGOS</span><div class="opsRows">
+      <div><span>Completados</span><b>${Number(pAll.completed||0)}</b></div>
+      <div><span>Reembolsados</span><b>${Number(pAll.refunded||0)}</b></div>
+      <div><span>Revertidos</span><b>${Number(pAll.reversed||0)}</b></div>
+      <div><span>Denegados</span><b>${Number(pAll.denied||0)}</b></div>
+    </div></div>
+  </div>
+  <div class="card adminUsersCard"><div class="recordListHead"><div><span class="eyebrow">USUARIOS</span><h3>Accesos y soporte</h3></div><small>Actualizado ${new Date(ops.generated_at||Date.now()).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})}</small></div><div class="adminTable">${rows||'<p class="sub">Aún no hay usuarios.</p>'}</div></div>`;
+  $('#adminRefresh')?.addEventListener('click',openAdmin);
   $$('.adminLicense').forEach(b=>b.onclick=async()=>{try{await cloud.adminSetLicense(b.dataset.user,b.dataset.status);await openAdmin()}catch(e){alert(e.message)}});
   $$('.adminNote').forEach(b=>b.onclick=()=>openModalForm('Nota de soporte','<div class="field"><label>Nota interna</label><textarea id="supportNote" maxlength="1000"></textarea></div>',async()=>{await cloud.adminAddNote(b.dataset.user,$('#supportNote').value);$('#modalWrap').classList.add('hidden')}));
  }catch(e){alert(e.message)}
