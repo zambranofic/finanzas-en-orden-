@@ -325,3 +325,10 @@ button:disabled{opacity:.58;cursor:not-allowed;transform:none!important}
 .modalMsg{margin-top:14px;padding:11px 13px;border-radius:12px;background:rgba(173,80,73,.08);border:1px solid rgba(173,80,73,.18);color:#94443E;font-size:11px;line-height:1.45}
 [data-theme="dark"] .modalMsg{color:#F0A59F;background:rgba(173,80,73,.10)}
 .field input.fieldError,.field select.fieldError{border-color:#AD5049;box-shadow:0 0 0 3px rgba(173,80,73,.08)}
+
+/* FINORVE CLOUD SYNC STATES */
+.syncStatus,.syncError{margin:0 0 16px;padding:11px 13px;border-radius:13px;font-size:10px;line-height:1.5}
+.syncStatus{background:rgba(47,174,155,.08);border:1px solid rgba(47,174,155,.18);color:#0B6965}
+.syncError{background:rgba(173,80,73,.08);border:1px solid rgba(173,80,73,.18);color:#94443E}
+[data-theme="dark"] .syncStatus{color:#78D7C4;background:rgba(47,174,155,.10)}
+[data-theme="dark"] .syncError{color:#F0A59F;background:rgba(173,80,73,.10)}
