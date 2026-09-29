@@ -27,3 +27,14 @@ body{font-weight:400;letter-spacing:0}.mark{font-family:inherit!important;font-s
 @media(max-width:1050px){.dashboardLead{grid-template-columns:1fr}.dashboardGrid{grid-template-columns:1fr}.onboardingShell{grid-template-columns:270px 1fr}.onboardingMain{padding:38px 30px}.onboardingAside{padding:30px 24px}.onboardingAsideCopy h2{font-size:31px}}
 @media(max-width:760px){.dashboardLead{gap:11px}.scoreCard,.priorityCard{border-radius:22px;padding:19px}.scoreLine strong{font-size:43px}.priorityBody{gap:12px}.triad{grid-template-columns:1fr 1fr 1fr;gap:7px}.triadCard{display:block;padding:12px;border-radius:17px}.triadIcon{width:34px;height:34px;margin-bottom:9px}.triadCard strong{font-size:14px}.triadCard em{display:none}.dashboardGrid{gap:11px}.microBars{height:145px;gap:8px}.moduleGrid{grid-template-columns:1fr}.moduleCard{padding:16px}.onboardingGate{padding:0;background:var(--surface)}.onboardingShell{display:block;min-height:100vh;border:0;border-radius:0;box-shadow:none}.onboardingAside{min-height:190px;padding:24px;border-radius:0 0 28px 28px}.onboardingAsideCopy{margin:18px 0 20px}.onboardingAsideCopy h2{font-size:27px;margin:10px 0}.onboardingAsideCopy p{font-size:11px}.onboardingTrack{max-width:280px}.onboardingMain{padding:30px 20px 42px}.onboardingCard h1{font-size:28px}.choiceGrid{grid-template-columns:1fr}.choiceCard:last-child{grid-column:auto}.onboardingPath{display:grid;grid-template-columns:auto 1fr auto;justify-content:start;padding:18px}.onboardingPath i{display:none}.tour{align-items:end;padding:10px}.tourCard{width:100%;border-radius:24px 24px 16px 16px}.sidebar+main header .eyebrow{display:none}}
 @media(max-width:420px){.triad{grid-template-columns:1fr}.triadCard{display:flex}.triadCard em{display:block}.scoreLine strong{font-size:40px}.onboardingAside{min-height:175px}.onboardingAsideCopy p{display:none}}
+
+.embeddedPay{margin-top:18px;padding:16px;border:1px solid var(--line);border-radius:18px;background:var(--surface2)}
+.payMethodHead{display:grid;gap:3px;margin-bottom:12px}.payMethodHead span{font-size:13px;font-weight:700}.payMethodHead small{font-size:10px;color:var(--muted)}
+.paypalLoading,.paypalUnavailable{font-size:11px;color:var(--muted);padding:10px 0}
+.paypalUnavailable{color:#8d5a22}
+.paypalField{height:50px;border:1px solid var(--line);border-radius:13px;background:var(--surface);overflow:hidden}
+.paypalFieldRow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+#payWithCard{margin-top:12px}
+.payDivider{display:flex;align-items:center;gap:10px;margin:16px 0 4px;color:var(--muted);font-size:10px}
+.payDivider:before,.payDivider:after{content:"";height:1px;background:var(--line);flex:1}
+@media(max-width:520px){.paypalFieldRow{grid-template-columns:1fr}.embeddedPay{padding:14px}}
