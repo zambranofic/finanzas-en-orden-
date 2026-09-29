@@ -62,8 +62,40 @@ let records={personal:{},business:{}};
 let profileData={...PROFILE_DEFAULT};
 let adminMode=false;
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let syncTimer; const saveRecords=()=>{clearTimeout(syncTimer);syncTimer=setTimeout(()=>cloud.syncRecords(records,profileData).catch(showCloudError),120)};
-function showCloudError(e){console.error(e);const c=$('#content');if(c)c.insertAdjacentHTML('afterbegin',`<div class="syncError">No se pudo guardar en la nube. Revisa tu conexión e inténtalo de nuevo.</div>`)}
+const SYNC_BACKUP='finorve-pending-sync';
+let syncTimer=null,syncPromise=Promise.resolve(),syncPending=false,syncRetryTimer=null;
+function syncSnapshot(){return {records:JSON.parse(JSON.stringify(records)),profile:{...profileData}}}
+function showSyncState(kind,text){
+  document.querySelectorAll('.syncError,.syncStatus').forEach(x=>x.remove());
+  const c=$('#content');if(!c)return;
+  c.insertAdjacentHTML('afterbegin',`<div class="${kind==='error'?'syncError':'syncStatus'}">${text}</div>`);
+}
+function persistPending(snapshot){try{localStorage.setItem(SYNC_BACKUP,JSON.stringify(snapshot))}catch{}}
+function clearPending(){try{localStorage.removeItem(SYNC_BACKUP)}catch{}}
+function readPending(){try{return JSON.parse(localStorage.getItem(SYNC_BACKUP)||'null')}catch{return null}}
+async function flushRecords(snapshot=syncSnapshot()){
+  persistPending(snapshot);syncPending=true;
+  try{
+    await cloud.syncRecords(snapshot.records,snapshot.profile);
+    clearPending();syncPending=false;clearTimeout(syncRetryTimer);
+    document.querySelectorAll('.syncError,.syncStatus').forEach(x=>x.remove());
+    return true;
+  }catch(e){
+    syncPending=true;showCloudError(e);
+    clearTimeout(syncRetryTimer);
+    if(navigator.onLine)syncRetryTimer=setTimeout(()=>queueSync(readPending()||snapshot,0),3000);
+    return false;
+  }
+}
+function queueSync(snapshot=syncSnapshot(),delay=180){
+  persistPending(snapshot);clearTimeout(syncTimer);
+  syncTimer=setTimeout(()=>{syncPromise=syncPromise.then(()=>flushRecords(snapshot))},delay);
+}
+const saveRecords=()=>queueSync(syncSnapshot(),180);
+function showCloudError(e){console.error(e);showSyncState('error',navigator.onLine?'No pudimos guardar todavía. FINORVE conservará los cambios y reintentará automáticamente.':'Sin conexión. Tus cambios quedan pendientes y se guardarán al volver a estar en línea.')}
+window.addEventListener('online',()=>{const pending=readPending();if(pending)queueSync(pending,50)});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){const pending=readPending();if(pending)queueSync(pending,50)}});
+window.addEventListener('pagehide',()=>{const pending=syncPending?readPending():null;if(pending)persistPending(pending)});
 const bucket=()=>records[state.mode]||(records[state.mode]={});
 function listFor(type){return bucket()[type]||(bucket()[type]=[])}
 function currency(){return state.mode==='personal'?profileData.personalCurrency:profileData.businessCurrency}
@@ -157,7 +189,7 @@ async function boot(){
  if(user){await enterApp();if(authType==='recovery'){state.section='settings';render();setTimeout(()=>$('#changePassword')?.click(),100)};return}
  showCheckout();
 }
-async function enterApp(){try{const lic=await cloud.myLicense();adminMode=await cloud.isAdmin();if(!adminMode&&lic?.status!=='active'){showAccessPending(lic);return}hideEntryGates();const data=await cloud.loadData();records=data.records;profileData={...PROFILE_DEFAULT,...data.profile};if(profileData.theme&&['light','dark','system'].includes(profileData.theme))state.theme=profileData.theme;localStorage.setItem('feo-theme',state.theme);applyTheme();profileData.photoUrl=await cloud.avatarObjectUrl(profileData.photo);$('#authGate')?.classList.add('hidden');$('#accessGate')?.classList.add('hidden');if(adminMode){$('#shell').classList.remove('hidden');$('#mobileNav').classList.remove('hidden');injectAdminButton();render();return}if(!profileData.tutorialCompleted){showOnboarding();return}$('#shell').classList.remove('hidden');$('#mobileNav').classList.remove('hidden');render()}catch(e){showAuth(e.message)}}
+async function enterApp(){try{const lic=await cloud.myLicense();adminMode=await cloud.isAdmin();if(!adminMode&&lic?.status!=='active'){showAccessPending(lic);return}hideEntryGates();const data=await cloud.loadData();records=data.records;profileData={...PROFILE_DEFAULT,...data.profile};const pendingSync=readPending();if(pendingSync?.records){records=pendingSync.records;profileData={...profileData,...pendingSync.profile};queueSync(pendingSync,50);}if(profileData.theme&&['light','dark','system'].includes(profileData.theme))state.theme=profileData.theme;localStorage.setItem('feo-theme',state.theme);applyTheme();profileData.photoUrl=await cloud.avatarObjectUrl(profileData.photo);$('#authGate')?.classList.add('hidden');$('#accessGate')?.classList.add('hidden');if(adminMode){$('#shell').classList.remove('hidden');$('#mobileNav').classList.remove('hidden');injectAdminButton();render();return}if(!profileData.tutorialCompleted){showOnboarding();return}$('#shell').classList.remove('hidden');$('#mobileNav').classList.remove('hidden');render()}catch(e){showAuth(e.message)}}
 function showAccessPending(lic,message=''){ hideEntryGates();$('#shell').classList.add('hidden');$('#mobileNav').classList.add('hidden');const g=$('#accessGate');g?.classList.remove('hidden');const st=$('#accessStatus');if(st)st.textContent=message||(lic?`Estado de acceso: ${lic.status}.`:'Esta cuenta no tiene una compra asociada.');const buy=$('#buyAccess');if(buy){buy.textContent='Comprar acceso · USD 29 →';buy.onclick=()=>{cloud.signOut();showCheckout('Completa el pago primero. Después podrás entrar con tu cuenta.')}}const refresh=$('#refreshAccess');if(refresh)refresh.onclick=async()=>{refresh.disabled=true;try{const pendingClaim=sessionStorage.getItem('feo-paid-claim');if(pendingClaim){await cloud.claimPaidAccess(pendingClaim);sessionStorage.removeItem('feo-paid-claim');sessionStorage.removeItem('feo-paid-email');await enterApp();return}const l=await cloud.myLicense();if(l?.status==='active'){await enterApp();return}st.textContent='No encontramos una compra confirmada asociada a esta cuenta.'}catch(e){st.textContent=e.message}finally{refresh.disabled=false}}}
 function injectAdminButton(){const b=document.createElement('button');b.id='adminOpen';b.innerHTML='▦ <span>Admin</span>';b.onclick=()=>openAdmin();document.querySelector('.sideBottom')?.prepend(b)}
 async function openAdmin(){
