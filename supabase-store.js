@@ -66,3 +66,5 @@ export async function capturePublicCheckout(checkoutId,checkoutSecret,orderId){r
 export async function createPaidAccount(email,password,claimToken){return jsonFetch('/functions/v1/create-paid-account',{method:'POST',headers:headers(null),body:JSON.stringify({email,password,claim_token:claimToken})})}
 
 export async function claimPaidAccess(claimToken){const ses=getSession();if(!ses?.access_token)throw new Error('AUTH_REQUIRED');return jsonFetch('/functions/v1/claim-paid-access',{method:'POST',headers:headers(ses.access_token),body:JSON.stringify({claim_token:claimToken})})}
+
+export async function paypalBrowserToken(){return jsonFetch('/functions/v1/paypal-browser-token',{method:'GET',headers:headers(null)})}
