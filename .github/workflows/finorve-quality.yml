@@ -18,6 +18,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      # npm test includes UI quality regression checks
       - name: Financial engine tests
         run: npm test
       - name: JavaScript syntax checks

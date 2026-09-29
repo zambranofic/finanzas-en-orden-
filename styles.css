@@ -371,3 +371,35 @@ html[data-keyboard-open="true"] body{padding-bottom:0}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
   button:active{transform:none}
 }
+
+/* FINORVE LOAD STABILITY + ACCESSIBLE TYPE SCALE */
+.bootGate{position:fixed;inset:0;z-index:100;background:var(--bg);display:grid;place-items:center;padding:24px;transition:opacity .18s ease}
+.bootGate.bootDone{opacity:0;pointer-events:none}
+.bootShell{width:min(680px,100%);min-height:420px;background:var(--surface);border:1px solid var(--line);border-radius:28px;padding:28px;box-shadow:var(--shadow)}
+.bootShell>.mark{width:44px;height:44px;margin-bottom:14px}
+.bootBrand{font-size:.8125rem;font-weight:800;letter-spacing:.14em;margin-bottom:28px}
+.bootSkeleton{position:relative;overflow:hidden;background:var(--surface2);border-radius:16px}
+.bootSkeleton:after{content:"";position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent,rgba(120,215,196,.18),transparent);animation:bootShimmer 1.2s infinite}
+.bootHero{height:180px;margin-bottom:18px}.bootLine{height:18px;width:82%;margin-top:12px}.bootLine.short{width:56%}
+@keyframes bootShimmer{to{transform:translateX(100%)}}
+#content.viewEntering{animation:viewEnter .18s ease both}
+@keyframes viewEnter{from{opacity:.82;transform:translateY(3px)}to{opacity:1;transform:none}}
+
+body{font-size:1rem;line-height:1.45}
+.authCard h1{font-size:clamp(1.75rem,2.3vw,2.3125rem)}
+.authVisualCopy h2{font-size:clamp(2.125rem,4vw,3.25rem)}
+header h1,h1{font-size:clamp(1.3125rem,2vw,1.8125rem)}
+.sectionHead h2{font-size:clamp(1.5rem,2.2vw,1.8125rem)}
+.hero h2{font-size:clamp(2rem,4vw,2.875rem)}
+.scoreLine strong{font-size:clamp(2.5rem,5vw,3rem)}
+.modal h2,.decisionSummary h2{font-size:clamp(1.3125rem,2vw,1.5rem)}
+.sidebar nav button,.sideBottom button,.authCard>p,.priorityCard p,.sectionHead p,.card p.sub,.tourStep p{font-size:.75rem}
+.row b,.settingsRow b,.moduleCard b,.decision b{font-size:.8125rem}
+.row small,.settingsRow small,.moduleCard small,.decision small,.kpi small,.metricRow span,.authTrust,.payMethodHead small{font-size:.6875rem;line-height:1.45}
+.eyebrow,.authKicker,.focusTag,.triadCard small,.chartLegend{font-size:clamp(.625rem,.8vw,.6875rem)}
+.field label,.authCard label{font-size:.75rem}
+.mobileNav button{font-size:.625rem}
+input,select,textarea{font-size:1rem}
+.primary,.ghost{font-size:.8125rem}
+@media(max-width:760px){.bootShell{min-height:360px;border-radius:24px;padding:22px}.bootHero{height:145px}.authCard>p,.priorityCard p,.sectionHead p{font-size:.8125rem}}
+@media(prefers-reduced-motion:reduce){.bootSkeleton:after,#content.viewEntering{animation:none!important}.bootGate{transition:none!important}}
