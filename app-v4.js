@@ -106,9 +106,30 @@ function showAuth(message=''){const gate=$('#authGate');gate?.classList.remove('
 function authMessage(error){const m=String(error?.message||error||'').toLowerCase();if(m.includes('anonymous sign-ins are disabled'))return 'Escribe tu correo electrónico para crear la cuenta.';if(m.includes('invalid login credentials'))return 'Correo o contraseña incorrectos.';if(m.includes('email not confirmed'))return 'Confirma tu correo antes de iniciar sesión.';if(m.includes('user already registered'))return 'Ya existe una cuenta con ese correo. Inicia sesión.';if(m.includes('password'))return 'La contraseña debe tener al menos 8 caracteres.';if(m.includes('email'))return 'Revisa que el correo electrónico sea válido.';return 'No pudimos completar la solicitud. Inténtalo nuevamente.'}
 function validateAuth(mode){const email=$('#authEmail').value.trim(),password=$('#authPassword').value,msg=$('#authMsg');msg.textContent='';if(!email){msg.textContent='Escribe tu correo electrónico.';$('#authEmail').focus();return null}if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)){msg.textContent='Escribe un correo electrónico válido.';$('#authEmail').focus();return null}if(!password){msg.textContent='Escribe tu contraseña.';$('#authPassword').focus();return null}if(password.length<8){msg.textContent='La contraseña debe tener al menos 8 caracteres.';$('#authPassword').focus();return null}return {email,password,msg}}
 window.feoAuth={async forgot(){const email=$('#authEmail').value.trim(),msg=$('#authMsg');msg.textContent='';if(!email||!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)){msg.textContent='Escribe un correo electrónico válido.';$('#authEmail').focus();return}try{await cloud.requestPasswordReset(email);msg.textContent='Si existe una cuenta con ese correo, recibirás instrucciones para restablecer la contraseña.'}catch(e){msg.textContent=authMessage(e)}},async submit(mode){const v=validateAuth(mode);if(!v)return;const {email,password,msg}=v;const btn=mode==='signup'?$('#authSignup'):$('#authSignin');const original=btn?.textContent;if(btn){btn.disabled=true;btn.textContent=mode==='signup'?'Creando cuenta…':'Ingresando…'}try{if(mode==='signup'){const s=await cloud.signUp(email,password);if(!s?.access_token){msg.textContent='Cuenta creada. Revisa tu correo para confirmar el acceso.';return}}else await cloud.signIn(email,password);await enterApp()}catch(e){msg.textContent=authMessage(e)}finally{if(btn){btn.disabled=false;btn.textContent=original}}},logout(){cloud.signOut();location.reload()}};
+let authMode='signin';
+function setAuthMode(mode){
+  authMode=mode;
+  const signup=mode==='signup';
+  $('#authKicker').textContent=signup?'CREAR CUENTA':'BIENVENIDO';
+  $('#authTitle').textContent=signup?'Crea tu cuenta':'Accede a tus finanzas';
+  $('#authCopy').textContent=signup?'Usa tu correo y una contraseña segura para comenzar.':'Tu situación financiera, organizada para que sepas qué hacer después.';
+  $('#signupConfirmWrap').classList.toggle('hidden',!signup);
+  $('#forgotPassword').classList.toggle('hidden',signup);
+  $('#authSignin').innerHTML=signup?'Crear mi cuenta <span>→</span>':'Iniciar sesión <span>→</span>';
+  $('#authSignup').textContent=signup?'Ya tengo una cuenta':'Crear una cuenta';
+  $('#authPassword').setAttribute('autocomplete',signup?'new-password':'current-password');
+  $('#authMsg').textContent='';
+}
 function bindAuthActions(){
-  $('#authSignin')?.addEventListener('click',()=>window.feoAuth.submit('signin'));
-  $('#authSignup')?.addEventListener('click',()=>window.feoAuth.submit('signup'));
+  $('#authSignin')?.addEventListener('click',()=>{
+    if(authMode==='signup'){
+      const p=$('#authPassword').value, c=$('#authPasswordConfirm').value, msg=$('#authMsg');
+      if(!c){msg.textContent='Confirma tu contraseña.';$('#authPasswordConfirm').focus();return}
+      if(p!==c){msg.textContent='Las contraseñas no coinciden.';$('#authPasswordConfirm').focus();return}
+      window.feoAuth.submit('signup');
+    }else window.feoAuth.submit('signin');
+  });
+  $('#authSignup')?.addEventListener('click',()=>setAuthMode(authMode==='signup'?'signin':'signup'));
   $('#forgotPassword')?.addEventListener('click',()=>window.feoAuth.forgot());
   $('#accessLogout')?.addEventListener('click',()=>window.feoAuth.logout());
 }
