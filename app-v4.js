@@ -3,6 +3,7 @@ import * as cloud from './supabase-store.js';
 import { ensureSyncId, samePendingSnapshot } from './sync-utils.js';
 import { commitProfile } from './profile-utils.js';
 import { validatePassword, PASSWORD_POLICY_MESSAGE } from './password-policy.js';
+import { normalizeNavigationState, navigationChanged } from './navigation-utils.js';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const state={mode:localStorage.getItem('feo-mode')||'personal',section:'home',theme:localStorage.getItem('feo-theme')||'system',sound:localStorage.getItem('feo-sound')!=='off',onboardingChoice:'personal',onboardingMode:'personal',onboardingStep:0};
 const money=(n,c='USD')=>new Intl.NumberFormat('es-ES',{style:'currency',currency:c,minimumFractionDigits:2,maximumFractionDigits:2}).format(n);
