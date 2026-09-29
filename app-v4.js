@@ -85,7 +85,7 @@ function paintOnboarding(){const box=$('#onboardingContent'),track=$('#onboardin
 
 function hideEntryGates(){['checkoutGate','authGate','paidSignupGate','accessGate'].forEach(id=>$('#'+id)?.classList.add('hidden'))}
 function showCheckout(message=''){hideEntryGates();$('#shell').classList.add('hidden');$('#mobileNav').classList.add('hidden');$('#checkoutGate').classList.remove('hidden');if(message)$('#checkoutMsg').textContent=message}
-function showExistingLogin(message=''){hideEntryGates();showAuth(message)}
+function showExistingLogin(message=''){hideEntryGates();showAuth();const msg=$('#authMsg');if(message&&msg){msg.textContent=message;msg.classList.add('authMsgInfo')}if(message)$('#authSignup')?.classList.add('hidden')}
 function showPaidSignup(email,claim){hideEntryGates();$('#shell').classList.add('hidden');$('#mobileNav').classList.add('hidden');$('#paidSignupGate').classList.remove('hidden');$('#paidEmail').value=email;sessionStorage.setItem('feo-paid-claim',claim);sessionStorage.setItem('feo-paid-email',email)}
 async function boot(){
  const authType=cloud.acceptAuthFromUrl();
@@ -127,9 +127,9 @@ async function openAdmin(){
  }catch(e){alert(e.message)}
 }
 
-function showAuth(message=''){const gate=$('#authGate');gate?.classList.remove('hidden');$('#shell').classList.add('hidden');$('#mobileNav').classList.add('hidden');if(message&&$('#authMsg'))$('#authMsg').textContent=message}
+function showAuth(message=''){const gate=$('#authGate');gate?.classList.remove('hidden');$('#shell').classList.add('hidden');$('#mobileNav').classList.add('hidden');const msg=$('#authMsg');if(msg){msg.textContent=message||'';msg.classList.remove('authMsgInfo')}$('#authSignup')?.classList.remove('hidden')}
 function authMessage(error){const m=String(error?.message||error||'').toLowerCase();if(m.includes('anonymous sign-ins are disabled'))return 'Escribe tu correo electrónico para crear la cuenta.';if(m.includes('invalid login credentials'))return 'Correo o contraseña incorrectos.';if(m.includes('email not confirmed'))return 'Confirma tu correo antes de iniciar sesión.';if(m.includes('user already registered'))return 'Ya existe una cuenta con ese correo. Inicia sesión.';if(m.includes('password'))return 'La contraseña debe tener al menos 8 caracteres.';if(m.includes('email'))return 'Revisa que el correo electrónico sea válido.';return 'No pudimos completar la solicitud. Inténtalo nuevamente.'}
-function validateAuth(mode){const email=$('#authEmail').value.trim(),password=$('#authPassword').value,msg=$('#authMsg');msg.textContent='';if(!email){msg.textContent='Escribe tu correo electrónico.';$('#authEmail').focus();return null}if(!email.includes('@')||email.startsWith('@')||!email.slice(email.indexOf('@')+1).includes('.')||email.endsWith('.')){msg.textContent='Escribe un correo electrónico válido.';$('#authEmail').focus();return null}if(!password){msg.textContent='Escribe tu contraseña.';$('#authPassword').focus();return null}if(password.length<8){msg.textContent='La contraseña debe tener al menos 8 caracteres.';$('#authPassword').focus();return null}return {email,password,msg}}
+function validateAuth(mode){const email=$('#authEmail').value.trim(),password=$('#authPassword').value,msg=$('#authMsg');msg.textContent='';msg.classList.remove('authMsgInfo');if(!email){msg.textContent='Escribe tu correo electrónico.';$('#authEmail').focus();return null}if(!email.includes('@')||email.startsWith('@')||!email.slice(email.indexOf('@')+1).includes('.')||email.endsWith('.')){msg.textContent='Escribe un correo electrónico válido.';$('#authEmail').focus();return null}if(!password){msg.textContent='Escribe tu contraseña.';$('#authPassword').focus();return null}if(password.length<8){msg.textContent='La contraseña debe tener al menos 8 caracteres.';$('#authPassword').focus();return null}return {email,password,msg}}
 window.feoAuth={async forgot(){const email=$('#authEmail').value.trim(),msg=$('#authMsg');msg.textContent='';if(!email||!email.includes('@')||email.startsWith('@')||!email.slice(email.indexOf('@')+1).includes('.')||email.endsWith('.')){msg.textContent='Escribe un correo electrónico válido.';$('#authEmail').focus();return}try{await cloud.requestPasswordReset(email);msg.textContent='Si existe una cuenta con ese correo, recibirás instrucciones para restablecer la contraseña.'}catch(e){msg.textContent=authMessage(e)}},async submit(mode){const v=validateAuth(mode);if(!v)return;const {email,password,msg}=v;const btn=$('#authSignin');const original=btn?.textContent;if(btn){btn.disabled=true;btn.textContent='Ingresando…'}try{await cloud.signIn(email,password);const pendingClaim=sessionStorage.getItem('feo-paid-claim');if(pendingClaim){await cloud.claimPaidAccess(pendingClaim);sessionStorage.removeItem('feo-paid-claim');sessionStorage.removeItem('feo-paid-email')}await enterApp()}catch(e){msg.textContent=authMessage(e)}finally{if(btn){btn.disabled=false;btn.textContent=original}}},logout(){cloud.signOut();location.reload()}};
 let authMode='signin';
 function setAuthMode(mode){
@@ -243,7 +243,7 @@ function bindAuthActions(){
     }catch(e){
       if(e.message==='ACCOUNT_EXISTS'){
         const email=$('#paidEmail').value.trim().toLowerCase();
-        showExistingLogin('Ya tienes una cuenta. Inicia sesión para activar automáticamente esta compra.');
+        showExistingLogin('✓ Compra verificada. Ya tienes una cuenta. Inicia sesión para activar tu acceso.');
         $('#authEmail').value=email;
         $('#authEmail').readOnly=true;
         $('#authPassword').focus();
