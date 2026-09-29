@@ -332,3 +332,21 @@ button:disabled{opacity:.58;cursor:not-allowed;transform:none!important}
 .syncError{background:rgba(173,80,73,.08);border:1px solid rgba(173,80,73,.18);color:#94443E}
 [data-theme="dark"] .syncStatus{color:#78D7C4;background:rgba(47,174,155,.10)}
 [data-theme="dark"] .syncError{color:#F0A59F;background:rgba(173,80,73,.10)}
+
+/* FINORVE ADMIN OBSERVABILITY */
+.adminOpsGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:15px}
+.adminOpsCard{background:var(--surface);border:1px solid rgba(11,105,101,.09);border-radius:18px;padding:18px 19px}
+.adminOpsCard small{display:block;font-size:8px;letter-spacing:.13em;color:var(--muted);font-weight:800;margin-bottom:6px}
+.adminOpsCard strong{display:block;font-size:24px;letter-spacing:-.04em}
+.adminOpsCard span{font-size:9px;color:var(--muted)}
+.adminOpsCard.warn{border-color:rgba(173,80,73,.24);background:rgba(173,80,73,.04)}
+.adminOpsCard.warn strong{color:#94443E}
+[data-theme="dark"] .adminOpsCard.warn strong{color:#F0A59F}
+.adminOpsDetail{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:15px}
+.opsRows{display:grid;gap:0;margin-top:10px}
+.opsRows>div{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line);font-size:11px}
+.opsRows>div:last-child{border-bottom:0}
+.opsRows span{color:var(--muted)}
+.adminUsersCard{padding-top:20px}
+@media(max-width:900px){.adminOpsGrid{grid-template-columns:1fr 1fr}.adminOpsDetail{grid-template-columns:1fr}}
+@media(max-width:520px){.adminOpsGrid{grid-template-columns:1fr}}
