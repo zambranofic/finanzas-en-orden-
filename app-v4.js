@@ -86,6 +86,35 @@ function paintOnboarding(){const box=$('#onboardingContent'),track=$('#onboardin
 function hideEntryGates(){['checkoutGate','authGate','paidSignupGate','accessGate'].forEach(id=>$('#'+id)?.classList.add('hidden'))}
 function showCheckout(message=''){hideEntryGates();$('#shell').classList.add('hidden');$('#mobileNav').classList.add('hidden');$('#checkoutGate').classList.remove('hidden');if(message)$('#checkoutMsg').textContent=message}
 function showExistingLogin(message=''){hideEntryGates();showAuth();const msg=$('#authMsg');if(message&&msg){msg.textContent=message;msg.classList.add('authMsgInfo')}if(message)$('#authSignup')?.classList.add('hidden')}
+function showRecoveryPassword(){
+  hideEntryGates();showAuth();authMode='recovery';
+  $('#authKicker').textContent='SEGURIDAD';
+  $('#authTitle').textContent='Crea una nueva contraseña';
+  $('#authCopy').textContent='Tu identidad ya fue verificada desde el enlace enviado a tu correo.';
+  $('#authEmail').closest('label')?.classList.add('hidden');
+  $('#authEmail').classList.add('hidden');
+  $('#authPassword').setAttribute('autocomplete','new-password');
+  $('#authPassword').value='';
+  $('#signupConfirmWrap').classList.remove('hidden');
+  $('#authPasswordConfirm').value='';
+  $('#authSignin').innerHTML='Guardar nueva contraseña <span>→</span>';
+  $('#authSignup').classList.add('hidden');
+  $('#forgotPassword').classList.add('hidden');
+  $('#authMsg').textContent='';
+  $('#authPassword').focus();
+}
+async function submitRecoveryPassword(){
+  const p=$('#authPassword').value, c=$('#authPasswordConfirm').value, msg=$('#authMsg'), btn=$('#authSignin');
+  msg.textContent='';msg.classList.remove('authMsgInfo');
+  if(p.length<8){msg.textContent='La contraseña debe tener al menos 8 caracteres.';return}
+  if(p!==c){msg.textContent='Las contraseñas no coinciden.';return}
+  const old=btn.textContent;btn.disabled=true;btn.textContent='Guardando…';
+  try{
+    await cloud.changePassword(p);
+    cloud.signOut();
+    location.href=location.origin+location.pathname;
+  }catch(e){msg.textContent=authMessage(e);btn.disabled=false;btn.textContent=old}
+}
 function showPaidSignup(email,claim){hideEntryGates();$('#shell').classList.add('hidden');$('#mobileNav').classList.add('hidden');$('#paidSignupGate').classList.remove('hidden');$('#paidEmail').value=email;sessionStorage.setItem('feo-paid-claim',claim);sessionStorage.setItem('feo-paid-email',email)}
 async function boot(){
  const authType=cloud.acceptAuthFromUrl();
@@ -103,6 +132,7 @@ async function boot(){
    }
    return;
  }
+ if(authType==='recovery'){showRecoveryPassword();return}
  const pendingClaim=sessionStorage.getItem('feo-paid-claim'), pendingEmail=sessionStorage.getItem('feo-paid-email');
  if(pendingClaim&&pendingEmail){showPaidSignup(pendingEmail,pendingClaim);return}
  const user=await cloud.currentUser();
@@ -253,7 +283,7 @@ function bindAuthActions(){
       btn.disabled=false;btn.textContent=old;
     }
   });
-  $('#authSignin')?.addEventListener('click',()=>window.feoAuth.submit('signin'));
+  $('#authSignin')?.addEventListener('click',()=>authMode==='recovery'?submitRecoveryPassword():window.feoAuth.submit('signin'));
   $('#authSignup')?.addEventListener('click',()=>showCheckout());
   $('#forgotPassword')?.addEventListener('click',()=>window.feoAuth.forgot());
   $('#accessLogout')?.addEventListener('click',()=>window.feoAuth.logout());
