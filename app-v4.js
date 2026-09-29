@@ -104,4 +104,11 @@ async function openAdmin(){
 
 function showAuth(message=''){const gate=$('#authGate');gate?.classList.remove('hidden');$('#shell').classList.add('hidden');$('#mobileNav').classList.add('hidden');if(message&&$('#authMsg'))$('#authMsg').textContent=message}
 window.feoAuth={async forgot(){const email=$('#authEmail').value.trim(),msg=$('#authMsg');try{await cloud.requestPasswordReset(email);msg.textContent='Si existe una cuenta con ese correo, recibirás instrucciones para restablecer la contraseña.'}catch(e){msg.textContent=e.message}},async submit(mode){const email=$('#authEmail').value.trim(),password=$('#authPassword').value,msg=$('#authMsg');msg.textContent='';try{if(mode==='signup'){const s=await cloud.signUp(email,password);if(!s?.access_token){msg.textContent='Cuenta creada. Revisa tu correo para confirmar el acceso.';return}}else await cloud.signIn(email,password);await enterApp()}catch(e){msg.textContent=e.message}},logout(){cloud.signOut();location.reload()}};
+function bindAuthActions(){
+  $('#authSignin')?.addEventListener('click',()=>window.feoAuth.submit('signin'));
+  $('#authSignup')?.addEventListener('click',()=>window.feoAuth.submit('signup'));
+  $('#forgotPassword')?.addEventListener('click',()=>window.feoAuth.forgot());
+  $('#accessLogout')?.addEventListener('click',()=>window.feoAuth.logout());
+}
+bindAuthActions();
 boot();
