@@ -401,4 +401,4 @@ bindAuthActions();
 boot();
 
 function syncVisualViewport(){const vv=window.visualViewport;const h=vv?.height||window.innerHeight;document.documentElement.style.setProperty('--visual-viewport-height',h+'px');document.documentElement.dataset.keyboardOpen=vv&&window.innerHeight-h>120?'true':'false'}
-syncVisualViewport();window.visualViewport?.addEventListener('resize',syncVisualViewport);window.visualViewport?.addEventListener('scroll',syncVisualViewport);document.addEventListener('focusin',e=>{if(/INPUT|SELECT|TEXTAREA/.test(e.target?.tagName||''))setTimeout(()=>e.target.scrollIntoView({block:'center',behavior:'smooth'}),120)});
+syncVisualViewport();window.visualViewport?.addEventListener('resize',syncVisualViewport);window.visualViewport?.addEventListener('scroll',syncVisualViewport);document.addEventListener('focusin',e=>{if(/INPUT|SELECT|TEXTAREA/.test(e.target?.tagName||''))setTimeout(()=>e.target.scrollIntoView({block:'center',behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'}),120)});
