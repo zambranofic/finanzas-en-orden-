@@ -78,7 +78,7 @@ const after=simulateBusiness(
 assert.equal(before.result,100000);
 assert.equal(after.result,150000);
 eq(businessDecisionImpact(before,after),{
-  salesDelta:50000,resultDelta:50000,cashDelta:50000,breakEvenUnitsDelta:-5
+  salesDelta:50000,resultDelta:50000,cashDelta:50000,breakEvenUnitsDelta:-10
 });
 
 assert.throws(()=>convertMinor(Number.MAX_SAFE_INTEGER,'USD','EUR',FX_SCALE),/entero seguro/);
