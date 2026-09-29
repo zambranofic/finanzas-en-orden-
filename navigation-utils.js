@@ -1,0 +1,12 @@
+const SECTIONS=new Set(['home','movements','plan','decisions','more','profile','settings']);
+const MODES=new Set(['personal','business']);
+
+export function normalizeNavigationState(value,fallback={section:'home',mode:'personal'}){
+  const section=SECTIONS.has(value?.section)?value.section:fallback.section;
+  const mode=MODES.has(value?.mode)?value.mode:fallback.mode;
+  return {section,mode};
+}
+export function navigationChanged(current,next){
+  const a=normalizeNavigationState(current),b=normalizeNavigationState(next,a);
+  return a.section!==b.section||a.mode!==b.mode;
+}
