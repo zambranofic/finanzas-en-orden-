@@ -41,3 +41,33 @@ body{font-weight:400;letter-spacing:0}.mark{font-family:inherit!important;font-s
 .payDivider{display:flex;align-items:center;gap:10px;margin:16px 0 4px;color:var(--muted);font-size:10px}
 .payDivider:before,.payDivider:after{content:"";height:1px;background:var(--line);flex:1}
 @media(max-width:520px){.paypalFieldRow{grid-template-columns:1fr}.embeddedPay{padding:14px}}
+
+/* FINORVE AUTH POLISH */
+.authFrame{border-color:rgba(11,105,101,.10);box-shadow:0 34px 100px rgba(7,31,29,.14)}
+.authVisual{background:
+radial-gradient(circle at 76% 18%,rgba(120,215,196,.16),transparent 26%),
+linear-gradient(145deg,#061816 0%,#082B28 56%,#0B6965 100%)}
+.authVisualBrand b{font-size:14px;letter-spacing:.16em}
+.authVisualBrand .mark{background:rgba(255,255,255,.96)}
+.authVisualCopy{max-width:560px}
+.authVisualCopy p{max-width:470px}
+.authBenefits{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.authBenefits span{padding:7px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#C7E9E1;font-weight:750}
+.priceBadge{border:1px solid rgba(11,105,101,.10);box-shadow:0 18px 44px rgba(0,0,0,.12)}
+.priceBadge strong{color:#071F1D}
+.authPanel{background:linear-gradient(180deg,rgba(255,255,255,.72),rgba(244,247,246,.92))}
+[data-theme="dark"] .authPanel{background:linear-gradient(180deg,#0A211E,#081A18)}
+.authCard{padding:4px}
+.authKicker{color:#2FAE9B}
+.authCard h1{font-size:37px}
+.authCard>p{max-width:390px}
+.embeddedPay{border-color:#D7E6E2;background:#F7FAF9}
+[data-theme="dark"] .embeddedPay{border-color:#183A36;background:#102D2A}
+.authPrimary{box-shadow:0 10px 24px rgba(11,105,101,.16)}
+.authPrimary:hover{transform:translateY(-1px)}
+.authTrust{line-height:1.45}
+@media(max-width:760px){
+  .authBenefits{margin-top:12px}
+  .authBenefits span{font-size:8px;padding:6px 8px}
+  .authCard h1{font-size:30px}
+}
