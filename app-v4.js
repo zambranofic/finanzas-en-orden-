@@ -174,7 +174,7 @@ async function retryCheckoutCapture(){
 async function boot(){
  const authType=cloud.acceptAuthFromUrl();
  const qp=new URLSearchParams(location.search);
- if(qp.get('checkout')==='cancelled'){history.replaceState(null,'',location.pathname);showCheckout('El pago fue cancelado. No se creó ninguna cuenta.');return}
+ if(qp.get('checkout')==='cancelled'){const cid=qp.get('cid'),cs=qp.get('cs');history.replaceState(null,'',location.pathname);if(cid&&cs){try{await cloud.cancelPublicCheckout(cid,cs)}catch(e){console.warn('checkout cancel sync',e)}}showCheckout('El pago fue cancelado. No se creó ninguna cuenta.');return}
  if(qp.get('checkout')==='approved'&&qp.get('cid')&&qp.get('cs')&&qp.get('token')){
    sessionStorage.setItem('feo-checkout-recovery',JSON.stringify({cid:qp.get('cid'),cs:qp.get('cs'),token:qp.get('token')}));
    history.replaceState(null,'',location.pathname);
