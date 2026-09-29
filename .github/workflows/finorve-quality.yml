@@ -25,4 +25,5 @@ jobs:
           node --check financial-engine.js
           node --check certification-fixtures.js
           node --check supabase-store.js
+          node --check sync-utils.js
           node --check app-v4.js

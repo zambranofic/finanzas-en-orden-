@@ -1,5 +1,6 @@
 import { personalMonth, personalPosition, businessMonth, businessBreakEvenSummary, breakEven as calcBreakEven, simulateBusiness } from './financial-engine.js';
 import * as cloud from './supabase-store.js';
+import { ensureSyncId, samePendingSnapshot } from './sync-utils.js';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const state={mode:localStorage.getItem('feo-mode')||'personal',section:'home',theme:localStorage.getItem('feo-theme')||'system',sound:localStorage.getItem('feo-sound')!=='off',onboardingChoice:'personal',onboardingMode:'personal',onboardingStep:0};
 const money=(n,c='USD')=>new Intl.NumberFormat('es-ES',{style:'currency',currency:c,minimumFractionDigits:2,maximumFractionDigits:2}).format(n);
@@ -72,21 +73,23 @@ let adminMode=false;
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const SYNC_BACKUP='finorve-pending-sync';
 let syncTimer=null,syncPromise=Promise.resolve(),syncPending=false,syncRetryTimer=null;
-function syncSnapshot(){return {records:JSON.parse(JSON.stringify(records)),profile:{...profileData}}}
+function syncSnapshot(){return ensureSyncId({records:JSON.parse(JSON.stringify(records)),profile:{...profileData}})}
 function showSyncState(kind,text){
   document.querySelectorAll('.syncError,.syncStatus').forEach(x=>x.remove());
   const c=$('#content');if(!c)return;
   c.insertAdjacentHTML('afterbegin',`<div class="${kind==='error'?'syncError':'syncStatus'}">${text}</div>`);
 }
-function persistPending(snapshot){try{localStorage.setItem(SYNC_BACKUP,JSON.stringify(snapshot))}catch{}}
-function clearPending(){try{localStorage.removeItem(SYNC_BACKUP)}catch{}}
-function readPending(){try{return JSON.parse(localStorage.getItem(SYNC_BACKUP)||'null')}catch{return null}}
+function persistPending(snapshot){try{const normalized=ensureSyncId(snapshot);localStorage.setItem(SYNC_BACKUP,JSON.stringify(normalized));return normalized}catch{return ensureSyncId(snapshot)}}
+function clearPending(snapshot){try{const pending=readPending();if(samePendingSnapshot(pending,snapshot)){localStorage.removeItem(SYNC_BACKUP);return true}}catch{}return false}
+function readPending(){try{const raw=JSON.parse(localStorage.getItem(SYNC_BACKUP)||'null');if(!raw)return null;const normalized=ensureSyncId(raw);if(!raw.syncId)localStorage.setItem(SYNC_BACKUP,JSON.stringify(normalized));return normalized}catch{return null}}
 async function flushRecords(snapshot=syncSnapshot()){
-  persistPending(snapshot);syncPending=true;
+  snapshot=persistPending(snapshot);syncPending=true;
   try{
     await cloud.syncRecords(snapshot.records,snapshot.profile);
-    clearPending();syncPending=false;clearTimeout(syncRetryTimer);
-    document.querySelectorAll('.syncError,.syncStatus').forEach(x=>x.remove());
+    const cleared=clearPending(snapshot);
+    syncPending=!!readPending();
+    clearTimeout(syncRetryTimer);
+    if(cleared&&!syncPending)document.querySelectorAll('.syncError,.syncStatus').forEach(x=>x.remove());
     return true;
   }catch(e){
     syncPending=true;showCloudError(e);
@@ -96,7 +99,7 @@ async function flushRecords(snapshot=syncSnapshot()){
   }
 }
 function queueSync(snapshot=syncSnapshot(),delay=180){
-  persistPending(snapshot);clearTimeout(syncTimer);
+  snapshot=persistPending(snapshot);clearTimeout(syncTimer);
   syncTimer=setTimeout(()=>{syncPromise=syncPromise.then(()=>flushRecords(snapshot))},delay);
 }
 const saveRecords=()=>queueSync(syncSnapshot(),180);
