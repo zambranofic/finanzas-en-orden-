@@ -152,7 +152,69 @@ function showSignupSuccess(email){
   $('#authCopy').textContent='Hemos enviado un enlace de confirmación a '+email+'.';
   $('#signupSuccess').classList.remove('hidden');
 }
+
+let paypalEmbeddedReady=false;
+let paypalCardSession=null;
+async function loadPayPalCore(){
+  if(window.paypal?.createInstance)return;
+  await new Promise((resolve,reject)=>{
+    const existing=document.querySelector('script[data-paypal-v6]');
+    if(existing){existing.addEventListener('load',resolve,{once:true});existing.addEventListener('error',reject,{once:true});return}
+    const sc=document.createElement('script');
+    sc.src='https://www.sandbox.paypal.com/web-sdk/v6/core';
+    sc.async=true;
+    sc.dataset.paypalV6='1';
+    sc.onload=resolve;sc.onerror=()=>reject(new Error('No se pudo cargar el checkout seguro de PayPal.'));
+    document.head.appendChild(sc);
+  });
+}
+async function initEmbeddedPayPal(){
+  if(paypalEmbeddedReady)return;
+  const loading=$('#paypalCardLoading'),fields=$('#paypalCardFields'),unavailable=$('#paypalCardUnavailable'),msg=$('#checkoutMsg');
+  try{
+    loading?.classList.remove('hidden');unavailable?.classList.add('hidden');
+    const token=await cloud.paypalBrowserToken();
+    await loadPayPalCore();
+    const sdk=await window.paypal.createInstance({clientToken:token.clientToken,components:['card-fields'],pageType:'checkout'});
+    const methods=await sdk.findEligibleMethods({currencyCode:'USD'});
+    if(!methods.isEligible('advanced_cards'))throw new Error('CARD_FIELDS_NOT_ELIGIBLE');
+    paypalCardSession=sdk.createCardFieldsOneTimePaymentSession();
+    const numberField=paypalCardSession.createCardFieldsComponent({type:'number',placeholder:'Número de tarjeta'});
+    const expiryField=paypalCardSession.createCardFieldsComponent({type:'expiry',placeholder:'MM/AA'});
+    const cvvField=paypalCardSession.createCardFieldsComponent({type:'cvv',placeholder:'CVV'});
+    $('#paypal-card-number').replaceChildren(numberField);
+    $('#paypal-card-expiry').replaceChildren(expiryField);
+    $('#paypal-card-cvv').replaceChildren(cvvField);
+    fields?.classList.remove('hidden');loading?.classList.add('hidden');
+    paypalEmbeddedReady=true;
+  }catch(e){
+    loading?.classList.add('hidden');unavailable?.classList.remove('hidden');
+    if(msg&&String(e?.message||e)!=='CARD_FIELDS_NOT_ELIGIBLE')msg.textContent='No pudimos preparar el pago con tarjeta. Puedes continuar con PayPal.';
+  }
+}
+async function payEmbeddedCard(){
+  const email=$('#checkoutEmail').value.trim().toLowerCase(),msg=$('#checkoutMsg'),btn=$('#payWithCard');
+  msg.textContent='';
+  if(!email||!email.includes('@')||!(email.split('@')[1]||'').includes('.')){msg.textContent='Escribe un correo electrónico válido.';return}
+  if(!paypalCardSession){msg.textContent='El pago con tarjeta todavía se está preparando.';return}
+  btn.disabled=true;const old=btn.textContent;btn.textContent='Procesando pago…';
+  try{
+    const o=await cloud.createPublicCheckout(email);
+    const result=await paypalCardSession.submit(o.order_id,{});
+    if(result?.state==='canceled')throw new Error('Autenticación cancelada.');
+    if(result?.state==='failed')throw new Error(result?.data?.message||'La tarjeta no pudo ser procesada.');
+    if(result?.state!=='succeeded')throw new Error('No pudimos confirmar la tarjeta.');
+    const c=await cloud.capturePublicCheckout(o.checkout_id,o.checkout_secret,o.order_id);
+    if(!c?.claim_token)throw new Error('El pago se realizó, pero no pudimos preparar el acceso.');
+    showPaidSignup(c.email,c.claim_token);
+  }catch(e){
+    msg.textContent=String(e?.message||e).replace(/^HTTP \d+\s*/,'');
+    btn.disabled=false;btn.textContent=old;
+  }
+}
 function bindAuthActions(){
+  $('#payWithCard')?.addEventListener('click',payEmbeddedCard);
+  initEmbeddedPayPal();
   $('#startCheckout')?.addEventListener('click',async()=>{
     const email=$('#checkoutEmail').value.trim().toLowerCase(),msg=$('#checkoutMsg'),btn=$('#startCheckout');
     msg.textContent='';
