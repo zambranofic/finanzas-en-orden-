@@ -1,10 +1,10 @@
 {
-  "captured_at": "2026-09-30T03:58:44.366Z",
-  "description": "Recovery source snapshot; not a redeployment or end-to-end verification.",
+  "captured_at": "2026-09-30T23:04:51.078Z",
+  "description": "Recovery source inventory compared to all active functions; no redeployment or full-service restore performed.",
   "functions": [
     {
       "slug": "delete-my-account",
-      "version": 10,
+      "version": 15,
       "verify_jwt": true,
       "import_map": false,
       "entrypoint": "supabase/functions/delete-my-account/index.ts",
@@ -13,7 +13,7 @@
     },
     {
       "slug": "admin-set-license",
-      "version": 10,
+      "version": 15,
       "verify_jwt": true,
       "import_map": false,
       "entrypoint": "supabase/functions/admin-set-license/index.ts",
@@ -22,7 +22,7 @@
     },
     {
       "slug": "admin-list-users",
-      "version": 9,
+      "version": 14,
       "verify_jwt": true,
       "import_map": false,
       "entrypoint": "supabase/functions/admin-list-users/index.ts",
@@ -31,7 +31,7 @@
     },
     {
       "slug": "paypal-create-order",
-      "version": 11,
+      "version": 16,
       "verify_jwt": true,
       "import_map": false,
       "entrypoint": "supabase/functions/paypal-create-order/index.ts",
@@ -40,7 +40,7 @@
     },
     {
       "slug": "paypal-capture-order",
-      "version": 11,
+      "version": 16,
       "verify_jwt": true,
       "import_map": false,
       "entrypoint": "supabase/functions/paypal-capture-order/index.ts",
@@ -49,7 +49,7 @@
     },
     {
       "slug": "paypal-webhook",
-      "version": 13,
+      "version": 18,
       "verify_jwt": false,
       "import_map": false,
       "entrypoint": "supabase/functions/paypal-webhook/index.ts",
@@ -58,7 +58,7 @@
     },
     {
       "slug": "paypal-create-checkout",
-      "version": 12,
+      "version": 17,
       "verify_jwt": false,
       "import_map": false,
       "entrypoint": "supabase/functions/paypal-create-checkout/index.ts",
@@ -67,7 +67,7 @@
     },
     {
       "slug": "paypal-capture-checkout",
-      "version": 15,
+      "version": 20,
       "verify_jwt": false,
       "import_map": false,
       "entrypoint": "supabase/functions/paypal-capture-checkout/index.ts",
@@ -76,7 +76,7 @@
     },
     {
       "slug": "claim-paid-access",
-      "version": 6,
+      "version": 11,
       "verify_jwt": true,
       "import_map": false,
       "entrypoint": "supabase/functions/claim-paid-access/index.ts",
@@ -85,7 +85,7 @@
     },
     {
       "slug": "create-paid-account",
-      "version": 7,
+      "version": 12,
       "verify_jwt": false,
       "import_map": false,
       "entrypoint": "supabase/functions/create-paid-account/index.ts",
@@ -94,7 +94,7 @@
     },
     {
       "slug": "paypal-health",
-      "version": 8,
+      "version": 13,
       "verify_jwt": true,
       "import_map": false,
       "entrypoint": "supabase/functions/paypal-health/index.ts",
@@ -103,7 +103,7 @@
     },
     {
       "slug": "paypal-env-diagnostic",
-      "version": 6,
+      "version": 11,
       "verify_jwt": true,
       "import_map": false,
       "entrypoint": "supabase/functions/paypal-env-diagnostic/index.ts",
@@ -112,7 +112,7 @@
     },
     {
       "slug": "paypal-browser-token",
-      "version": 4,
+      "version": 9,
       "verify_jwt": true,
       "import_map": false,
       "entrypoint": "supabase/functions/paypal-browser-token/index.ts",
@@ -121,7 +121,7 @@
     },
     {
       "slug": "paypal-public-config",
-      "version": 4,
+      "version": 9,
       "verify_jwt": false,
       "import_map": false,
       "entrypoint": "supabase/functions/paypal-public-config/index.ts",
@@ -130,7 +130,7 @@
     },
     {
       "slug": "create-paid-account-finorve",
-      "version": 5,
+      "version": 10,
       "verify_jwt": false,
       "import_map": false,
       "entrypoint": "supabase/functions/create-paid-account-finorve/index.ts",
@@ -139,7 +139,7 @@
     },
     {
       "slug": "paypal-cancel-checkout",
-      "version": 5,
+      "version": 10,
       "verify_jwt": false,
       "import_map": false,
       "entrypoint": "supabase/functions/paypal-cancel-checkout/index.ts",
@@ -148,20 +148,61 @@
     },
     {
       "slug": "admin-ops-summary",
-      "version": 6,
+      "version": 11,
       "verify_jwt": true,
       "import_map": false,
       "entrypoint": "supabase/functions/admin-ops-summary/index.ts",
       "deployment_bundle_sha256": "5446fad787bbcd22d47e8e9cadaf3c0baecd363cf480818c9b5ff83e3c364563",
       "source_sha256": "9220a5daead40a10f31be6a2282534b0fe7d0442a639d507f93a148c83eccd34"
+    },
+    {
+      "slug": "payphone-health",
+      "version": 4,
+      "verify_jwt": true,
+      "import_map": false,
+      "entrypoint": "supabase/functions/payphone-health/index.ts",
+      "deployment_bundle_sha256": "602b1856d22d24184e74eb57c24da5917a02bffdf85804918e8c3401ca4db60c",
+      "source_sha256": "0546f99fac983c7ef6c5d69221c3cff61bfcb687b891af8d44b042fc9afced29"
+    },
+    {
+      "slug": "payphone-test-checkout",
+      "version": 5,
+      "verify_jwt": false,
+      "import_map": false,
+      "entrypoint": "supabase/functions/payphone-test-checkout/index.ts",
+      "deployment_bundle_sha256": "85b9238be6fe49129c4a141ae3c09f8fdfd2c21473e01c7fdba46975ce36be5f",
+      "source_sha256": "983d257069ab45d35eba2fcb34446aea451e39163fb6e60585582d983b3e7716"
+    },
+    {
+      "slug": "payphone-membership",
+      "version": 4,
+      "verify_jwt": false,
+      "import_map": false,
+      "entrypoint": "supabase/functions/payphone-membership/index.ts",
+      "deployment_bundle_sha256": "7d74827506c32a613941a82b7a1eac28d6d47e2339dc41310e515a4e3082a3d3",
+      "source_sha256": "b18661fb60a085345db28ca9337e4fbd50c291d0a23adbbf29f4e1e71b978327"
+    },
+    {
+      "slug": "membership-email-reminders",
+      "version": 5,
+      "verify_jwt": false,
+      "import_map": false,
+      "entrypoint": "supabase/functions/membership-email-reminders/index.ts",
+      "deployment_bundle_sha256": "ed4e573356f12283b17988957ab83bca2fc81367192def4a8702a25717c98748",
+      "source_sha256": "351e88b2b3cfe34ac87dd55533d6db74cce0e3d7924dcc1d72ca67c887e09da1"
     }
   ],
   "required_environment_variable_names": [
     "APP_BASE_URL",
+    "MEMBERSHIP_EMAIL_FROM",
     "PAYPAL_BASE_URL",
     "PAYPAL_CLIENT_ID",
     "PAYPAL_CLIENT_SECRET",
     "PAYPAL_WEBHOOK_ID",
+    "PAYPHONE_LIVE_ENABLED",
+    "PAYPHONE_STORE_ID",
+    "PAYPHONE_TOKEN",
+    "RESEND_API_KEY",
     "SUPABASE_ANON_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
