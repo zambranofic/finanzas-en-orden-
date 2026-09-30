@@ -68,3 +68,12 @@ entrypoint = "./functions/paypal-cancel-checkout/index.ts"
 [functions.admin-ops-summary]
 verify_jwt = true
 entrypoint = "./functions/admin-ops-summary/index.ts"
+
+[functions.payphone-health]
+verify_jwt = true
+entrypoint = "./functions/payphone-health/index.ts"
+
+# Guest tests are authenticated with the app key plus a random intent secret.
+[functions.payphone-test-checkout]
+verify_jwt = false
+entrypoint = "./functions/payphone-test-checkout/index.ts"

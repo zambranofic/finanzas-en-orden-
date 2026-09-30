@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow"><meta name="referrer" content="origin">
+  <title>Prueba de pago · FINORVE</title>
+  <link rel="stylesheet" href="payphone-prueba.css">
+</head>
+<body>
+  <main class="card">
+    <a class="brand" href="/">FINORVE</a>
+    <span class="badge">PRUEBA DE INTEGRACIÓN</span>
+    <h1>Paga dentro de FINORVE</h1>
+    <p>Esta pantalla permite comprobar el formulario de Payphone y la confirmación del resultado.</p>
+    <div class="notice"><strong>Importe de prueba: $1,00 USD</strong><p>La prueba no activa un acceso de pago. Antes de comenzar, revisa que la aplicación <strong>FINORVE Web</strong> esté en <strong>Prueba</strong> en Payphone Developers.</p></div>
+    <form id="test-form">
+      <label class="confirmation"><input id="test-mode" type="checkbox" required> Confirmo que FINORVE Web está en Prueba en Payphone Developers.</label>
+      <button id="start" type="submit">Cargar formulario de prueba</button>
+    </form>
+    <p id="status" role="status" aria-live="polite">El formulario aparecerá aquí.</p>
+    <div id="pp-button"></div>
+    <p class="small">Los datos de la tarjeta se introducen en el formulario de Payphone. FINORVE no guarda el número de tarjeta ni su código de seguridad.</p>
+    <a class="back" href="/">Volver a FINORVE</a>
+  </main>
+  <script type="module" src="payphone-prueba.js"></script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+:root{color-scheme:dark;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:#071713;color:#eaf5f0}
+*{box-sizing:border-box}body{margin:0;padding:40px 20px;min-height:100vh;display:grid;place-items:start center}
+.card{width:100%;max-width:680px;background:#10251d;border:1px solid #284137;border-radius:24px;padding:32px;box-shadow:0 24px 80px #0003}
+.brand{font-size:24px;letter-spacing:.08em;color:#4ce6a9;text-decoration:none;font-weight:800;display:block;margin-bottom:24px}
+.badge{font-size:12px;font-weight:700;letter-spacing:.08em;color:#ffdc91;background:#47381b;border-radius:20px;padding:7px 12px;display:inline-block}
+h1{font-size:32px;line-height:1.15;margin:22px 0 16px}p{line-height:1.6;color:#c7d8ce}.notice{margin:24px 0;padding:20px;border:1px solid #526443;border-radius:16px;background:#223121}.notice p{margin-bottom:0}
+.confirmation{display:flex;gap:12px;align-items:flex-start;line-height:1.6;font-size:15px}input[type=checkbox]{width:20px;height:20px;flex-shrink:0;accent-color:#36d899;margin-top:4px}
+button{width:100%;margin:20px 0 8px;border:0;border-radius:12px;background:#39dda0;color:#082015;font:700 16px system-ui;padding:16px;cursor:pointer}button:disabled{opacity:.55;cursor:wait}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #ffe59b;outline-offset:4px}
+#pp-button{border-radius:16px;overflow:hidden;background:white;color:#192823}#pp-button:empty{display:none}.small{font-size:13px}.back{display:block;margin-top:16px;color:#4ce6a9}.error{color:#ffb7b0}.success{color:#71f0b6}
+@media(max-width:520px){body{padding:16px 12px}.card{padding:24px 18px;border-radius:18px}h1{font-size:27px}}
