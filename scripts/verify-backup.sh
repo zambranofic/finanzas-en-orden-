@@ -36,6 +36,19 @@ done
 # do not grant extra privileges to application functions during restoration.
 docker exec -i "$container" psql -U supabase_admin -d postgres -X -w -v ON_ERROR_STOP=1 -c 'ALTER ROLE postgres WITH SUPERUSER;' > "$work/bootstrap.log" 2>&1
 psql_local=(docker exec -i "$container" psql -U postgres -d postgres -X -w -v ON_ERROR_STOP=1)
+# pg_dump ACLs assume normal PostgreSQL defaults at object creation. Supabase's
+# local bootstrap grants anon/authenticated extra rights by default, which can
+# otherwise survive an import of source objects whose ACL excludes those roles.
+# Reset only this fresh local creator's custom defaults; schema.sql restores the
+# original defaults for future objects after restoring each object's actual ACL.
+"${psql_local[@]}" > "$work/default-acl.log" 2>&1 <<'SQL'
+ALTER DEFAULT PRIVILEGES FOR ROLE postgres REVOKE ALL ON TABLES FROM anon, authenticated, service_role;
+ALTER DEFAULT PRIVILEGES FOR ROLE postgres REVOKE ALL ON SEQUENCES FROM anon, authenticated, service_role;
+ALTER DEFAULT PRIVILEGES FOR ROLE postgres REVOKE ALL ON FUNCTIONS FROM anon, authenticated, service_role;
+ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA public REVOKE ALL ON TABLES FROM anon, authenticated, service_role;
+ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA public REVOKE ALL ON SEQUENCES FROM anon, authenticated, service_role;
+ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA public REVOKE ALL ON FUNCTIONS FROM anon, authenticated, service_role;
+SQL
 "${psql_local[@]}" -c "CREATE EXTENSION IF NOT EXISTS pg_cron; CREATE EXTENSION IF NOT EXISTS pg_net WITH SCHEMA extensions;" > "$work/extensions.log" 2>&1
 docker cp "$work/." "$container:/tmp/finorve-restore" > /dev/null
 history=()
