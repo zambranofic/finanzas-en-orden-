@@ -7,4 +7,5 @@ h1{font-size:32px;line-height:1.15;margin:22px 0 16px}p{line-height:1.6;color:#c
 .confirmation{display:flex;gap:12px;align-items:flex-start;line-height:1.6;font-size:15px}input[type=checkbox]{width:20px;height:20px;flex-shrink:0;accent-color:#36d899;margin-top:4px}
 button{width:100%;margin:20px 0 8px;border:0;border-radius:12px;background:#39dda0;color:#082015;font:700 16px system-ui;padding:16px;cursor:pointer}button:disabled{opacity:.55;cursor:wait}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #ffe59b;outline-offset:4px}
 #pp-button{border-radius:16px;overflow:hidden;background:white;color:#192823}#pp-button:empty{display:none}.small{font-size:13px}.back{display:block;margin-top:16px;color:#4ce6a9}.error{color:#ffb7b0}.success{color:#71f0b6}
+#pp-button{color-scheme:light}#pp-button p{color:#24362b}#pp-button .ppb-text-danger{color:#b42318}
 @media(max-width:520px){body{padding:16px 12px}.card{padding:24px 18px;border-radius:18px}h1{font-size:27px}}
