@@ -41,10 +41,14 @@ Project ref: `euqhrqsatbhnxgohbild`
 Before any database restore:
 1. Record the exact incident timestamp in UTC.
 2. Export or record any payment/checkouts that happened after the desired restore point.
-3. Confirm whether scheduled daily backups or PITR are enabled in Supabase Dashboard > Database > Backups.
+3. For the Free plan, inspect the external encrypted backups in GitHub Actions: `.github/workflows/finorve-backup.yml`. See BACKUP_FREE.md for seven-day retention, independent downloads and the isolated restore verification. Platform daily backups/PITR are not enabled by this external workflow.
 4. Restore only after understanding the amount of data that will be lost between the restore point and the incident.
 
 Supabase restore can require downtime. Database backups do not restore deleted Storage objects.
+
+The external backup runs daily at 08:23 UTC (approximately 03:23 Ecuador). Each run saves an encrypted artifact before attempting an isolated, network-disconnected local recovery. A failed recovery test leaves the encrypted artifact available but must be investigated. Keep the encryption passphrase independently; it cannot be retrieved from the artifact.
+
+Restore roles, application schema and data, managed Auth/Storage customizations and optional migration history in a fresh compatible target. The backup also preserves cron definitions, restored paused; activate them only after the final destination is validated. Local Supabase's bootstrap default ACLs can add unintended anon/authenticated privileges during import: use the isolation script's clean-creator setup, then verify the restricted RPC checks. Never copy its local superuser setup to production.
 
 After a restore, run:
 `select private.recovery_healthcheck();`
