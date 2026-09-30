@@ -29,17 +29,17 @@ def literal(value):
 
 checks = []
 for name, count in counts.items():
-    checks.append(f"IF (SELECT count(*) FROM {name}) <> {count} THEN RAISE EXCEPTION 'Restored row count mismatch'; END IF;")
+    checks.append(f"IF (SELECT count(*) FROM {name}) <> {count} THEN RAISE EXCEPTION 'Restored row count mismatch: %', {literal(name)}; END IF;")
 inventory = json.loads((root / 'inventory.json').read_text())
 for item in inventory['rls']:
     checks.append(f"IF NOT EXISTS (SELECT 1 FROM pg_tables WHERE schemaname={literal(item['schema'])} AND tablename={literal(item['table'])} AND rowsecurity={'true' if item['enabled'] else 'false'}) THEN RAISE EXCEPTION 'RLS mismatch'; END IF;")
 for item in inventory['policies']:
     # Compare every policy property, not only the policy name.
-    checks.append(f"IF NOT EXISTS (SELECT 1 FROM pg_policies p WHERE row_to_json(p)::jsonb = {literal(json.dumps(item))}::jsonb) THEN RAISE EXCEPTION 'Policy mismatch'; END IF;")
+    checks.append(f"IF NOT EXISTS (SELECT 1 FROM pg_policies p WHERE row_to_json(p)::jsonb = {literal(json.dumps(item))}::jsonb) THEN RAISE EXCEPTION 'Policy mismatch: %', {literal(item['schemaname'] + '.' + item['tablename'] + '.' + item['policyname'])}; END IF;")
 for item in inventory['managed_triggers']:
     checks.append(f"IF NOT EXISTS (SELECT 1 FROM pg_trigger t JOIN pg_class c ON c.oid=t.tgrelid JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname={literal(item['schema'])} AND c.relname={literal(item['table'])} AND t.tgname={literal(item['name'])} AND pg_get_triggerdef(t.oid)={literal(item['definition'])} AND t.tgenabled={literal(item['enabled'])}) THEN RAISE EXCEPTION 'Managed trigger mismatch'; END IF;")
 checks.append("health := private.recovery_healthcheck(); IF (health->>'database_ok')::boolean IS DISTINCT FROM true THEN RAISE EXCEPTION 'Database health check failed'; END IF;")
-checks.append("FOR category IN SELECT unnest(ARRAY['tables','functions','security']) LOOP IF EXISTS (SELECT 1 FROM jsonb_each(health->category) WHERE value <> 'true'::jsonb) THEN RAISE EXCEPTION 'Application recovery check failed'; END IF; END LOOP;")
-sql = "DO $verify$ DECLARE health jsonb; category text; BEGIN\n" + '\n'.join(checks) + "\nEND $verify$;\n"
+checks.append("FOR category IN SELECT unnest(ARRAY['tables','functions','security']) LOOP FOR failed_key IN SELECT key FROM jsonb_each(health->category) WHERE value <> 'true'::jsonb LOOP RAISE EXCEPTION 'Application recovery check failed: %.%', category, failed_key; END LOOP; END LOOP;")
+sql = "DO $verify$ DECLARE health jsonb; category text; failed_key text; BEGIN\n" + '\n'.join(checks) + "\nEND $verify$;\n"
 (root / 'verify.sql').write_text(sql)
 print(f"Prepared checks for {len(counts)} tables, {len(inventory['policies'])} policies and {len(inventory['managed_triggers'])} managed triggers.")
