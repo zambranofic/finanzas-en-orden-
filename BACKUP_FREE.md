@@ -40,6 +40,8 @@ Seguir la guía oficial y OPERATIONS_RECOVERY.md para restaurar en un destino ai
 
 El artifact se guarda antes de probar la restauración: un fallo de compatibilidad no elimina la copia cifrada, pero la ejecución se marca como fallida y debe revisarse. Solo se sube el archivo .gpg; SQL, inventarios descifrados y registros privados se eliminan. Cada intento tiene un nombre de artifact distinto para permitir reintentos.
 
+Importante para Supabase local: su instalación inicial concede permisos por defecto a anon/authenticated. Antes de crear los objetos restaurados, verify-backup.sh elimina esos permisos iniciales del creador postgres en la base temporal; schema.sql restablece después los defaults originales. Así no sobreviven grants extra en RPC internos. La prueba exige que los RPC de pagos, activación, administración y límites de uso sigan restringidos. El ajuste de superusuario usado para importar roles se aplica exclusivamente al contenedor desechable; nunca se ejecuta en producción.
+
 Fuentes:
 - https://supabase.com/docs/guides/platform/migrating-within-supabase/backup-restore
 - https://supabase.com/docs/guides/platform/backups
