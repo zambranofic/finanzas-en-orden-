@@ -3,6 +3,7 @@ const KEY = 'sb_publishable_Ltn-8m11gMlS2AY14k8nfA_hcJ3Izjl';
 const PREFIX = 'finorve-payphone-test:';
 const status = document.getElementById('status');
 let inFlight = false;
+let processingTimer = null;
 const messages = {
   PAYPHONE_NOT_CONFIGURED: 'Falta la configuración de Payphone. No se ha iniciado el pago.',
   PAYPHONE_CREDENTIALS_REJECTED: 'Payphone no acepta las credenciales configuradas. Hay que revisarlas antes de continuar.',
@@ -27,6 +28,32 @@ function saveIntent(intent) {
   sessionStorage.setItem(PREFIX + intent.checkout_id, JSON.stringify({ checkout_id: intent.checkout_id, checkout_secret: intent.checkout_secret, expires_at: intent.expires_at }));
 }
 function readIntent(cid) { try { return JSON.parse(sessionStorage.getItem(PREFIX + cid)); } catch { return null; } }
+function displayResult(result) {
+  if (result.mode !== 'test' || result.access_activated !== false) throw new Error('La respuesta no corresponde a una prueba segura.');
+  if (result.status === 'approved' || result.status === 'cancelled') {
+    clearTimeout(processingTimer);
+    const container = document.getElementById('pp-button'); if (container) container.hidden = true;
+    show(result.status === 'approved' ? 'Prueba aprobada y confirmada. No se ha activado ningún acceso de pago.' : 'Payphone registra esta prueba como cancelada. No se ha activado ningún acceso.', result.status === 'approved' ? 'success' : '');
+  } else show('El resultado está pendiente. No repitas el pago; puedes consultar de nuevo.', 'error');
+}
+async function checkStatus(cid) {
+  const intent = readIntent(cid);
+  if (!intent || inFlight) return;
+  show('Consultando el resultado de la prueba anterior…');
+  try {
+    const result = await request({ action: 'status', checkout_id: cid, checkout_secret: intent.checkout_secret });
+    if (result.status === 'needs_confirmation') await confirm(result.transaction_id, cid);
+    else displayResult(result);
+  } catch (e) { show(e.message || 'No se pudo consultar el resultado. No repitas el pago.', 'error'); }
+}
+function addStatusButton(cid) {
+  const existing = document.getElementById('check-status');
+  if (existing) { existing.dataset.checkoutId = cid; return; }
+  const button = document.createElement('button'); button.id = 'check-status'; button.type = 'button'; button.textContent = 'Consultar resultado sin repetir el pago';
+  button.dataset.checkoutId = cid;
+  button.addEventListener('click', async () => { button.disabled = true; try { await checkStatus(button.dataset.checkoutId); } finally { button.disabled = false; } });
+  status.insertAdjacentElement('afterend', button);
+}
 async function confirm(transactionId, cid) {
   if (inFlight) return;
   const intent = readIntent(cid);
@@ -35,10 +62,7 @@ async function confirm(transactionId, cid) {
   show('Confirmando el resultado con Payphone…');
   try {
     const result = await request({ action: 'confirm', checkout_id: cid, checkout_secret: intent.checkout_secret, transaction_id: String(transactionId) });
-    if (result.mode !== 'test' || result.access_activated !== false) throw new Error('La respuesta no corresponde a una prueba segura.');
-    if (result.status === 'approved') show('Prueba aprobada y confirmada. El formulario y la confirmación funcionaron. No se ha activado ningún acceso de pago.', 'success');
-    else if (result.status === 'cancelled') show('Prueba cancelada. No se ha activado ningún acceso.');
-    else show('El resultado está pendiente de revisión. No repitas el pago.', 'error');
+    displayResult(result);
   } catch (e) { show(e.message || 'No se pudo confirmar el resultado. No repitas el pago.', 'error'); }
   finally { inFlight = false; }
 }
@@ -66,18 +90,35 @@ if (form) form.addEventListener('submit', async event => {
     if (intent.mode !== 'test') throw new Error('La configuración no corresponde a una prueba.');
     saveIntent(intent);
     const cid = intent.checkout_id;
+    addStatusButton(cid);
     const box = new window.PPaymentButtonBox({ ...intent.box, isAsyncResponse: true,
       showPayphonePayment: false, showCashPayment: false, showClickToPay: false, showPaymentMethodSelector: false });
-    box.onCompletedPayment(result => {
+    const handlePaymentResult = result => {
       if (result?.transactionId && result?.clientTransactionId === cid) confirm(result.transactionId, cid);
-      else if (result === 'errorProcess') show('Payphone no pudo completar la prueba. Revisa el mensaje del formulario.', 'error');
-    });
+      else if (result === 'errorProcess') { clearTimeout(processingTimer); show('Payphone no pudo completar la prueba. Revisa el mensaje del formulario.', 'error'); }
+      else if (result === 'errorValidation') { clearTimeout(processingTimer); show('Revisa los campos indicados por Payphone antes de continuar.', 'error'); }
+    };
+    // v2.0 dispatches its async result as a DOM event. Its callback setter alone
+    // does not subscribe to that event when the provider's own Pagar button is used.
+    window.addEventListener('processPaymentAsync', event => handlePaymentResult(event.detail));
+    box.onCompletedPayment(handlePaymentResult);
     box.render('pp-button');
+    document.getElementById('pp-button').hidden = false;
+    document.getElementById('pp-button').addEventListener('submit', () => {
+      show('Payphone está procesando la prueba. No vuelvas a pulsar Pagar.');
+      clearTimeout(processingTimer);
+      processingTimer = setTimeout(() => show('Payphone tarda en responder. Usa Consultar resultado sin repetir el pago.', 'error'), 45000);
+    }, { capture: true });
     delete intent.box.token;
     form.hidden = true;
     show('Completa el formulario de Payphone. La confirmación aparecerá aquí mismo.');
   } catch (e) { start.disabled = false; show(e.message || 'No se pudo cargar el formulario.', 'error'); }
 });
+if (form) {
+  // Recover only this app's existing one-use intent, without creating another payment.
+  const intents = Object.keys(sessionStorage).filter(key => key.startsWith(PREFIX)).map(key => { try { return JSON.parse(sessionStorage.getItem(key)); } catch { return null; } }).filter(x => x?.checkout_id && Date.parse(x.expires_at) > Date.now()).sort((a, b) => Date.parse(b.expires_at) - Date.parse(a.expires_at));
+  if (intents[0]) { addStatusButton(intents[0].checkout_id); checkStatus(intents[0].checkout_id); }
+}
 if (!form) {
   const query = new URLSearchParams(location.search);
   const tid = query.get('id'); const cid = query.get('clientTransactionId');
