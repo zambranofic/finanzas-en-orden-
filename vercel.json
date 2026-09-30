@@ -21,15 +21,14 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' https://www.sandbox.paypal.com https://www.paypal.com https://www.paypalobjects.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://*.paypal.com https://*.paypalobjects.com; connect-src 'self' https://*.supabase.co https://*.paypal.com https://*.paypalobjects.com; frame-src https://*.paypal.com https://*.paypalobjects.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self' https://*.paypal.com"
+          "value": "default-src 'self'; script-src 'self' https://cdn.payphonetodoesposible.com https://songbird.cardinalcommerce.com https://h.online-metrix.net https://www.sandbox.paypal.com https://www.paypal.com https://www.paypalobjects.com; style-src 'self' https://cdn.payphonetodoesposible.com 'unsafe-inline'; img-src 'self' https://payphoneimages.blob.core.windows.net https://*.payphonetodoesposible.com https://h.online-metrix.net data: blob: https://*.paypal.com https://*.paypalobjects.com; connect-src 'self' https://paymentbox.payphonetodoesposible.com https://ipinfo.io https://*.cardinalcommerce.com https://h.online-metrix.net https://*.supabase.co https://*.paypal.com https://*.paypalobjects.com; frame-src https://paymentbox.payphonetodoesposible.com https://*.cardinalcommerce.com https://h.online-metrix.net https://*.paypal.com https://*.paypalobjects.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self' https://paymentbox.payphonetodoesposible.com https://*.paypal.com"
         }
       ]
     }
   ],
   "git": {
     "deploymentEnabled": {
-      "staging": false,
-      "codex/payphone-configuration-check": false
+      "staging": false
     }
   }
 }
