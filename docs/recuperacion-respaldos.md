@@ -60,12 +60,14 @@ La restauración sobre producción y el cambio de destino no se han realizado co
 
 | Estado | Evidencia / límite |
 |---|---|
-| Verde: exportación cifrada y recuperación aislada | [Ejecución 36650987313](https://github.com/zambranofic/finanzas-en-orden-/actions/runs/36650987313), exportación y restauración correctas |
-| Verde: archivo disponible al revisar | `finorve-database-36650987313-1`, creado 29/09/2026 19:38 Ecuador; caduca 06/10/2026 19:38 Ecuador |
+| Verde: exportación cifrada y recuperación aislada | [Ejecución 36665333299](https://github.com/zambranofic/finanzas-en-orden-/actions/runs/36665333299), exportación y restauración correctas |
+| Verde: archivo disponible al revisar | `finorve-database-36665333299-1`, creado 29/09/2026 22:41 Ecuador; caduca 06/10/2026 22:41 Ecuador |
 | Verde: aislamiento en la base de datos | `scripts/verify-user-isolation.sql` pasó el 29/09/2026; dos cuentas con licencia, rol `authenticated`, visitantes `anon`, transacción revertida y cero registros de prueba restantes |
-| Rojo: respaldo posterior a los últimos arreglos | La ejecución citada es anterior a los ajustes del alta y la activación de acceso. Verificar una nueva ejecución que los incluya |
+| Verde: respaldo posterior a los últimos arreglos | Ejecución manual desde `b09aaa6`, posterior a los ajustes del alta y la activación de acceso. Exportación y restauración aislada correctas; ZIP descargado con SHA256 coincidente con GitHub |
 | Rojo: acceso del propietario a archivo y clave | Confirmar que conserva una copia privada descargada y la contraseña correspondiente fuera del secreto de GitHub |
 | Rojo: recuperación completa en otro destino | Funciones, secretos, archivos Storage si los hubiera, configuración y prueba de servicio necesitan comprobación propia |
 | Rojo: interfaz Personal y Negocio | Corrección preparada; publicación bloqueada por cuota gratuita de Vercel, pendiente de prueba en navegador |
 
 Referencias: [Backups de Supabase](https://supabase.com/docs/guides/platform/backups) y [políticas RLS](https://supabase.com/docs/guides/database/postgres/row-level-security). El horario y la retención proceden de `.github/workflows/finorve-backup.yml` del proyecto, no de un servicio de respaldos de pago de Supabase.
+
+La copia descargada contiene únicamente `finorve-backup.tar.gz.gpg`. SHA256 del ZIP: `415c97c8875403984813354f97e60884f6169d73b512fd48a2903d9059517e80`. La restauración aislada terminó correctamente en la ejecución 36665333299. Aún debe confirmarse la custodia independiente de la contraseña por el propietario.
