@@ -403,3 +403,6 @@ input,select,textarea{font-size:1rem}
 .primary,.ghost{font-size:.8125rem}
 @media(max-width:760px){.bootShell{min-height:360px;border-radius:24px;padding:22px}.bootHero{height:145px}.authCard>p,.priorityCard p,.sectionHead p{font-size:.8125rem}}
 @media(prefers-reduced-motion:reduce){.bootSkeleton:after,#content.viewEntering{animation:none!important}.bootGate{transition:none!important}}
+
+
+.membershipNotice{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px;margin-bottom:20px;border:1px solid var(--accent,#55dba3);border-radius:16px;background:var(--card,#15291f)}.membershipNotice p{margin:6px 0 0}.membershipNotice a,.membershipCard a{display:inline-block;text-decoration:none;text-align:center}.membershipCard{margin-top:20px}.membershipCalendar{overflow-x:auto}.membershipCalendar table{width:100%;border-collapse:collapse}.membershipCalendar th,.membershipCalendar td{text-align:left;padding:12px;border-bottom:1px solid var(--border,#365045)}#expiredMembership{max-width:760px;margin:20px auto;padding:16px}@media(max-width:600px){.membershipNotice{align-items:stretch;flex-direction:column}}
