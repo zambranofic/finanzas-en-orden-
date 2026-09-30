@@ -9,12 +9,16 @@ const key = 'sb_publishable_Ltn-8m11gMlS2AY14k8nfA_hcJ3Izjl';
 const hash = Buffer.from(await webcrypto.subtle.digest('SHA-256', new TextEncoder().encode(secret))).toString('hex');
 const provider = { statusCode: 3, transactionStatus: 'Approved', clientTransactionId: cid, transactionId: 12345, amount: 100, currency: 'USD' };
 function setup({ payload = provider, intentChanges = {}, envChanges = {}, networkFailure = false } = {}) {
-  let handler; let providerCalls = 0;
+  let handler; let providerCalls = 0; let lookupCalls = 0;
   const logs = [];
   const row = { id: cid, mode: 'test', amount_minor: 100, currency: 'USD', secret_hash: hash, status: 'created', store_id: cid, expires_at: new Date(Date.now() + 600000).toISOString(), ...intentChanges };
   const env = { SUPABASE_URL: 'https://db.example', SUPABASE_SERVICE_ROLE_KEY: 'fake-service-only-key', PAYPHONE_TOKEN: 'fake-merchant-test-token', PAYPHONE_STORE_ID: cid, ...envChanges };
   const fakeFetch = async (url, opts = {}) => {
     const u = new URL(url);
+    if (u.hostname === 'pay.payphonetodoesposible.com') {
+      lookupCalls++; assert.equal(u.pathname, '/api/Sale/client/' + cid); assert.equal(opts.method || 'GET', 'GET');
+      return Response.json(payload);
+    }
     if (u.hostname === 'paymentbox.payphonetodoesposible.com') {
       providerCalls++; assert.equal(u.pathname, '/api/confirm');
       const body = JSON.parse(opts.body); assert.equal(body.clientTxId, cid); assert.equal(body.id, 12345);
@@ -39,7 +43,7 @@ function setup({ payload = provider, intentChanges = {}, envChanges = {}, networ
     const r = await handler(new Request('https://function.example', { method, headers, ...(method === 'POST' ? { body: JSON.stringify(body) } : {}) }));
     return { status: r.status, body: r.status === 204 ? null : await r.json() };
   };
-  return { request, row, calls: () => providerCalls, logs };
+  return { request, row, calls: () => providerCalls, lookups: () => lookupCalls, logs };
 }
 const confirm = { action: 'confirm', checkout_id: cid, checkout_secret: secret, transaction_id: '12345' };
 {
@@ -84,3 +88,17 @@ for (const token of ['', cid]) {
   assert.equal(s.calls(), 1); assert(r.some(x => x.status === 200));
 }
 console.log('PASS: Payphone rehearsal validates amount/currency/transaction, protects intent secrets, serializes confirmation, handles uncertainty, and never grants paid access.');
+{
+  const s = setup({ payload: { ...provider, statusCode: 2, transactionStatus: 'Canceled' } });
+  const r = await s.request({ action: 'status', checkout_id: cid, checkout_secret: secret });
+  assert.equal(r.body.status, 'cancelled'); assert.equal(s.row.status, 'cancelled'); assert.equal(s.calls(), 0); assert.equal(s.lookups(), 1);
+}
+{
+  const s = setup(); const r = await s.request({ action: 'status', checkout_id: cid, checkout_secret: secret });
+  assert.equal(r.body.status, 'needs_confirmation'); assert.equal(s.row.status, 'created'); assert.equal(s.calls(), 0);
+  assert.equal((await s.request({ action: 'status', checkout_id: cid, checkout_secret: secret.replace('36da','46da') })).status, 401); assert.equal(s.lookups(), 1);
+}
+{
+  const s = setup({ payload: { ...provider, amount: 200 } }); assert.equal((await s.request({ action: 'status', checkout_id: cid, checkout_secret: secret })).status, 409); assert.equal(s.calls(), 0);
+}
+console.log('PASS: status recovery reads only the original provider transaction, detects cancellation, and never initiates another payment.');
