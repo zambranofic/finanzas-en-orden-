@@ -1,0 +1,70 @@
+project_id = "finorve"
+
+# Recovery snapshot: preserve each deployed function’s JWT setting.
+[functions.delete-my-account]
+verify_jwt = true
+entrypoint = "./functions/delete-my-account/index.ts"
+
+[functions.admin-set-license]
+verify_jwt = true
+entrypoint = "./functions/admin-set-license/index.ts"
+
+[functions.admin-list-users]
+verify_jwt = true
+entrypoint = "./functions/admin-list-users/index.ts"
+
+[functions.paypal-create-order]
+verify_jwt = true
+entrypoint = "./functions/paypal-create-order/index.ts"
+
+[functions.paypal-capture-order]
+verify_jwt = true
+entrypoint = "./functions/paypal-capture-order/index.ts"
+
+[functions.paypal-webhook]
+verify_jwt = false
+entrypoint = "./functions/paypal-webhook/index.ts"
+
+[functions.paypal-create-checkout]
+verify_jwt = false
+entrypoint = "./functions/paypal-create-checkout/index.ts"
+
+[functions.paypal-capture-checkout]
+verify_jwt = false
+entrypoint = "./functions/paypal-capture-checkout/index.ts"
+
+[functions.claim-paid-access]
+verify_jwt = true
+entrypoint = "./functions/claim-paid-access/index.ts"
+
+[functions.create-paid-account]
+verify_jwt = false
+entrypoint = "./functions/create-paid-account/index.ts"
+
+[functions.paypal-health]
+verify_jwt = true
+entrypoint = "./functions/paypal-health/index.ts"
+
+[functions.paypal-env-diagnostic]
+verify_jwt = true
+entrypoint = "./functions/paypal-env-diagnostic/index.ts"
+
+[functions.paypal-browser-token]
+verify_jwt = true
+entrypoint = "./functions/paypal-browser-token/index.ts"
+
+[functions.paypal-public-config]
+verify_jwt = false
+entrypoint = "./functions/paypal-public-config/index.ts"
+
+[functions.create-paid-account-finorve]
+verify_jwt = false
+entrypoint = "./functions/create-paid-account-finorve/index.ts"
+
+[functions.paypal-cancel-checkout]
+verify_jwt = false
+entrypoint = "./functions/paypal-cancel-checkout/index.ts"
+
+[functions.admin-ops-summary]
+verify_jwt = true
+entrypoint = "./functions/admin-ops-summary/index.ts"
