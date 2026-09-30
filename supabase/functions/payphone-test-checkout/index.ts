@@ -51,7 +51,7 @@ Deno.serve(async req => {
   let body;
   try { body = await req.json(); } catch { return json({ error: 'INVALID_JSON' }, 400); }
   const action = body?.action;
-  if (!['create', 'confirm'].includes(action)) return json({ error: 'INVALID_ACTION' }, 400);
+  if (!['create', 'confirm', 'status'].includes(action)) return json({ error: 'INVALID_ACTION' }, 400);
   try {
     const rate = await rateLimit(req, action);
     if (!rate.allowed) return json({ error: 'TOO_MANY_ATTEMPTS' }, 429);
@@ -71,12 +71,37 @@ Deno.serve(async req => {
     const cid = String(body.checkout_id || '');
     const secret = String(body.checkout_secret || '');
     const tid = String(body.transaction_id || '');
-    if (!UUID.test(cid) || secret.length < 60 || secret.length > 100 || !/^[1-9]\d{0,14}$/.test(tid) || !Number.isSafeInteger(Number(tid))) {
+    if (!UUID.test(cid) || secret.length < 60 || secret.length > 100 || (action === 'confirm' && (!/^[1-9]\d{0,14}$/.test(tid) || !Number.isSafeInteger(Number(tid))))) {
       return json({ error: 'INVALID_CHECKOUT_DATA' }, 400);
     }
     const [intent] = await database(table + '?id=eq.' + encodeURIComponent(cid) + '&select=*');
     if (!intent || await sha(secret) !== intent.secret_hash) return json({ error: 'INVALID_CHECKOUT_SECRET' }, 401);
     if (intent.mode !== 'test' || intent.store_id !== storeId) return json({ error: 'CHECKOUT_CONFIGURATION_CHANGED' }, 409);
+    if (action === 'status') {
+      if (intent.status === 'approved' || intent.status === 'cancelled') return json(publicResult(intent, true));
+      if (intent.status !== 'created') return json({ error: 'CONFIRMATION_REQUIRES_REVIEW' }, 409);
+      let lookup;
+      try {
+        lookup = await fetch('https://pay.payphonetodoesposible.com/api/Sale/client/' + encodeURIComponent(cid), {
+          headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' }, signal: AbortSignal.timeout(10000),
+        });
+      } catch { return json({ error: 'PAYPHONE_STATUS_UNAVAILABLE' }, 502); }
+      const value = await lookup.json().catch(() => null);
+      if (lookup.status === 404 || (lookup.ok && Array.isArray(value) && value.length === 0)) return json({ mode: 'test', status: 'not_found', access_activated: false });
+      if (!lookup.ok) return json({ error: 'PAYPHONE_STATUS_UNAVAILABLE' }, 502);
+      const result = Array.isArray(value) ? value.find(x => x?.clientTransactionId === cid) : value;
+      if (!result || result.clientTransactionId !== cid || result.amount !== intent.amount_minor || result.currency !== intent.currency) return json({ error: 'PAYPHONE_VERIFICATION_FAILED' }, 409);
+      const transactionId = String(result.transactionId || '');
+      if (!/^[1-9]\d{0,14}$/.test(transactionId)) return json({ error: 'PAYPHONE_VERIFICATION_FAILED' }, 409);
+      if (result.statusCode === 2 && result.transactionStatus === 'Canceled') {
+        const [cancelled] = await database(table + '?id=eq.' + cid + '&status=eq.created', { method: 'PATCH', body: JSON.stringify({ status: 'cancelled', provider_transaction_id: Number(transactionId), updated_at: new Date().toISOString() }) });
+        if (!cancelled) return json({ error: 'CONFIRMATION_IN_PROGRESS' }, 409);
+        return json(publicResult(cancelled));
+      }
+      // Reading an approved provider state is not confirmation. The original
+      // checkout secret still authorizes the separate confirm action.
+      return json({ mode: 'test', status: result.statusCode === 3 && result.transactionStatus === 'Approved' ? 'needs_confirmation' : 'pending', transaction_id: transactionId, access_activated: false });
+    }
     if (intent.status === 'approved' || intent.status === 'cancelled') {
       if (String(intent.provider_transaction_id) !== tid) return json({ error: 'TRANSACTION_MISMATCH' }, 409);
       return json(publicResult(intent, true));
