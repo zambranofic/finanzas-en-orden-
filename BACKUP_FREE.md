@@ -2,6 +2,8 @@
 
 Primera exportación real completada: 2026-09-29, ejecución 36647204929, intento 2. El workflow actualizado crea una copia diaria y prueba su restauración en un contenedor temporal de Supabase/Postgres 17, aislado de la red antes de importar datos.
 
+Verificación real completa: 2026-09-29 (Ecuador), ejecución https://github.com/zambranofic/finanzas-en-orden-/actions/runs/36650987313. Exportación, cifrado, carga, restauración y eliminación de temporales finalizaron correctamente. Se comprobaron conteos exactos de 42 tablas, 20 políticas, un trigger propio en un esquema gestionado y los checks de tablas, funciones y seguridad de FINORVE. Artifact: finorve-database-36650987313-1; SHA256 del ZIP: 86c44b0f3e4c4928b2d5ed06b9dab4f4c68bb7701a0c57c66fbc2889bfe360ea. Existe una copia cifrada independiente con el nombre FINORVE_respaldo_2026-09-29.zip.
+
 ## Activación
 
 1. Abrir Settings > Secrets and variables > Actions:
