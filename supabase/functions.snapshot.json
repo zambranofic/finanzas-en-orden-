@@ -1,5 +1,5 @@
 {
-  "captured_at": "2026-09-30T03:50:11.125825+00:00",
+  "captured_at": "2026-09-30T03:58:44.366Z",
   "description": "Recovery source snapshot; not a redeployment or end-to-end verification.",
   "functions": [
     {
@@ -67,12 +67,12 @@
     },
     {
       "slug": "paypal-capture-checkout",
-      "version": 14,
+      "version": 15,
       "verify_jwt": false,
       "import_map": false,
       "entrypoint": "supabase/functions/paypal-capture-checkout/index.ts",
-      "deployment_bundle_sha256": "9daf6c528d97f6ce167513284e73aec144051dbe0a77850a4bdfb9568ab252e5",
-      "source_sha256": "8cf688551f6cc44d47b6b1b731667e56c0c35f0522d3d005122d4ecb5f9a47ba"
+      "deployment_bundle_sha256": "6acfbc8705dac0114b66c56135e4d563137667cf4e71da478d62a65b34154161",
+      "source_sha256": "30dd45a0f1ac6954201bd896168c99c5668c94e7a1561ed2eec06d51e042ffef"
     },
     {
       "slug": "claim-paid-access",
