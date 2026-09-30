@@ -1,6 +1,13 @@
 name: FINORVE encrypted database backup
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/finorve-backup.yml'
+      - 'scripts/backup-*'
+      - 'scripts/verify-backup.sh'
+      - 'scripts/check-restored-backup.py'
   schedule:
     - cron: '23 8 * * *'
 permissions:
@@ -10,7 +17,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   backup:
-    if: github.event_name == 'workflow_dispatch' || vars.FINORVE_BACKUP_ENABLED == 'true'
+    if: github.event_name != 'schedule' || vars.FINORVE_BACKUP_ENABLED != 'false'
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
@@ -30,11 +37,15 @@ jobs:
       - name: Save encrypted archive only
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: finorve-database-${{ github.run_id }}
+          name: finorve-database-${{ github.run_id }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/finorve-backup.tar.gz.gpg
           if-no-files-found: error
           retention-days: 7
           compression-level: 0
+      - name: Verify isolated database restore
+        env:
+          FINORVE_BACKUP_PASSPHRASE: ${{ secrets.FINORVE_BACKUP_PASSPHRASE }}
+        run: bash scripts/verify-backup.sh
       - name: Remove temporary exports
         if: always()
-        run: rm -rf "$RUNNER_TEMP/finorve-backup-work" "$RUNNER_TEMP/finorve-backup.tar.gz.gpg"
+        run: rm -rf "$RUNNER_TEMP/finorve-backup-work" "$RUNNER_TEMP/finorve-backup.tar.gz.gpg" "$RUNNER_TEMP/finorve-restore-check"
