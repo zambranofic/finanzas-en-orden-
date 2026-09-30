@@ -31,7 +31,9 @@ PY
 for network in $(docker inspect --format '{{range $name, $_ := .NetworkSettings.Networks}}{{$name}} {{end}}' "$container"); do
   docker network disconnect "$network" "$container"
 done
-psql_local=(docker exec -i "$container" psql -U postgres -d postgres -X -v ON_ERROR_STOP=1)
+# The logical roles export sets log_min_messages; use the local bootstrap superuser.
+# This identity exists only in this disposable container, never at the source URL.
+psql_local=(docker exec -i "$container" psql -U supabase_admin -d postgres -X -w -v ON_ERROR_STOP=1)
 "${psql_local[@]}" -c "CREATE EXTENSION IF NOT EXISTS pg_cron; CREATE EXTENSION IF NOT EXISTS pg_net WITH SCHEMA extensions;" > "$work/extensions.log" 2>&1
 docker cp "$work/." "$container:/tmp/finorve-restore" > /dev/null
 history=()
