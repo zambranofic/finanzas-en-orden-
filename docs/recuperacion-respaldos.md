@@ -58,16 +58,17 @@ La restauración sobre producción y el cambio de destino no se han realizado co
 
 ## 5. Evidencia y pendientes
 
+Verificación actualizada: 30/09/2026, Ecuador.
+
 | Estado | Evidencia / límite |
 |---|---|
-| Verde: exportación cifrada y recuperación aislada | [Ejecución 36665333299](https://github.com/zambranofic/finanzas-en-orden-/actions/runs/36665333299), exportación y restauración correctas |
-| Verde: archivo disponible al revisar | `finorve-database-36665333299-1`, creado 29/09/2026 22:41 Ecuador; caduca 06/10/2026 22:41 Ecuador |
-| Verde: aislamiento en la base de datos | `scripts/verify-user-isolation.sql` pasó el 29/09/2026; dos cuentas con licencia, rol `authenticated`, visitantes `anon`, transacción revertida y cero registros de prueba restantes |
-| Verde: respaldo posterior a los últimos arreglos | Ejecución manual desde `b09aaa6`, posterior a los ajustes del alta y la activación de acceso. Exportación y restauración aislada correctas; ZIP descargado con SHA256 coincidente con GitHub |
-| Rojo: acceso del propietario a archivo y clave | Confirmar que conserva una copia privada descargada y la contraseña correspondiente fuera del secreto de GitHub |
-| Rojo: recuperación completa en otro destino | Funciones, secretos, archivos Storage si los hubiera, configuración y prueba de servicio necesitan comprobación propia |
-| Rojo: interfaz Personal y Negocio | Corrección preparada; publicación bloqueada por cuota gratuita de Vercel, pendiente de prueba en navegador |
+| Verde: respaldo diario automático | Ejecución 36690807088 del 30/09, exportación cifrada y restauración aislada correctas |
+| Verde: respaldo actualizado y recuperación | [Ejecución 36787862866](https://github.com/zambranofic/finanzas-en-orden-/actions/runs/36787862866), incluye permisos de lectura id/email del proceso de avisos; 45 tablas, 20 políticas y 1 trigger propio comprobados |
+| Verde: copia independiente cifrada | FINORVE_respaldo_2026-09-30.zip, ZIP SHA256 4fb867ce5b8f501a0c483a6460a58d372783649ff8104f27b5f6b19ff0d8abf2; descargado y comprobado. Contiene solamente finorve-backup.tar.gz.gpg |
+| Verde: código del correo conservado | Versión desplegada 5 de membership-email-reminders guardada en el repositorio, incluido el diseño aprobado |
+| Verde: Storage revisado | Cero archivos binarios en storage.objects al revisar el 30/09. Añadir respaldo de binarios antes de incorporar archivos |
+| Verde: interfaz comprobada parcialmente | Usuario validó ingresos personales y ventas de negocio con creación/edición/eliminación/recarga; escenarios ficticios probaron módulos y cálculos. No equivale a certificar todas las operaciones autenticadas |
+| Rojo: custodia de la contraseña de cifrado | El propietario debe conservar la frase original por separado; no está incluida en el ZIP |
+| Rojo: recuperación completa del servicio | Secretos, Auth/SMTP, DNS, proveedores, archivos futuros y prueba de acceso en un destino nuevo siguen fuera de la restauración aislada de PostgreSQL |
 
-Referencias: [Backups de Supabase](https://supabase.com/docs/guides/platform/backups) y [políticas RLS](https://supabase.com/docs/guides/database/postgres/row-level-security). El horario y la retención proceden de `.github/workflows/finorve-backup.yml` del proyecto, no de un servicio de respaldos de pago de Supabase.
-
-La copia descargada contiene únicamente `finorve-backup.tar.gz.gpg`. SHA256 del ZIP: `415c97c8875403984813354f97e60884f6169d73b512fd48a2903d9059517e80`. La restauración aislada terminó correctamente en la ejecución 36665333299. Aún debe confirmarse la custodia independiente de la contraseña por el propietario.
+El artifact finorve-database-36787862866-1 de GitHub caduca el 07/10/2026 a las 17:55 Ecuador. La copia independiente no depende de esa retención. No se ha restaurado sobre producción.
