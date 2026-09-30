@@ -138,9 +138,44 @@ function showOnboarding(){state.onboardingStep=0;state.onboardingChoice='persona
 function onboardingModes(){return state.onboardingChoice==='both'?['personal','business']:[state.onboardingChoice]}
 function paintOnboarding(){const box=$('#onboardingContent'),track=$('#onboardingTrack');if(state.onboardingStep===0){track.innerHTML='<span class="active">1</span><i></i><span>2</span><i></i><span>3</span>';box.innerHTML=`<div class="onboardingCard"><span class="eyebrow">TU PRIMERA CONFIGURACIÓN</span><h1>¿Qué quieres entender primero?</h1><p>Elige el espacio que quieres ordenar ahora. Personal y Negocio funcionan por separado para que nunca mezcles tus decisiones.</p><div class="choiceGrid"><button class="choiceCard active" data-onboard-choice="personal"><span>01</span><b>Mis finanzas personales</b><small>Controla ingresos, gastos, deudas, ahorro y metas.</small></button><button class="choiceCard" data-onboard-choice="business"><span>02</span><b>Mi negocio</b><small>Entiende ventas, costos, caja, margen y punto de equilibrio.</small></button><button class="choiceCard" data-onboard-choice="both"><span>03</span><b>Quiero organizar ambos</b><small>FINORVE te guiará por cada espacio sin mezclar información.</small></button></div><button class="primary onboardingNext">Configurar FINORVE →</button><div class="onboardingTrust">Puedes cambiar entre Personal y Negocio cuando quieras.</div></div>`;$$('[data-onboard-choice]').forEach(b=>b.onclick=()=>{state.onboardingChoice=b.dataset.onboardChoice;$$('[data-onboard-choice]').forEach(x=>x.classList.toggle('active',x===b))});$('.onboardingNext').onclick=()=>{state.onboardingMode=onboardingModes()[0];state.onboardingStep=1;paintOnboarding()};return}const modes=onboardingModes(), modeIndex=modes.indexOf(state.onboardingMode), steps=onboardingCopy[state.onboardingMode], stepIndex=((state.onboardingStep-1)%3), [label,title,copy,path]=steps[stepIndex];track.innerHTML=`<span class="${stepIndex>=0?'active':''}">1</span><i class="${stepIndex>=1?'active':''}"></i><span class="${stepIndex>=1?'active':''}">2</span><i class="${stepIndex>=2?'active':''}"></i><span class="${stepIndex>=2?'active':''}">3</span>`;box.innerHTML=`<div class="onboardingCard"><div class="onboardingModeTag">${state.onboardingMode==='personal'?'Personal':'Negocio'} · ${label}</div><h1>${title}</h1><p>${copy}</p><div class="onboardingPath">${path.split(' → ').map((x,i)=>`<span>${i+1}</span><b>${x}</b>`).join('<i>→</i>')}</div><div class="onboardingActions"><button class="ghost onboardingBack">Atrás</button><button class="primary onboardingNext">${stepIndex===2&&modeIndex===modes.length-1?'Ver mi panorama →':'Siguiente →'}</button></div></div>`;$('.onboardingBack').onclick=()=>{if(stepIndex===0){state.onboardingStep=0;paintOnboarding()}else{state.onboardingStep--;paintOnboarding()}};$('.onboardingNext').onclick=async()=>{if(stepIndex<2){state.onboardingStep++;paintOnboarding();return}if(modeIndex<modes.length-1){state.onboardingMode=modes[modeIndex+1];state.onboardingStep=1;paintOnboarding();return}profileData.tutorialCompleted=false;state.mode=modes[0];localStorage.setItem('feo-mode',state.mode);$('#onboardingGate').classList.add('hidden');$('#shell').classList.remove('hidden');$('#mobileNav').classList.remove('hidden');render();setTimeout(()=>startTour(true),250)}}
 
+// Paid checkout recovery is shared across same-origin tabs and expires locally.
+const PAID_CHECKOUT_KEY='feo-paid-checkout';
+function rememberPaidCheckout(email,claim,existingAccount=false){
+  const previous=readPaidCheckout();
+  const same=previous?.claim===claim&&previous?.email===email.toLowerCase();
+  const value={email:email.toLowerCase(),claim,existingAccount:existingAccount||(same&&previous.existingAccount)||false,expiresAt:same?previous.expiresAt:Date.now()+24*60*60*1000};
+  localStorage.setItem(PAID_CHECKOUT_KEY,JSON.stringify(value));
+  sessionStorage.removeItem('feo-paid-claim');sessionStorage.removeItem('feo-paid-email');
+  return value;
+}
+function clearPaidCheckout(){
+  localStorage.removeItem(PAID_CHECKOUT_KEY);
+  sessionStorage.removeItem('feo-paid-claim');sessionStorage.removeItem('feo-paid-email');
+}
+function readPaidCheckout(){
+  try{
+    const raw=localStorage.getItem(PAID_CHECKOUT_KEY);
+    if(raw){const value=JSON.parse(raw);if(value.claim&&value.email&&Number.isFinite(value.expiresAt)&&value.expiresAt>Date.now())return value;clearPaidCheckout();return null}
+    const claim=sessionStorage.getItem('feo-paid-claim'),email=sessionStorage.getItem('feo-paid-email');
+    if(!claim||!email)return null;
+    const value={email:email.toLowerCase(),claim,existingAccount:false,expiresAt:Date.now()+24*60*60*1000};
+    localStorage.setItem(PAID_CHECKOUT_KEY,JSON.stringify(value));
+    sessionStorage.removeItem('feo-paid-claim');sessionStorage.removeItem('feo-paid-email');
+    return value;
+  }catch{clearPaidCheckout();return null}
+}
+async function claimPendingPaidAccess(){
+  const pending=readPaidCheckout();if(!pending)return;
+  const user=await cloud.currentUser();
+  if(!user?.email||user.email.toLowerCase()!==pending.email.toLowerCase())return;
+  const license=await cloud.myLicense();
+  if(license?.status!=='active')await cloud.claimPaidAccess(pending.claim);
+  clearPaidCheckout();
+}
+// End paid checkout recovery helpers.
 function hideEntryGates(){['checkoutGate','authGate','paidSignupGate','accessGate'].forEach(id=>$('#'+id)?.classList.add('hidden'))}
 function showCheckout(message=''){hideEntryGates();$('#shell').classList.add('hidden');$('#mobileNav').classList.add('hidden');$('#checkoutGate').classList.remove('hidden');if(message)$('#checkoutMsg').textContent=message}
-function showExistingLogin(message=''){hideEntryGates();showAuth();const msg=$('#authMsg');if(message&&msg){msg.textContent=message;msg.classList.add('authMsgInfo')}if(message)$('#authSignup')?.classList.add('hidden')}
+function showExistingLogin(message=''){hideEntryGates();showAuth();setAuthMode('signin');const pending=readPaidCheckout();if(pending){pending.existingAccount=true;localStorage.setItem(PAID_CHECKOUT_KEY,JSON.stringify(pending));$('#authEmail').value=pending.email}const msg=$('#authMsg');if(message&&msg){msg.textContent=message;msg.classList.add('authMsgInfo')}if(message)$('#authSignup')?.classList.add('hidden')}
 function showRecoveryPassword(){
   hideEntryGates();showAuth();authMode='recovery';
   $('#authKicker').textContent='SEGURIDAD';
@@ -167,10 +202,10 @@ async function submitRecoveryPassword(){
   try{
     await cloud.changePassword(p);
     cloud.signOut();
-    location.href=location.origin+location.pathname;
+    location.href=location.origin+location.pathname+'?login=1';
   }catch(e){msg.textContent=authMessage(e);btn.disabled=false;btn.textContent=old}
 }
-function showPaidSignup(email,claim){hideEntryGates();$('#shell').classList.add('hidden');$('#mobileNav').classList.add('hidden');$('#paidSignupGate').classList.remove('hidden');$('#paidEmail').value=email;sessionStorage.setItem('feo-paid-claim',claim);sessionStorage.setItem('feo-paid-email',email)}
+function showPaidSignup(email,claim){hideEntryGates();$('#shell').classList.add('hidden');$('#mobileNav').classList.add('hidden');$('#paidSignupGate').classList.remove('hidden');$('#paidEmail').value=email;rememberPaidCheckout(email,claim)}
 function showCheckoutRecovery(message){showCheckout(message);const b=$('#retryCheckoutCapture');b?.classList.remove('hidden')}
 async function retryCheckoutCapture(){
   const raw=sessionStorage.getItem('feo-checkout-recovery'),btn=$('#retryCheckoutCapture'),msg=$('#checkoutMsg');
@@ -191,6 +226,8 @@ async function retryCheckoutCapture(){
 async function boot(){
  const authType=cloud.acceptAuthFromUrl();
  const qp=new URLSearchParams(location.search);
+ if(authType==='recovery'){showRecoveryPassword();return}
+ if(qp.get('login')==='1'){history.replaceState(null,'',location.pathname);showExistingLogin('Contraseña actualizada. Inicia sesión con tu nueva contraseña.');return}
  if(qp.get('checkout')==='cancelled'){const cid=qp.get('cid'),ct=qp.get('ct'),cs=qp.get('cs');history.replaceState(null,'',location.pathname);if(cid&&(ct||cs)){try{await cloud.cancelPublicCheckout(cid,ct,cs)}catch(e){console.warn('checkout cancel sync',e)}}showCheckout('El pago fue cancelado. No se creó ninguna cuenta.');return}
  if(qp.get('checkout')==='approved'&&qp.get('cid')&&qp.get('cs')&&qp.get('token')){
    sessionStorage.setItem('feo-checkout-recovery',JSON.stringify({cid:qp.get('cid'),cs:qp.get('cs'),token:qp.get('token')}));
@@ -201,15 +238,14 @@ async function boot(){
  }
  const pendingCheckout=sessionStorage.getItem('feo-checkout-recovery');
  if(pendingCheckout){showCheckoutRecovery('Hay una confirmación de pago pendiente. No vuelvas a pagar; reintenta la confirmación.');return}
- if(authType==='recovery'){showRecoveryPassword();return}
- const pendingClaim=sessionStorage.getItem('feo-paid-claim'), pendingEmail=sessionStorage.getItem('feo-paid-email');
- if(pendingClaim&&pendingEmail){showPaidSignup(pendingEmail,pendingClaim);return}
  const user=await cloud.currentUser();
- if(user){await enterApp();if(authType==='recovery'){state.section='settings';render();setTimeout(()=>$('#changePassword')?.click(),100)};return}
+ if(user){try{await claimPendingPaidAccess();await enterApp()}catch{showAccessPending(null,'Tu compra sigue pendiente de asociarse. Pulsa Comprobar acceso para reintentar; no vuelvas a pagar.')}return}
+ const pending=readPaidCheckout();
+ if(pending){if(pending.existingAccount)showExistingLogin('Tu compra está confirmada. Inicia sesión para activar tu acceso.');else showPaidSignup(pending.email,pending.claim);return}
  showCheckout();
 }
 async function enterApp(){try{const lic=await cloud.myLicense();adminMode=await cloud.isAdmin();if(!adminMode&&lic?.status!=='active'){showAccessPending(lic);return}hideEntryGates();const data=await cloud.loadData();records=data.records;profileData={...PROFILE_DEFAULT,...data.profile};const pendingSync=readPending();if(pendingSync?.records){records=pendingSync.records;profileData={...profileData,...pendingSync.profile};queueSync(pendingSync,50);}if(profileData.theme&&['light','dark','system'].includes(profileData.theme))state.theme=profileData.theme;localStorage.setItem('feo-theme',state.theme);applyTheme();profileData.photoUrl=await cloud.avatarObjectUrl(profileData.photo);$('#authGate')?.classList.add('hidden');$('#accessGate')?.classList.add('hidden');if(adminMode){$('#shell').classList.remove('hidden');$('#mobileNav').classList.remove('hidden');injectAdminButton();ensureHistoryState();render();return}if(!profileData.tutorialCompleted){showOnboarding();return}$('#shell').classList.remove('hidden');$('#mobileNav').classList.remove('hidden');ensureHistoryState();render()}catch(e){showAuth(e.message)}}
-function showAccessPending(lic,message=''){ hideEntryGates();$('#shell').classList.add('hidden');$('#mobileNav').classList.add('hidden');const g=$('#accessGate');g?.classList.remove('hidden');const st=$('#accessStatus');if(st)st.textContent=message||(lic?`Estado de acceso: ${lic.status}.`:'Esta cuenta no tiene una compra asociada.');const buy=$('#buyAccess');if(buy){buy.textContent='Comprar acceso · USD 29 →';buy.onclick=()=>{cloud.signOut();showCheckout('Completa el pago primero. Después podrás entrar con tu cuenta.')}}const refresh=$('#refreshAccess');if(refresh)refresh.onclick=async()=>{refresh.disabled=true;try{const pendingClaim=sessionStorage.getItem('feo-paid-claim');if(pendingClaim){await cloud.claimPaidAccess(pendingClaim);sessionStorage.removeItem('feo-paid-claim');sessionStorage.removeItem('feo-paid-email');await enterApp();return}const l=await cloud.myLicense();if(l?.status==='active'){await enterApp();return}st.textContent='No encontramos una compra confirmada asociada a esta cuenta.'}catch(e){st.textContent=e.message}finally{refresh.disabled=false}}}
+function showAccessPending(lic,message=''){ hideEntryGates();$('#shell').classList.add('hidden');$('#mobileNav').classList.add('hidden');const g=$('#accessGate');g?.classList.remove('hidden');const st=$('#accessStatus');if(st)st.textContent=message||(lic?`Estado de acceso: ${lic.status}.`:'Esta cuenta no tiene una compra asociada.');const buy=$('#buyAccess');if(buy){buy.textContent='Comprar acceso · USD 29 →';buy.onclick=()=>{cloud.signOut();showCheckout('Completa el pago primero. Después podrás entrar con tu cuenta.')}}const refresh=$('#refreshAccess');if(refresh)refresh.onclick=async()=>{refresh.disabled=true;try{if(readPaidCheckout()){await claimPendingPaidAccess();await enterApp();return}const l=await cloud.myLicense();if(l?.status==='active'){await enterApp();return}st.textContent='No encontramos una compra confirmada asociada a esta cuenta.'}catch(e){st.textContent=e.message}finally{refresh.disabled=false}}}
 function injectAdminButton(){const b=document.createElement('button');b.id='adminOpen';b.innerHTML='▦ <span>Admin</span>';b.onclick=()=>openAdmin();document.querySelector('.sideBottom')?.prepend(b)}
 async function openAdmin(){
  try{
@@ -255,7 +291,7 @@ async function openAdmin(){
 function showAuth(message=''){const gate=$('#authGate');gate?.classList.remove('hidden');$('#shell').classList.add('hidden');$('#mobileNav').classList.add('hidden');const msg=$('#authMsg');if(msg){msg.textContent=message||'';msg.classList.remove('authMsgInfo')}$('#authSignup')?.classList.remove('hidden')}
 function authMessage(error){const m=String(error?.message||error||'').toLowerCase();if(m.includes('anonymous sign-ins are disabled'))return 'Escribe tu correo electrónico para crear la cuenta.';if(m.includes('invalid login credentials'))return 'Correo o contraseña incorrectos.';if(m.includes('email not confirmed'))return 'Confirma tu correo antes de iniciar sesión.';if(m.includes('user already registered'))return 'Ya existe una cuenta con ese correo. Inicia sesión.';if(m.includes('password'))return 'La contraseña debe tener al menos 8 caracteres.';if(m.includes('email'))return 'Revisa que el correo electrónico sea válido.';return 'No pudimos completar la solicitud. Inténtalo nuevamente.'}
 function validateAuth(mode){const email=$('#authEmail').value.trim(),password=$('#authPassword').value,msg=$('#authMsg');msg.textContent='';msg.classList.remove('authMsgInfo','authMsgSuccess');if(!email){msg.textContent='Escribe tu correo electrónico.';$('#authEmail').focus();return null}if(!email.includes('@')||email.startsWith('@')||!email.slice(email.indexOf('@')+1).includes('.')||email.endsWith('.')){msg.textContent='Escribe un correo electrónico válido.';$('#authEmail').focus();return null}if(!password){msg.textContent='Escribe tu contraseña.';$('#authPassword').focus();return null}if(password.length<8){msg.textContent='La contraseña debe tener al menos 8 caracteres.';$('#authPassword').focus();return null}return {email,password,msg}}
-window.feoAuth={async forgot(){const email=$('#authEmail').value.trim(),msg=$('#authMsg');msg.textContent='';msg.classList.remove('authMsgInfo','authMsgSuccess');if(!email||!email.includes('@')||email.startsWith('@')||!email.slice(email.indexOf('@')+1).includes('.')||email.endsWith('.')){msg.textContent='Escribe un correo electrónico válido.';$('#authEmail').focus();return}try{await cloud.requestPasswordReset(email);msg.textContent='✓ Revisa tu correo. Si existe una cuenta con esta dirección, recibirás un enlace para crear una nueva contraseña.';msg.classList.add('authMsgInfo')}catch(e){msg.textContent=authMessage(e)}},async submit(mode){const v=validateAuth(mode);if(!v)return;const {email,password,msg}=v;const btn=$('#authSignin');const original=btn?.textContent;if(btn){btn.disabled=true;btn.textContent='Ingresando…'}try{await cloud.signIn(email,password);const pendingClaim=sessionStorage.getItem('feo-paid-claim');if(pendingClaim){await cloud.claimPaidAccess(pendingClaim);sessionStorage.removeItem('feo-paid-claim');sessionStorage.removeItem('feo-paid-email')}await enterApp()}catch(e){msg.textContent=authMessage(e)}finally{if(btn){btn.disabled=false;btn.textContent=original}}},logout(){cloud.signOut();location.reload()}};
+window.feoAuth={async forgot(){const email=$('#authEmail').value.trim(),msg=$('#authMsg');msg.textContent='';msg.classList.remove('authMsgInfo','authMsgSuccess');if(!email||!email.includes('@')||email.startsWith('@')||!email.slice(email.indexOf('@')+1).includes('.')||email.endsWith('.')){msg.textContent='Escribe un correo electrónico válido.';$('#authEmail').focus();return}try{await cloud.requestPasswordReset(email);msg.textContent='✓ Revisa tu correo. Si existe una cuenta con esta dirección, recibirás un enlace para crear una nueva contraseña.';msg.classList.add('authMsgInfo')}catch(e){msg.textContent=authMessage(e)}},async submit(mode){const v=validateAuth(mode);if(!v)return;const {email,password,msg}=v;const btn=$('#authSignin');const original=btn?.textContent;if(btn){btn.disabled=true;btn.textContent='Ingresando…'}try{await cloud.signIn(email,password);await claimPendingPaidAccess();await enterApp()}catch(e){msg.textContent=authMessage(e)}finally{if(btn){btn.disabled=false;btn.textContent=original}}},logout(){cloud.signOut();location.reload()}};
 let authMode='signin';
 function setAuthMode(mode){
   authMode=mode;
@@ -361,7 +397,7 @@ function bindAuthActions(){
   $('#existingLogin')?.addEventListener('click',()=>showExistingLogin());
   $('#paidExistingLogin')?.addEventListener('click',()=>showExistingLogin());
   $('#createPaidAccount')?.addEventListener('click',async()=>{
-    const name=$('#paidName').value.trim(),email=$('#paidEmail').value.trim().toLowerCase(),password=$('#paidPassword').value,confirm=$('#paidPasswordConfirm').value,msg=$('#paidSignupMsg'),btn=$('#createPaidAccount'),claim=sessionStorage.getItem('feo-paid-claim');
+    const name=$('#paidName').value.trim(),email=$('#paidEmail').value.trim().toLowerCase(),password=$('#paidPassword').value,confirm=$('#paidPasswordConfirm').value,msg=$('#paidSignupMsg'),btn=$('#createPaidAccount'),claim=readPaidCheckout()?.claim;
     msg.textContent='';
     if(name.length<2){msg.textContent='Escribe tu nombre.';$('#paidName').focus();return}
     if(!validatePassword(password)){msg.textContent=PASSWORD_POLICY_MESSAGE;return}
@@ -372,7 +408,7 @@ function bindAuthActions(){
       await cloud.createPaidAccount(email,password,claim);
       await cloud.signIn(email,password);
       await cloud.saveProfile({name,country:'Ecuador',personalCurrency:'USD',businessCurrency:'USD',theme:'system',tutorialCompleted:false});
-      sessionStorage.removeItem('feo-paid-claim');sessionStorage.removeItem('feo-paid-email');
+      clearPaidCheckout();
       await enterApp();
     }catch(e){
       if(e.message==='ACCOUNT_EXISTS'){
