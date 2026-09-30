@@ -1,0 +1,169 @@
+{
+  "captured_at": "2026-09-30T03:50:11.125825+00:00",
+  "description": "Recovery source snapshot; not a redeployment or end-to-end verification.",
+  "functions": [
+    {
+      "slug": "delete-my-account",
+      "version": 10,
+      "verify_jwt": true,
+      "import_map": false,
+      "entrypoint": "supabase/functions/delete-my-account/index.ts",
+      "deployment_bundle_sha256": "f5119ea6ace0de6c0a1aa45958d5c9d9008e1caf02173c5c006273e63c5c9bbd",
+      "source_sha256": "c7207a06428793b11b9e3bc5d63aa5555f75ab4d1a7cadc920f843151e199961"
+    },
+    {
+      "slug": "admin-set-license",
+      "version": 10,
+      "verify_jwt": true,
+      "import_map": false,
+      "entrypoint": "supabase/functions/admin-set-license/index.ts",
+      "deployment_bundle_sha256": "8f8d15035273f55f5aca346e402a31407b3af972f6df4cc2290c4df0e4ec0424",
+      "source_sha256": "10a7ed6c74155207e411738681b64338dfc32c4b650caa180f3e79c93c226dfa"
+    },
+    {
+      "slug": "admin-list-users",
+      "version": 9,
+      "verify_jwt": true,
+      "import_map": false,
+      "entrypoint": "supabase/functions/admin-list-users/index.ts",
+      "deployment_bundle_sha256": "b100124d32eb899faf1af06694085862125a2e75d39931c82dac264c8f1356f7",
+      "source_sha256": "1fad5453ca4dfd2c6e1032a533b59efe5563977c275b51a5e91026a52626fa1d"
+    },
+    {
+      "slug": "paypal-create-order",
+      "version": 11,
+      "verify_jwt": true,
+      "import_map": false,
+      "entrypoint": "supabase/functions/paypal-create-order/index.ts",
+      "deployment_bundle_sha256": "515f167207a57b84fcb8baa6353ac84eb4692ed8fd31da652361c30b2ed83a9b",
+      "source_sha256": "bfc0ba8d82fd06731c9a95058e10a8cb8e1416642c0b17c466463989b595db45"
+    },
+    {
+      "slug": "paypal-capture-order",
+      "version": 11,
+      "verify_jwt": true,
+      "import_map": false,
+      "entrypoint": "supabase/functions/paypal-capture-order/index.ts",
+      "deployment_bundle_sha256": "061ab6159aa89c3ab1fab8a97a45a811497b2e9b06dc2f5280f69bf0f1d20070",
+      "source_sha256": "a14546083a729aeab68d12bfc5e41cf9a7af5eeb9bcf6fc7bedc6bce4e31da78"
+    },
+    {
+      "slug": "paypal-webhook",
+      "version": 13,
+      "verify_jwt": false,
+      "import_map": false,
+      "entrypoint": "supabase/functions/paypal-webhook/index.ts",
+      "deployment_bundle_sha256": "2c3c38675891dbaba93ff4cc7b6a6d92e9658eaf78c630a0cfd36340bbd2ce7f",
+      "source_sha256": "5ad9a5490e13834d99e7b60d13ccc55af2b411594f02ed9cb4234f5e34a4b5a3"
+    },
+    {
+      "slug": "paypal-create-checkout",
+      "version": 12,
+      "verify_jwt": false,
+      "import_map": false,
+      "entrypoint": "supabase/functions/paypal-create-checkout/index.ts",
+      "deployment_bundle_sha256": "b3456571f15832d943fd15bacaf38c0f14a99a77ae34a7137409d902b94b3173",
+      "source_sha256": "36a6aff7be4595bb9889e1f46ba5719e57e84c8c7bd67e79423631890126cb9b"
+    },
+    {
+      "slug": "paypal-capture-checkout",
+      "version": 14,
+      "verify_jwt": false,
+      "import_map": false,
+      "entrypoint": "supabase/functions/paypal-capture-checkout/index.ts",
+      "deployment_bundle_sha256": "9daf6c528d97f6ce167513284e73aec144051dbe0a77850a4bdfb9568ab252e5",
+      "source_sha256": "8cf688551f6cc44d47b6b1b731667e56c0c35f0522d3d005122d4ecb5f9a47ba"
+    },
+    {
+      "slug": "claim-paid-access",
+      "version": 6,
+      "verify_jwt": true,
+      "import_map": false,
+      "entrypoint": "supabase/functions/claim-paid-access/index.ts",
+      "deployment_bundle_sha256": "2c13a7590ad94e6cc5d06bf8fc154e8e60b58699bb19a026471f26a1f5f9b703",
+      "source_sha256": "18cd7fecc56669b7cfdf82bc5b3bac128ef1f554c3cca87d271c8cf017135db5"
+    },
+    {
+      "slug": "create-paid-account",
+      "version": 7,
+      "verify_jwt": false,
+      "import_map": false,
+      "entrypoint": "supabase/functions/create-paid-account/index.ts",
+      "deployment_bundle_sha256": "ccc7fea5596a9047d4fd6018a28c009239a4905a0f48e41b60e6566cb7f31d0c",
+      "source_sha256": "048ed243f937707a8c21d4e9c26a23289e8f77cbf712271bfc7e7fadb0cb091f"
+    },
+    {
+      "slug": "paypal-health",
+      "version": 8,
+      "verify_jwt": true,
+      "import_map": false,
+      "entrypoint": "supabase/functions/paypal-health/index.ts",
+      "deployment_bundle_sha256": "af294bac96befd3a28d7859c3e9459662259cfcdab87de7397bd0321650ec4f5",
+      "source_sha256": "c6a611c0bfb2cfe027726964b2aa59b0f5b81e1e533d72169ca8f89a903d978d"
+    },
+    {
+      "slug": "paypal-env-diagnostic",
+      "version": 6,
+      "verify_jwt": true,
+      "import_map": false,
+      "entrypoint": "supabase/functions/paypal-env-diagnostic/index.ts",
+      "deployment_bundle_sha256": "68cedff41fd37e970f0160b822c3171f1dec43d64caa3d502ecbe13c4aa1841e",
+      "source_sha256": "c6a611c0bfb2cfe027726964b2aa59b0f5b81e1e533d72169ca8f89a903d978d"
+    },
+    {
+      "slug": "paypal-browser-token",
+      "version": 4,
+      "verify_jwt": true,
+      "import_map": false,
+      "entrypoint": "supabase/functions/paypal-browser-token/index.ts",
+      "deployment_bundle_sha256": "bf3ca4b20b65a54e11540145d37d37372f0aa34975e295e69fa1f62d982b5b3f",
+      "source_sha256": "c6a611c0bfb2cfe027726964b2aa59b0f5b81e1e533d72169ca8f89a903d978d"
+    },
+    {
+      "slug": "paypal-public-config",
+      "version": 4,
+      "verify_jwt": false,
+      "import_map": false,
+      "entrypoint": "supabase/functions/paypal-public-config/index.ts",
+      "deployment_bundle_sha256": "178419c3a8020f58c6ac28dc0fce1e4c7ebba165ba3b6e789d48b83bc88a5846",
+      "source_sha256": "fccfcf3d4222f642ee3fdcc908765c773f3af79e10824d5d5f5c9f83292ccc9f"
+    },
+    {
+      "slug": "create-paid-account-finorve",
+      "version": 5,
+      "verify_jwt": false,
+      "import_map": false,
+      "entrypoint": "supabase/functions/create-paid-account-finorve/index.ts",
+      "deployment_bundle_sha256": "817ba892b6468d9c847f795e6251d89775e9b78e3f75695e25d20c76fdd763b6",
+      "source_sha256": "8929a2f58087448a6b1cb042a7db4d6094c82906983728d34c530c745611d704"
+    },
+    {
+      "slug": "paypal-cancel-checkout",
+      "version": 5,
+      "verify_jwt": false,
+      "import_map": false,
+      "entrypoint": "supabase/functions/paypal-cancel-checkout/index.ts",
+      "deployment_bundle_sha256": "b40e3a9de70290d3584450c7d6c8526db4bd678220a2ed7997ebe693a53a3e43",
+      "source_sha256": "3e3b68c7a7cbe9498b010d5b36ec2d1ac5da95cb8af8e761c5a42b92b3fcb1d8"
+    },
+    {
+      "slug": "admin-ops-summary",
+      "version": 6,
+      "verify_jwt": true,
+      "import_map": false,
+      "entrypoint": "supabase/functions/admin-ops-summary/index.ts",
+      "deployment_bundle_sha256": "5446fad787bbcd22d47e8e9cadaf3c0baecd363cf480818c9b5ff83e3c364563",
+      "source_sha256": "9220a5daead40a10f31be6a2282534b0fe7d0442a639d507f93a148c83eccd34"
+    }
+  ],
+  "required_environment_variable_names": [
+    "APP_BASE_URL",
+    "PAYPAL_BASE_URL",
+    "PAYPAL_CLIENT_ID",
+    "PAYPAL_CLIENT_SECRET",
+    "PAYPAL_WEBHOOK_ID",
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+  ]
+}
