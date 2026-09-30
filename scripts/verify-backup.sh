@@ -31,9 +31,11 @@ PY
 for network in $(docker inspect --format '{{range $name, $_ := .NetworkSettings.Networks}}{{$name}} {{end}}' "$container"); do
   docker network disconnect "$network" "$container"
 done
-# The logical roles export sets log_min_messages; use the local bootstrap superuser.
-# This identity exists only in this disposable container, never at the source URL.
-psql_local=(docker exec -i "$container" psql -U supabase_admin -d postgres -X -w -v ON_ERROR_STOP=1)
+# Grant the disposable postgres role bootstrap rights, then import as the same
+# object creator as production so the bootstrap administrator's default ACLs
+# do not grant extra privileges to application functions during restoration.
+docker exec -i "$container" psql -U supabase_admin -d postgres -X -w -v ON_ERROR_STOP=1 -c 'ALTER ROLE postgres WITH SUPERUSER;' > "$work/bootstrap.log" 2>&1
+psql_local=(docker exec -i "$container" psql -U postgres -d postgres -X -w -v ON_ERROR_STOP=1)
 "${psql_local[@]}" -c "CREATE EXTENSION IF NOT EXISTS pg_cron; CREATE EXTENSION IF NOT EXISTS pg_net WITH SCHEMA extensions;" > "$work/extensions.log" 2>&1
 docker cp "$work/." "$container:/tmp/finorve-restore" > /dev/null
 history=()
@@ -57,7 +59,17 @@ PY
   exit 1
 }
 python3 scripts/check-restored-backup.py "$work"
-"${psql_local[@]}" < "$work/verify.sql" > "$work/verify.log" 2>&1 || { echo 'Restored row counts or application/security checks failed.'; exit 1; }
+"${psql_local[@]}" < "$work/verify.sql" > "$work/verify.log" 2>&1 || {
+  python3 - "$work/verify.log" <<'PY'
+import re, sys
+for line in open(sys.argv[1]):
+    if 'ERROR:' in line:
+        primary = line.split('ERROR:', 1)[1].strip()
+        print('Verification failed: ' + re.sub(r'"[^"]*"|\x27[^\x27]*\x27', '<redacted>', primary))
+        break
+PY
+  exit 1
+}
 echo 'Isolated restore passed: checksums, exact row counts, policies, managed triggers and application database/security checks.'
 if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
   printf '%s\n' '### Database recovery test passed' 'Restored the encrypted export in an ephemeral Supabase/Postgres 17 container with network access disconnected. Verified checksums, all COPY row counts, RLS, policies, managed triggers and FINORVE database/security checks. Production was only read. No SQL or plaintext logs were uploaded. Cron activation, external Storage files, Edge Functions, Auth/SMTP settings and payment provider configuration remain part of manual disaster recovery.' >> "$GITHUB_STEP_SUMMARY"
