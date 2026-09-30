@@ -1,7 +1,7 @@
 {
   "type": "module",
   "scripts": {
-    "test": "node engine-tests.mjs && node certification-tests.mjs && node sync-tests.mjs && node profile-tests.mjs && node auth-session-tests.mjs && node password-policy-tests.mjs && node checkout-security-tests.mjs && node navigation-tests.mjs && node app-wiring-tests.mjs && node ui-quality-tests.mjs && node vercel-config-tests.mjs && node secret-policy-tests.mjs && node paypal-capture-tests.mjs && node embedded-checkout-tests.mjs && node payphone-test-checkout-tests.mjs && node payphone-browser-flow-tests.mjs",
+    "test": "node engine-tests.mjs && node certification-tests.mjs && node sync-tests.mjs && node profile-tests.mjs && node auth-session-tests.mjs && node password-policy-tests.mjs && node checkout-security-tests.mjs && node navigation-tests.mjs && node app-wiring-tests.mjs && node ui-quality-tests.mjs && node vercel-config-tests.mjs && node secret-policy-tests.mjs && node paypal-capture-tests.mjs && node embedded-checkout-tests.mjs && node payphone-test-checkout-tests.mjs && node payphone-browser-flow-tests.mjs && node membership-tests.mjs",
     "certify": "node certification-tests.mjs"
   }
 }
