@@ -1,4 +1,4 @@
-const SECTIONS=new Set(['home','movements','plan','decisions','more','profile','settings']);
+const SECTIONS=new Set(['home','movements','plan','decisions','more','profile','settings','income','expenses','debts','savings','goals','assets','diagnostic','sales','costs','cashflow','breakEven','results']);
 const MODES=new Set(['personal','business']);
 
 export function normalizeNavigationState(value,fallback={section:'home',mode:'personal'}){
