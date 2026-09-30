@@ -28,7 +28,8 @@
   ],
   "git": {
     "deploymentEnabled": {
-      "staging": false
+      "staging": false,
+      "codex/payphone-configuration-check": false
     }
   }
 }
