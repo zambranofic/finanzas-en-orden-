@@ -1,6 +1,6 @@
 # FINORVE — Recovery & Continuity Runbook
 
-Last reviewed: 2026-09-29
+Last reviewed: 2026-09-30
 Production domain: https://finorve.com
 
 ## 1. First response to an incident
@@ -16,12 +16,7 @@ Do not change database data or redeploy repeatedly before identifying the failin
 
 ## 2. Vercel rollback
 
-Current known-good production deployment at review time:
-
-- Deployment: `dpl_2FHqLAkp5CJxzi5wncPLduAMpN1V`
-- Commit: `4240d4dd66c2de83aea58400b8685e1073da15ba`
-- Status at review: READY
-- Includes FINORVE admin observability UI.
+Select a previously validated READY deployment from current Vercel history and record its deployment ID and commit before rollback. An older recorded deployment must not be assumed to contain today's fixes.
 
 If a newer frontend deployment breaks production, prefer an instant Vercel rollback/promote to a previously validated READY deployment instead of rebuilding the broken commit.
 
@@ -71,8 +66,8 @@ Then verify:
 - RLS advisors
 - performance advisors
 - Edge Functions and versions
-- PayPal webhook/config
-- cron job `finorve-operational-maintenance`
+- Payphone membership configuration and Resend sender/domain; legacy PayPal webhook/config if used
+- cron jobs `finorve-operational-maintenance`, `finorve-membership-reminders` and `finorve-membership-email-delivery`
 - one licensed synthetic isolation test inside a transaction with ROLLBACK
 
 ## 4. Database migration discipline
@@ -98,7 +93,7 @@ Relevant states:
 - license: active, inactive, revoked, refunded
 
 For “paid but no access”:
-1. Check checkout by PayPal order/capture ID.
+1. Check the provider transaction ID and checkout intent: Payphone for current memberships, PayPal for legacy payments.
 2. If checkout is completed, recover the claim rather than create a second payment.
 3. Verify the payment row.
 4. Verify license status.
@@ -137,3 +132,15 @@ Before declaring recovery complete:
 Frontend failures should be handled with Vercel rollback first.
 Database/data incidents require Supabase restore planning first.
 Never combine a frontend rollback with an automatic database restore unless both layers are proven to be part of the same incident.
+
+## 9. Verified recovery evidence and remaining work
+
+On 2026-09-30, backup run `36787862866` passed an isolated database restore: 45 tables, 20 policies and one managed trigger. See `docs/recuperacion-respaldos.md` for artifact, encryption custody and scope. This is not a complete Auth, DNS or provider recovery.
+
+All 21 deployed Edge Function sources matched the repository. `supabase/functions.snapshot.json` records source hashes, versions and JWT settings. Run `node scripts/verify-function-snapshot.mjs` before using this recovery revision. See `docs/recuperacion-funciones.md` for private variable names and deployment order.
+
+The annual 314-record scenario passed backend persistence, edit, delete, invalid-input atomicity and isolation checks with rollback; see `docs/annual-database-validation.md`. Real browser income/sale CRUD was confirmed separately. These checks do not establish recovery in a new Supabase project.
+
+For a full-service rehearsal, restore an isolated compatible destination first, configure its Auth redirects and mail settings, deploy the preserved functions, and replace embedded project URLs/public keys in frontend and functions. Keep scheduled sends and live payments disabled until the destination is verified. Validate registration, login, password recovery, licensed access, save/reload and account isolation. Verify Resend sender/domain, recipient permissions and renewal queue, then activate only the intended schedules. Reconcile payments and licenses before any production cutover.
+
+Current membership behavior: annual access, manual renewal, expiry notices at 30/15/7/0 days and retained individual renewal price. A real membership payment and the first automatic eligible reminder remain pending. Independent custody of the backup passphrase and full-service recovery in another environment are not yet confirmed. Do not mark these items complete from source preservation or the database restore alone.
