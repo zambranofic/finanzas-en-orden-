@@ -6,3 +6,13 @@ for(const e of s.expectations){const p=personalMonth(d.personal,e.month),b=busin
 const last=s.expectations.at(-1);assert.equal(personalPosition(d.personal,s.months.at(-1)+'-30').netWorth,last.assets-last.debts);
 for(const mode of ['personal','business'])for(const rows of Object.values(s.records[mode]))for(const r of rows){assert(r.demo);assert(Number.isSafeInteger(r.amountMinor));assert(r.amountMinor>0);}
 const totals=s.expectations.reduce((a,e)=>{for(const k of ['income','expense','available','sales','result','flow'])a[k]=(a[k]||0)+e[k];return a},{});console.log(JSON.stringify({months:12,records:Object.values(s.records).flatMap(x=>Object.values(x)).flat().length,totals,closingCash:last.closingCash,checks:'12 months personal/business, credit collections, cash flow, break-even and final net worth PASS'},null,2));
+
+import fs from 'node:fs';
+import vm from 'node:vm';
+const app=fs.readFileSync(new URL('./app-v4.js',import.meta.url),'utf8');
+const context=vm.createContext({records:s.records,moneyMinor:n=>String(n),asMinor:x=>x.amountMinor,currency:()=> 'USD',esc:String});
+vm.runInContext(app.split('\n').find(x=>x.startsWith('function cashflowView')),context);
+const cashHtml=vm.runInContext('cashflowView()',context);
+assert(cashHtml.includes(String(totals.flow)),'cash screen must reconcile with engine including principal and interest');
+assert(cashHtml.includes('Capital deuda'));
+assert(cashHtml.includes('Interés deuda'));
