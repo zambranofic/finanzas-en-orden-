@@ -6,7 +6,15 @@ const env=()=>({url:Deno.env.get("SUPABASE_URL"),service:Deno.env.get("SUPABASE_
 const hex=(b)=>[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("");
 async function sha(s){return hex(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s)))}
 function toMinorExact(value){const s=String(value??"").trim();const m=/^(0|[1-9]\d*)(?:\.(\d{1,2}))?$/.exec(s);if(!m)return null;const n=BigInt(m[1])*100n+BigInt((m[2]||"").padEnd(2,"0"));return n<=BigInt(Number.MAX_SAFE_INTEGER)?Number(n):null}
-async function token(c){if(!c.cid||!c.secret)throw new Error("PAYPAL_NOT_CONFIGURED");const r=await fetch(c.base+"/v1/oauth2/token",{method:"POST",headers:{Authorization:"Basic "+btoa(c.cid+":"+c.secret),"Content-Type":"application/x-www-form-urlencoded"},body:"grant_type=client_credentials"});if(!r.ok){console.error("capture_paypal_auth_failed",r.status);throw new Error("PAYPAL_AUTH_FAILED")}return (await r.json()).access_token}
+function logDependencyFailure(stage,status=null){console.error(JSON.stringify({event:"capture_dependency_failure",stage,upstream_status:status}))}
+async function token(c){
+ if(!c.cid||!c.secret)throw new Error("PAYPAL_NOT_CONFIGURED");
+ let r;try{r=await fetch(c.base+"/v1/oauth2/token",{method:"POST",headers:{Authorization:"Basic "+btoa(c.cid+":"+c.secret),"Content-Type":"application/x-www-form-urlencoded"},body:"grant_type=client_credentials"})}catch{logDependencyFailure("oauth_network");throw new Error("PAYPAL_UNAVAILABLE")}
+ if(!r.ok){logDependencyFailure("oauth_http",r.status);throw new Error("PAYPAL_AUTH_FAILED")}
+ let payload;try{payload=await r.json()}catch{logDependencyFailure("oauth_response",r.status);throw new Error("PAYPAL_AUTH_RESPONSE_INVALID")}
+ if(typeof payload?.access_token!=="string"||!payload.access_token){logDependencyFailure("oauth_response",r.status);throw new Error("PAYPAL_AUTH_RESPONSE_INVALID")}
+ return payload.access_token;
+}
 Deno.serve(async(req)=>{
  const origin=req.headers.get("origin");
  if(req.method==="OPTIONS"){if(origin&&!ALLOWED.has(origin))return new Response("Forbidden",{status:403});return new Response("ok",{headers:cors(origin)})}
@@ -34,10 +42,10 @@ Deno.serve(async(req)=>{
    if(re)return Response.json({error:"CHECKOUT_RECOVERY_FAILED"},{status:500,headers:cors(origin)});
    return Response.json({ok:true,email:intent.email,claim_token:claim,recovered:true},{headers:cors(origin)});
  }
- let access;try{access=await token(c)}catch(e){return Response.json({error:String(e.message)},{status:503,headers:cors(origin)})}
- let order;const gr=await fetch(c.base+"/v2/checkout/orders/"+encodeURIComponent(oid),{headers:{Authorization:"Bearer "+access}});
- order=await gr.json().catch(()=>({}));if(!gr.ok)return Response.json({error:"PAYPAL_ORDER_LOOKUP_FAILED"},{status:502,headers:cors(origin)});
- if(order.status!=="COMPLETED"){const cr=await fetch(c.base+"/v2/checkout/orders/"+encodeURIComponent(oid)+"/capture",{method:"POST",headers:{Authorization:"Bearer "+access,"Content-Type":"application/json","PayPal-Request-Id":"public-capture-"+cid},body:"{}"});order=await cr.json().catch(()=>({}));if(!cr.ok)return Response.json({error:"PAYPAL_CAPTURE_FAILED",paypal_status:order?.name||null},{status:502,headers:cors(origin)})}
+ let access;try{access=await token(c)}catch(e){return Response.json({error:["PAYPAL_NOT_CONFIGURED","PAYPAL_AUTH_FAILED","PAYPAL_UNAVAILABLE","PAYPAL_AUTH_RESPONSE_INVALID"].includes(e.message)?e.message:"PAYPAL_UNAVAILABLE"},{status:503,headers:cors(origin)})}
+ let order,gr;try{gr=await fetch(c.base+"/v2/checkout/orders/"+encodeURIComponent(oid),{headers:{Authorization:"Bearer "+access}})}catch{logDependencyFailure("order_lookup_network");return Response.json({error:"PAYPAL_ORDER_LOOKUP_UNAVAILABLE"},{status:502,headers:cors(origin)})}
+ order=await gr.json().catch(()=>({}));if(!gr.ok){logDependencyFailure("order_lookup_http",gr.status);return Response.json({error:"PAYPAL_ORDER_LOOKUP_FAILED"},{status:502,headers:cors(origin)})}
+ if(order.status!=="COMPLETED"){let cr;try{cr=await fetch(c.base+"/v2/checkout/orders/"+encodeURIComponent(oid)+"/capture",{method:"POST",headers:{Authorization:"Bearer "+access,"Content-Type":"application/json","PayPal-Request-Id":"public-capture-"+cid},body:"{}"})}catch{logDependencyFailure("capture_network_uncertain");return Response.json({error:"PAYPAL_CAPTURE_UNCERTAIN"},{status:502,headers:cors(origin)})}order=await cr.json().catch(()=>({}));if(!cr.ok){logDependencyFailure("capture_http",cr.status);return Response.json({error:"PAYPAL_CAPTURE_FAILED",paypal_status:order?.name||null},{status:502,headers:cors(origin)})}}
  const cap=order?.purchase_units?.[0]?.payments?.captures?.[0],amount=cap?.amount,capturedMinor=toMinorExact(amount?.value);
  if(order.status!=="COMPLETED"||cap?.status!=="COMPLETED"||amount?.currency_code!==intent.currency||capturedMinor===null||capturedMinor!==Number(intent.amount_minor))return Response.json({error:"CAPTURE_VERIFICATION_FAILED"},{status:409,headers:cors(origin)});
  const claim=crypto.randomUUID()+"."+crypto.randomUUID(),claimHash=await sha(claim),expires=new Date(Date.now()+24*60*60*1000).toISOString();
