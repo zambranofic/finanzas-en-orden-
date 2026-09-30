@@ -77,3 +77,12 @@ entrypoint = "./functions/payphone-health/index.ts"
 [functions.payphone-test-checkout]
 verify_jwt = false
 entrypoint = "./functions/payphone-test-checkout/index.ts"
+
+
+[functions.payphone-membership]
+verify_jwt = false
+entrypoint = "./functions/payphone-membership/index.ts"
+
+[functions.membership-email-reminders]
+verify_jwt = false
+entrypoint = "./functions/membership-email-reminders/index.ts"
