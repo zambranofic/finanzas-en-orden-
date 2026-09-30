@@ -220,7 +220,7 @@ async function retryCheckoutCapture(){
     showPaidSignup(r.email,r.claim_token);
   }catch(e){
     if(msg)msg.textContent='Aún no pudimos confirmar el acceso. No realices otro pago; puedes reintentar en esta misma pantalla.';
-    if(btn){btn.disabled=false;btn.textContent='Reintentar confirmación'}
+    if(btn){btn.classList.remove('hidden');btn.disabled=false;btn.textContent='Reintentar confirmación'}
   }
 }
 async function boot(){
