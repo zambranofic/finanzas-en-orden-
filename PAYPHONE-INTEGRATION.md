@@ -15,3 +15,9 @@ Provider SDK: official versioned v2.0 JS and CSS. Async completion confirms with
 Validation: existing 14 test suites pass, plus Payphone-specific fixtures covering altered amount/currency/IDs, missing and incorrect configuration, guest key and secret authorization, origin restrictions, replay, concurrency, and uncertain network response. Deployed Supabase configuration check confirms both secret values exist and StoreID format is valid; that check does not authenticate with Payphone.
 
 Pending before live checkout: real provider form and test transaction verification, confirmation response evidence, pricing/tax and access duration decision, secure paid account claim integration and reconciliation, then a deliberate move to production. Keep sandbox transactions isolated permanently.
+
+## Verified on 2026-09-30
+
+Production deployment `dpl_7qJKGZJxpKNoeMgeUz7oibNnT48C` is READY at merge commit `24a75925d659ba02a0c9b05dfef4709928974c39`. Both dedicated routes return HTTP 200. Browser verification on the registered domain finorve.com loaded the actual Payphone card form, which visibly displayed `(TEST) USD 1.00`. This validates the configured token and store combination for preparing the form. A screenshot contains only synthetic cardholder/test data.
+
+The simulation's final Pagar click was blocked by automatic permission review, which requires the user to execute even this test transaction personally. No transaction was submitted, no provider approval was obtained, and actual confirmation remains unverified. The server-side confirmation fixtures pass, but they are not evidence of a completed Payphone payment. The browser is ready for a user handoff. Historical pre-Payphone frontend fixes from PRs 18–25 are now included in the published source; their remaining full signed-in user flow checks are separate.
