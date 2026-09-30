@@ -57,7 +57,7 @@ assert.equal(vm.runInContext('readPaidCheckout()',first),null,'successful claim 
 vm.runInContext("rememberPaidCheckout('buyer@example.com','already-claimed',true)",first);
 second.cloud.myLicense=async()=>({status:'active'});
 await vm.runInContext('claimPendingPaidAccess()',second);
-assert.equal(claimed,1,'an active license must not retry a consumed claim');
+assert.equal(claimed,2,'an active member must submit a new paid claim; the server idempotently handles consumed claims');
 assert.equal(vm.runInContext('readPaidCheckout()',first),null);
 firstSession.setItem('feo-paid-claim','legacy');firstSession.setItem('feo-paid-email','buyer@example.com');
 assert.equal(vm.runInContext('readPaidCheckout().claim',first),'legacy','existing checkout tabs must migrate');
