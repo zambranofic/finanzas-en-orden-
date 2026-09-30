@@ -45,8 +45,11 @@ import re, sys
 s = open(sys.argv[1]).read()
 for line in s.splitlines():
     if 'ERROR:' in line:
-        safe = re.search(r'(relation|column|role|schema|extension) "[a-zA-Z0-9_.]+" (?:does not exist|already exists)', line)
-        print('Restore failed: ' + (safe.group(0) if safe else 'SQL compatibility error; private diagnostic retained only during this job.'))
+        # Primary PostgreSQL error only; redact all quoted values and omit CONTEXT/DETAIL.
+        primary = line.split('ERROR:', 1)[1].strip()
+        primary = re.sub(r'"[^"]*"|\x27[^\x27]*\x27', '<redacted>', primary)
+        location = re.search(r'/(roles|schema|data|managed-customizations|history-schema|history-data)\.sql:(\d+):', line)
+        print('Restore failed' + (' in ' + location.group(1) + '.sql line ' + location.group(2) if location else '') + ': ' + primary)
         break
 PY
   exit 1
