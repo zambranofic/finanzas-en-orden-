@@ -21,3 +21,12 @@ ORDER BY schemaname, tablename, policyname;
 SELECT format('WITH restored AS (SELECT cron.schedule(%L, %L, %L) AS id) SELECT cron.alter_job(id, active := false) FROM restored;',
   coalesce(jobname, 'restored-job-' || jobid::text), schedule, command)
 FROM cron.job WHERE database = current_database() ORDER BY jobid;
+
+-- Preserve the narrow recipient lookup permissions used by annual email delivery.
+-- auth is managed and its custom ACLs are excluded from the ordinary schema dump.
+SELECT format('GRANT SELECT (%I) ON auth.users TO service_role;', column_name)
+FROM information_schema.column_privileges
+WHERE table_schema='auth' AND table_name='users'
+  AND grantee='service_role' AND privilege_type='SELECT'
+  AND column_name IN ('id','email')
+ORDER BY column_name;
