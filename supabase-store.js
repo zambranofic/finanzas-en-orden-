@@ -65,7 +65,7 @@ export async function exportMyData(){
  const [profile,movements,licenses,payments]=await Promise.all([
   jsonFetch('/rest/v1/profiles?select=user_id,full_name,country,personal_currency,business_currency,language,tutorial_completed,theme,avatar_path,created_at,updated_at&limit=1',{headers:headers(s.access_token)}),
   jsonFetch('/rest/v1/movements?select=id,mode,kind,description,amount_minor,currency,fx_rate,base_currency,base_amount_minor,occurred_on,is_demo,metadata,created_at,updated_at&order=occurred_on.asc',{headers:headers(s.access_token)}),
-  jsonFetch('/rest/v1/licenses?select=status,product_code,access_type,activated_at,revoked_at,created_at,updated_at&limit=1',{headers:headers(s.access_token)}),
+  jsonFetch('/rest/v1/licenses?select=status,product_code,access_type,activated_at,expires_at,annual_price_minor,annual_currency,revoked_at,created_at,updated_at&limit=1',{headers:headers(s.access_token)}),
   jsonFetch('/rest/v1/payments?select=provider,provider_order_id,provider_capture_id,status,amount_minor,currency,created_at,updated_at&order=created_at.asc',{headers:headers(s.access_token)})
  ]);
  return {export_version:1,exported_at:new Date().toISOString(),account:{id:u.id,email:u.email||null,created_at:u.created_at||null},profile:profile?.[0]||null,movements:movements||[],license:licenses?.[0]||null,payments:payments||[]};
@@ -73,7 +73,7 @@ export async function exportMyData(){
 
 export async function deleteMyAccount(confirmation){const s=getSession();if(!s?.access_token)throw new Error('AUTH_REQUIRED');const r=await fetch(`${URL}/functions/v1/delete-my-account`,{method:'POST',headers:{'apikey':KEY,'Authorization':`Bearer ${s.access_token}`,'Content-Type':'application/json'},body:JSON.stringify({confirmation:String(confirmation||'')})});const body=await r.json().catch(()=>({}));if(!r.ok)throw new Error(body.error||'No se pudo eliminar la cuenta.');setSession(null);return body}
 
-export async function myLicense(){const s=getSession();if(!s?.access_token)throw new Error('AUTH_REQUIRED');const rows=await jsonFetch('/rest/v1/licenses?select=status,product_code,access_type,activated_at,revoked_at&limit=1',{headers:headers(s.access_token)});return rows?.[0]||null}
+export async function myLicense(){const user=await currentUser(),s=getSession();if(!s?.access_token||!user)throw new Error('AUTH_REQUIRED');const rows=await jsonFetch('/rest/v1/licenses?user_id=eq.'+user.id+'&select=status,product_code,access_type,activated_at,expires_at,annual_price_minor,annual_currency,revoked_at&limit=1',{headers:headers(s.access_token)});return rows?.[0]||null}
 export async function createPayPalOrder(){const s=getSession();if(!s?.access_token)throw new Error('AUTH_REQUIRED');return jsonFetch('/functions/v1/paypal-create-order',{method:'POST',headers:headers(s.access_token),body:'{}'})}
 export async function capturePayPalOrder(orderId){const s=getSession();if(!s?.access_token)throw new Error('AUTH_REQUIRED');return jsonFetch('/functions/v1/paypal-capture-order',{method:'POST',headers:headers(s.access_token),body:JSON.stringify({order_id:String(orderId||'')})})}
 export async function isAdmin(){const s=getSession();if(!s?.access_token)return false;const rows=await jsonFetch('/rest/v1/admin_roles?select=role&limit=1',{headers:headers(s.access_token)});return rows?.[0]?.role==='admin'}
@@ -91,3 +91,8 @@ export async function claimPaidAccess(claimToken){const ses=getSession();if(!ses
 
 
 export async function paypalPublicConfig(){return jsonFetch('/functions/v1/paypal-public-config',{method:'GET',headers:headers(null)})}
+
+
+export async function membershipRequest(body){const s=await activeSession();return jsonFetch("/functions/v1/payphone-membership",{method:"POST",headers:headers(s.access_token),body:JSON.stringify(body)})}
+
+export async function membershipGuestRequest(body){return jsonFetch('/functions/v1/payphone-membership',{method:'POST',headers:headers(null),body:JSON.stringify({...body,guest:true})})}
