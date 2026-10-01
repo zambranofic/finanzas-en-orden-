@@ -103,3 +103,14 @@ Se revisó la interfaz publicada de demostración con datos ficticios, en un nav
 | Cobro | Sigue aplazado por instrucción del usuario; no se realizaron pagos ni renovaciones. |
 
 Validación técnica: sintaxis de ambas aplicaciones y pruebas de navegación, cableado de interfaz y calidad visual automatizada superadas. Las capturas corresponden a la aplicación real, no a maquetas nuevas.
+
+
+## Patrón visual aprobado — ajuste publicado 1 octubre 2026
+
+Referencia: muestra corregida Móvil y PC enviada por el usuario (tarjetas blancas, botones azul/oscuro, iconos de línea e ilustraciones de fondos). Se conservaron el logo y favicon aprobados.
+
+- Inicio personal: franja de disponible/ingresos/gastos; acciones de gasto/ahorro; supervivencia junto a gastos; emergencia y capital futuro visibles; acceso a guía y cuatro accesos al plan financiero.
+- Iconos: caja de supervivencia azul, caja de emergencia verde y alcancía de capital futuro en círculos suaves; vivienda/tarjeta/taza para fijo/variable/hormiga. Sin emoji dependientes del dispositivo.
+- Estilos compartidos: sombras ligeras, bordes finos, botones con profundidad sutil y Geom. Aplicados también a los componentes existentes de Negocio.
+- Cálculos y registros conservados. No se añadieron saldos ni curvas ficticias para imitar los números de la referencia. La curva representa el historial del fondo cuando existen aportes asignados.
+- Verificado en publicación a 1348 px, en claro y oscuro; registro rápido abre el formulario. La adaptación CSS móvil está incluida; su comprobación visual sigue pendiente por la limitación del navegador indicada anteriormente.
