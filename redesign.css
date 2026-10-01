@@ -198,3 +198,6 @@ a.primary{text-decoration:none}
 /* Marca sobre superficies oscuras: usa la transparencia del wordmark aprobado. */
 .authVisualBrand .mark:before,.onboardingAside .brand .mark:before,[data-theme=dark] .brand .mark:before{filter:brightness(0) invert(1);background-color:transparent;border-radius:0}
 @media(max-width:1050px) and (min-width:761px){[data-theme=dark] .brand .mark:before{filter:grayscale(1) invert(1);mix-blend-mode:screen}}
+
+/* Inicio PC: el período del resumen siempre visible. */
+.homeMonth{display:block;margin-top:3px;font-size:13px;color:var(--muted);text-transform:capitalize}
