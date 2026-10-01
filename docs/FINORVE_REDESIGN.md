@@ -6,7 +6,9 @@ Este documento conserva las decisiones del usuario del 1 de octubre de 2026. Una
 
 - Implementado: capa visual compartida blanca, azul #0593ED, bordes suaves, Geom, botones legibles, navegación móvil flotante, logotipo y favicon aprobados, indicador de carga discreto con movimiento reducido.
 - Pendiente: revisión visual completa de todas las rutas, móvil y administración.
-- Pendiente: recorridos nuevos y modelos de datos que se detallan abajo. Las rutas actuales siguen disponibles durante la migración.
+- Implementado: Inicio Personal, gasto rápido con fijo/variable/hormiga, Base financiera y fondos independientes, supervivencia configurable (3–60 meses), aportes/retiradas, metas personalizadas y gráfica verde. Metadatos compatibles con Supabase; los registros anteriores permanecen sin asignar hasta revisión.
+- Verificado: npm test; prueba Supabase/RLS y JSON revertida; navegador de demostración con guardado/recarga de gasto, configuración 800×3=2400, aporte 1600 y retirada válida/rechazada.
+- Pendiente: recorridos de Negocio, calendarios, tutorial anclado, guía contextual completa y perfil ampliado. Revisión móvil real y recorrido autenticado en producción pendientes.
 
 ## Reglas comunes
 
@@ -14,7 +16,7 @@ Conservar acceso, recuperación de contraseña, datos, aislamiento por usuario, 
 
 Diseñar para personas mayores o sin conocimientos técnicos: texto visible junto al icono, controles grandes, lenguaje corriente, ejemplos junto al campo, categorías sugeridas más «Otro», teclado y contraste. Una acción recomendada cada vez. Conservar el formulario si falla el guardado; permitir editar sin duplicar. Mostrar información faltante en vez de inventar cifras. Las simulaciones y proyecciones deben indicar supuestos.
 
-## Personal — pendiente de implementar/verificar
+## Personal — implementación parcial; mantener pendientes los puntos no verificados
 
 - Inicio: ingresos, gastos y disponible; acción rápida «Apuntar gasto» y «Añadir ahorro».
 - Gastos fijos, variables y hormiga: importe, concepto, categoría, fecha de hoy editable, categorías recientes. Hormiga se muestra por separado y no se suma dos veces dentro de variables.
