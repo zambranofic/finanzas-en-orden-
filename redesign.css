@@ -131,3 +131,6 @@ a.primary{text-decoration:none}
 .homePlanGrid .moduleCard>span{width:30px;height:30px}
 }
 @media(max-width:359px){.homeFundGrid,.homePlanGrid{grid-template-columns:1fr}}
+
+.homePlanGrid .moduleCard{grid-template-columns:36px minmax(0,1fr) 16px}.homePlanGrid .moduleCard i{width:16px;height:auto;background:transparent;border-radius:0;font-size:18px;color:var(--muted)}
+@media(max-width:760px){.homePlanGrid .moduleCard{grid-template-columns:30px minmax(0,1fr) 16px}}
