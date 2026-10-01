@@ -132,3 +132,10 @@ El recorrido antiguo centrado de cuatro pasos se sustituyó por avisos junto a l
 Verificación: suite completa de pruebas superada; recorrido Personal/Negocio, retroceso, fin y Escape comprobados en navegador. Refinamiento adicional para devolver el foco a Siguiente después del cambio de sección.
 
 El tutorial contextual ya no es un pendiente de implementación. Siguen pendientes los campos de teléfono/fecha de nacimiento del perfil, la comprobación visual móvil/administrativa y los demás módulos funcionales indicados en el alcance anterior. El cobro real sigue aplazado.
+
+
+### Límite de publicación detectado en Vercel
+
+Tutorial principal publicado en producción desde `b7601bbfcf970a9084b6f02d90bacfb6a71c0c06` (despliegue READY `dpl_F1gja7j7WnNSFnoYP9e2ruX3LCk3`). Recorridos completos Personal/Negocio, Anterior, Terminar y Escape verificados en esa versión.
+
+Vercel rechazó el siguiente despliegue con `api-deployments-free-per-day`: más de 100 despliegues en 24 horas, intentar de nuevo en 24 horas. El refinamiento que devuelve explícitamente el foco a Siguiente después de cada paso está preparado y probado en la rama, pero NO está publicado. La documentación más reciente también espera publicación. La versión publicada mantiene el tutorial contextual y la navegación Tab contenida dentro del aviso comprobada en navegador. No se cambió de plan ni se alteraron protecciones para evitar el límite.
