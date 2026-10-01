@@ -1,0 +1,24 @@
+import {movementMetadata} from './personal-foundation.js';
+import assert from 'node:assert/strict';
+import {upsertDaily,readDaily,businessSummary,DAILY_FIELDS} from './business-daily.js';
+const input={...Object.fromEntries(DAILY_FIELDS.map(k=>[k,0])),collected:100000,olderCollections:20000,unpaidSales:30000,purchases:45000,expenses:10000,soldCost:null,principal:5000,interest:1000,loanReceived:30000,ownerContribution:10000,ownerWithdrawal:4000};
+const config={amountMinor:0,currency:'USD',date:'2026-10-01',cashRole:'openingConfig',startDate:'2026-10-01',openingCashMinor:40000,fixedMonthlyMinor:120000,contributionMarginBp:4000};
+const base={collection:[config]},one=upsertDaily(base,'2026-10-01','USD',input);
+let s=businessSummary(one,'2026-10','USD','2026-10-01');
+assert.equal(s.sales,110000);assert.equal(s.collections,100000);assert.equal(s.cash,115000);assert.equal(s.result,null);assert.equal(s.target,300000);assert.equal(s.remaining,190000);
+assert.equal(base.sale,undefined,'input not mutated');
+let edited=upsertDaily(one,'2026-10-01','USD',{...input,soldCost:35000});
+s=businessSummary(edited,'2026-10','USD','2026-10-01');assert.equal(s.result,64000);assert.equal(edited.sale.length,1);assert.equal(s.registeredDays,1);assert.equal(edited.collection.filter(x=>x.cashRole==='openingConfig').length,1);
+assert.equal(readDaily(edited,'2026-10-01','USD').olderCollections,20000);
+assert.throws(()=>upsertDaily({sale:[{amountMinor:1,date:'2026-10-01',currency:'USD'}]},'2026-10-01','USD',input),/movimientos anteriores/);
+assert.throws(()=>upsertDaily(base,'2026-10-01','USD',{...input,olderCollections:100001}),/superar/);
+assert.throws(()=>upsertDaily(base,'2026-02-30','USD',input),/fecha/);
+const zero=upsertDaily(base,'2026-10-02','USD',{...Object.fromEntries(DAILY_FIELDS.map(k=>[k,0])),soldCost:0});assert.equal(readDaily(zero,'2026-10-02','USD').registered,true);assert.equal(readDaily(zero,'2026-10-03','USD').registered,false);assert.equal(businessSummary(zero,'2026-10','USD','2026-10-02').result,0);
+assert.equal(readDaily(zero,'2026-10-02','EUR').registered,false);
+assert.equal(businessSummary(one,'2026-10','USD','2026-09-30').sales,0);
+console.log('business-daily: credit sales, cash funding, loan principal, unknown COGS, edit idempotency, legacy protection and confirmed-zero days PASS');
+
+const reloaded=Object.fromEntries(Object.entries(edited).map(([type,rows])=>[type,rows.map(x=>({name:x.name,amountMinor:x.amountMinor,date:x.date,currency:x.currency,...JSON.parse(JSON.stringify(movementMetadata(x,type)))}))]));
+assert.deepEqual(readDaily(reloaded,'2026-10-01','USD'),readDaily(edited,'2026-10-01','USD'));
+assert.equal(businessSummary(reloaded,'2026-10','USD','2026-10-01').cash,115000);
+assert.equal(businessSummary(reloaded,'2026-10','USD','2026-10-01').target,300000);
