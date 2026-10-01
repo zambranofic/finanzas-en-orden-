@@ -9,7 +9,7 @@ assert(!app.includes("function bindNav(){$('[data-section]').forEach"),'querySel
 const modeBinding=app.split('\n').find(line=>line.includes(".modeBtn')")&&line.includes('b.onclick='));
 assert(modeBinding,'mode buttons must be wired during startup');
 const buttons=[{dataset:{mode:'personal'}},{dataset:{mode:'business'}}];
-const elements={'#themeBtn':{},'#modalWrap':{}};
+const elements={'#themeBtn':{},'#modalWrap':{},'#mobileMode':{}};
 let navigation;
 vm.runInNewContext(modeBinding,{
   $:selector=>selector==='.modeBtn'?buttons[0]:elements[selector],
@@ -23,6 +23,15 @@ assert.equal(typeof buttons[1].onclick,'function');
 buttons[1].onclick();
 assert.equal(navigation.mode,'business');
 assert.equal(navigation.section,'home');
+assert.equal(typeof elements['#mobileMode'].onchange,'function','mobile selector must be wired while desktop sidebar is hidden');
+elements['#mobileMode'].onchange({target:{value:'business'}});
+assert.equal(navigation.mode,'business');assert.equal(navigation.section,'home');
+elements['#mobileMode'].onchange({target:{value:'personal'}});
+assert.equal(navigation.mode,'personal');assert.equal(navigation.section,'home');
+elements['#mobileMode'].onchange({target:{value:'invalid'}});
+assert.equal(navigation.mode,'personal','unknown mobile mode must not navigate');
+for(const file of ['index.html','demo-anual.html']){const html=fs.readFileSync(new URL('./'+file,import.meta.url),'utf8');assert(html.includes('id="mobileMode"'),'production and isolated demo must both expose the mobile area selector');}
+
 const extrasBinding=app.split('\n').find(line=>line.startsWith('function bindExtras(){'));
 let editedIndex, cashType;
 const editors=[{dataset:{i:'0'}},{dataset:{i:'2'}}],cashButtons=[{dataset:{cash:'collection'}},{dataset:{cash:'cashPayment'}}];
