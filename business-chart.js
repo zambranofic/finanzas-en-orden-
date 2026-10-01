@@ -1,0 +1,4 @@
+/** Historical periods and cumulative sales; missing days are never invented. */
+export function businessPeriods(bucket,currency,asOf){return [...new Set([asOf.slice(0,7),...Object.values(bucket||{}).flat().filter(x=>(!x.currency||x.currency===currency)&&x.date&&x.date<=asOf&&x.calendarRole!=='reminder'&&x.cashRole!=='openingConfig').map(x=>x.date.slice(0,7))])].sort().reverse()}
+export function businessPeriodEnd(month,asOf){const [y,m]=month.split('-').map(Number),end=new Date(Date.UTC(y,m,0)).toISOString().slice(0,10);return end<asOf?end:asOf}
+export function businessSalesSeries(bucket,month,currency,asOf){const days=new Map();for(const x of bucket.sale||[])if(x.date?.startsWith(month)&&x.date<=asOf&&(!x.currency||x.currency===currency)&&Number.isSafeInteger(x.amountMinor)&&x.amountMinor>=0)days.set(x.date,(days.get(x.date)||0)+x.amountMinor);let total=0;return [...days].sort(([a],[b])=>a.localeCompare(b)).map(([date,value])=>({date,value:total+=value}))}
