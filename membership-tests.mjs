@@ -9,7 +9,12 @@ assert(membershipBanner({status:'active',expires_at:expiry},now).includes('30 d�
 assert.equal(membershipBanner({status:'active',expires_at:new Date(now+31*86400000).toISOString()},now),'');
 assert.equal(membershipState({status:'active',expires_at:new Date(now).toISOString()},now).active,false);
 assert.equal(membershipState({status:'active',expires_at:null},now).active,false);
-assert(membershipCard({status:'active',expires_at:expiry,annual_price_minor:2900},now).includes('Calendario de membresía'));
+const memberProfile=membershipCard({status:'active',expires_at:expiry,annual_price_minor:2900},now);
+assert(!memberProfile.includes('Calendario de membresía'));
+assert(!memberProfile.includes('Recordatorio ·'));
+assert(memberProfile.includes('Vencimiento:'));
+assert(memberProfile.includes('Te quedan'));
+assert(memberProfile.includes('Renovar membresía'));
 const code=fs.readFileSync('supabase/functions/payphone-membership/index.ts','utf8');
 const uid='11111111-1111-4111-8111-111111111111',cid='22222222-2222-4222-8222-222222222222',store='36da299e-cd67-4dd7-a236-d460172d7c6c',secret=cid+'.'+cid,key='sb_publishable_Ltn-8m11gMlS2AY14k8nfA_hcJ3Izjl';
 const hash=Buffer.from(await webcrypto.subtle.digest('SHA-256',new TextEncoder().encode(secret))).toString('hex');
