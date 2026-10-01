@@ -353,3 +353,13 @@ header .eyebrow{color:var(--muted)}
 [data-theme=dark] .businessEquilibriumIntegrated{background:var(--surface);box-shadow:0 3px 14px rgba(0,0,0,.08)}
 @media(max-width:760px){.businessEquilibriumIntegrated{padding:18px;min-height:246px}.businessEquilibriumIntegrated .fundHeroCopy .fundAmount{font-size:27px}}
 @media(max-width:359px){.businessEquilibriumIntegrated{grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr)}.businessEquilibriumIntegrated .fundHeroCopy .fundAmount{font-size:23px}.equilibriumBadge{right:6px;font-size:10px;padding:3px 6px}}
+
+/* Inicio de Negocio: título, período y accesos en una única cabecera. */
+header.businessHomeHeader{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:16px;align-items:center;padding-bottom:14px;margin-bottom:18px}
+.businessHomeHeader .headerTitle{min-width:0}
+.businessHomeHeader #pageEyebrow[hidden]{display:none}
+.businessHomeHeader #pageTitle{margin:0;font-size:26px;line-height:1.25}
+.businessHeaderPeriod{min-width:0}
+.businessHeaderPeriod select{width:210px;max-width:100%;min-height:44px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font:inherit;font-size:14px;box-shadow:0 2px 5px rgba(25,45,75,.025)}
+.businessHomeHeader .headActions{gap:8px;margin:0;flex-shrink:0}
+@media(max-width:760px){header.businessHomeHeader{grid-template-columns:minmax(0,1fr) auto;gap:12px;padding-bottom:12px;margin-bottom:16px}.businessHomeHeader .mobileModePicker{grid-column:1/-1;grid-row:1}.businessHomeHeader .headerTitle{grid-column:1;grid-row:2}.businessHomeHeader .headActions{grid-column:2;grid-row:2}.businessHomeHeader #pageTitle{font-size:23px}.businessHeaderPeriod{grid-column:1/-1;grid-row:3}.businessHeaderPeriod select{width:100%}}
