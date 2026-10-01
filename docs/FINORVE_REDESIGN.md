@@ -76,3 +76,11 @@ Mantener pendientes anteriores: entrega automática de un aviso real de vencimie
 Orden: diseño común → gastos rápidos y Base financiera → registro diario y Resumen del negocio → calendarios → perfil/tutorial/guía → revisión integral. No marcar terminado por una maqueta o una prueba parcial.
 
 Actualización visual: retirada la franja verde de la demostración; solo se conserva una etiqueta discreta de datos ficticios.
+
+
+## Selector de área en móvil — 1 octubre 2026
+- Corregida la desaparición de Personal / Negocio cuando la barra lateral se oculta: ambas entradas HTML incorporan un select nativo con etiqueta accesible en la esquina superior izquierda, visible hasta 760 px.
+- La selección usa la misma navegación de cuenta y modo que los botones de escritorio; se sincroniza al renderizar. Se conserva la separación entre datos personales y de negocio.
+- Cabecera distribuida en dos filas a 760 px o menos: selector y acciones arriba, título debajo; botones táctiles de 44 px y variante estrecha para 320 px. Se limita el tamaño intrínseco de las columnas del calendario.
+- Comprobaciones: sintaxis de ambos scripts y suite npm test completa aprobadas, incluyendo cambio Personal → Negocio → Personal y rechazo de modo desconocido. Publicación de producción confirmada por Vercel.
+- Pendiente: comprobación visual y de desbordamiento en viewport móvil real. El navegador de revisión disponible permanece en 1348 px incluso al solicitar un popup de 390 px; no se presenta su captura de escritorio como una prueba móvil.
