@@ -156,3 +156,7 @@ a.primary{text-decoration:none}
 .recordSummary strong,.cashSummary strong,.resultGrid strong,.profileMeta b,.amount,.metricRow b,.personalSummary strong,.fundCard strong{overflow-wrap:anywhere;min-width:0;font-variant-numeric:tabular-nums}
 .profileFormCard select{width:100%;min-width:0;max-width:100%}
 @media(max-width:600px){.recordSummary strong,.cashSummary strong,.personalSummary strong{font-size:clamp(1rem,5vw,1.7rem)}.recordRow .amount{max-width:52%}}
+
+/* Buscar país sin alterar el patrón visual de Perfil. */
+.profileFormCard #pfCountrySearch{margin-bottom:8px}
+.profileFormCard #pfCountry{font-size:0.9rem}

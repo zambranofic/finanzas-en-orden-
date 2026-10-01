@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import {COUNTRIES,CURRENCIES,CURRENCY_MINOR_UNITS,countryInfo,currencyLabel,formatMinor,inputMinor,parseMinor,currencyBucket,countrySuggestion} from './currency-utils.js';
+import {COUNTRIES,CURRENCIES,CURRENCY_MINOR_UNITS,countryInfo,currencyLabel,currencyOptionLabel,countryOptions,searchCountries,countryLabel,formatMinor,inputMinor,parseMinor,currencyBucket,countrySuggestion} from './currency-utils.js';
 import {personalMonth,businessMonth,convertMinor} from './financial-engine.js';
 import {expenseBreakdown,fundBalance} from './personal-foundation.js';
 import {DAILY_FIELDS,upsertDaily,businessSummary} from './business-daily.js';
 import {calendarEvents} from './calendar-events.js';
-const required='EC AR BO CL CO CR CU DO SV GT GQ HN MX NI PA PY PE PR UY VE ES CA BR US AD AL DE AM AT AZ BE BY BA BG CY HR DK SK SI EE FI FR GE GR HU IE IS IT KZ XK LV LI LT LU MK MT MD MC ME NO NL PL PT GB CZ RO RU SM RS SE CH TR UA VA'.split(' ');
+const required='EC AR BO CL CO CR CU DO SV GT HN MX NI PA PY PE PR UY VE ES CA BR US AD DE AT BE BG CY HR SK SI EE FI FR GR IE IT LV LT LU MT MC ME NL PT SM XK VA AU HT GY SR'.split(' ');
 for(const code of required)assert(COUNTRIES.some(x=>x.code===code),code);
 assert.equal(countryInfo('BG').currency,'EUR');assert.equal(countryInfo('Brasil').currency,'BRL');assert.equal(COUNTRIES.length,new Set(COUNTRIES.map(x=>x.code)).size);
 let cases=0;
@@ -32,7 +32,7 @@ for(const path of ['app-v4.js','annual-demo-app.js']){
   const data=new Function('records','profileData','currencyBucket','asMinor','isWithdrawal',get(fn)+`;return ${fn}();`)(records,profileData,currencyBucket,x=>x.amountMinor,x=>x.direction==='withdrawal');
   assert(Object.values(data).flat().every(x=>mode==='personal'?x.amountMinor!==50000000&&x.amountMinor!==10000000:true));
  }
- const profileHtml=new Function('profileData','esc','COUNTRIES','CURRENCIES','currencyLabel','membershipCard','membershipLicense',get('profile')+';return profile();')(profileData,x=>String(x),COUNTRIES,CURRENCIES,currencyLabel,()=>'',null);
+ const profileHtml=new Function('profileData','esc','COUNTRIES','CURRENCIES','currencyLabel','membershipCard','membershipLicense','countryOptions','currencyOptionLabel',get('profile')+';return profile();')(profileData,x=>String(x),COUNTRIES,CURRENCIES,currencyLabel,()=>'',null,countryOptions,currencyOptionLabel);
  for(const c of COUNTRIES)assert(profileHtml.includes(`value="${c.name}"`));
  const current={name:'Ingreso COP',date:'2026-10-01',amountMinor:50000000,currency:'COP'},list=[current];let callback,saved=false;
  const inputs={'#rName':{value:'Ingreso COP actualizado'},'#rAmount':{value:'500.000,01'},'#rDate':{value:'2026-10-01'},'#modalWrap':{classList:{add(){}}}};
@@ -41,3 +41,8 @@ for(const path of ['app-v4.js','annual-demo-app.js']){
 }
 for(const c of CURRENCIES){const n=Number.MAX_SAFE_INTEGER;assert.equal(parseMinor(inputMinor(n,c,'España'),c,'España'),n);assert(formatMinor(-1,c,'España').includes('-'));}
 console.log('currency integration: both apps keep original currency when editing, render all country options, isolate dashboard data, preserve maximum safe integer and negative-display precision PASS');
+
+for(const code of ['GB','CH','NO','JP','NZ','GQ','PL','CZ','SE'])assert(!COUNTRIES.some(x=>x.code===code));
+assert.equal(searchCountries('Estados Unidos')[0].code,'US');assert.equal(searchCountries('EEUU')[0].code,'US');assert.equal(searchCountries('canada')[0].code,'CA');assert(searchCountries('euro').every(x=>x.currency==='EUR'));assert(countryLabel(countryInfo('US')).includes('🇺🇸 Estados Unidos · USD — DÓLAR'));
+assert(countryOptions('Colombia','Estados Unidos').includes('value="Colombia" selected'));assert(countryOptions('Colombia','Estados Unidos').includes('Estados Unidos'));assert(countryOptions('Colombia','zzzz').includes('No hay países'));assert(countryOptions('Suiza').includes('Selecciona tu país'));
+console.log('country picker: euro-only Europe, Latin America and requested destinations; flags, concise labels, accent-insensitive search, EEUU alias and stable selection PASS');
