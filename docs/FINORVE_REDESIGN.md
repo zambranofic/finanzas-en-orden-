@@ -9,8 +9,8 @@ Este documento conserva las decisiones del usuario del 1 de octubre de 2026. Una
 - Implementado: Inicio Personal, gasto rápido con fijo/variable/hormiga, Base financiera y fondos independientes, supervivencia configurable (3–60 meses), aportes/retiradas, metas personalizadas y gráfica verde. Metadatos compatibles con Supabase; los registros anteriores permanecen sin asignar hasta revisión.
 - Verificado: npm test; prueba Supabase/RLS y JSON revertida; navegador de demostración con guardado/recarga de gasto, configuración 800×3=2400, aporte 1600 y retirada válida/rechazada.
 - Implementado en Negocio: navegación Resumen / Anotar el día / Organizar; caja inicial; ventas/cobros a crédito; compras pagadas separadas del costo vendido; préstamos, aportes, retiros, capital e intereses; resumen editable sin duplicados; días explícitos sin movimiento; equilibrio estimado y gráfica verde. Iconos de navegación de línea fina unificados.
-- Verificado en esta etapa: pruebas financieras y de metadatos; SQL autenticado con licencia, registros de importe cero y configuración, revertido sin dejar fixtures.
-- Pendiente: revisión del recorrido diario en navegador, móvil real y cuenta de producción; calendarios/próximos pagos, saldos de deuda de negocio, reserva/metas, calculador opcional de productos, tutorial anclado, guía contextual completa y perfil ampliado.
+- Verificado en esta etapa: pruebas financieras y de metadatos; SQL autenticado con licencia, registros de importe cero y configuración, revertido sin dejar fixtures. Recorrido de demostración en navegador: caja inicial 400, gastos fijos 1200, margen 40% → equilibrio 3000; cobros 1000 con 200 anteriores y 300 ventas a crédito → ventas 1100. Edición, costo vendido 350, pagos 450+100, deuda 50+10, préstamo 300, aporte 100, retiro 40 → caja 1150, resultado parcial 640, un solo día tras recarga. Revisión visual PC en claro y oscuro.
+- Pendiente: móvil real y cuenta de producción; calendarios/próximos pagos, saldos de deuda de negocio, reserva/metas, calculador opcional de productos, tutorial anclado, guía contextual completa y perfil ampliado.
 
 ## Reglas comunes
 
