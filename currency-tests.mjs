@@ -32,7 +32,7 @@ for(const path of ['app-v4.js','annual-demo-app.js']){
   const data=new Function('records','profileData','currencyBucket','asMinor','isWithdrawal',get(fn)+`;return ${fn}();`)(records,profileData,currencyBucket,x=>x.amountMinor,x=>x.direction==='withdrawal');
   assert(Object.values(data).flat().every(x=>mode==='personal'?x.amountMinor!==50000000&&x.amountMinor!==10000000:true));
  }
- const profileHtml=new Function('profileData','esc','COUNTRIES','CURRENCIES','currencyLabel','membershipCard','membershipLicense','countryOptions','currencyOptionLabel',get('profile')+';return profile();')(profileData,x=>String(x),COUNTRIES,CURRENCIES,currencyLabel,()=>'',null,countryOptions,currencyOptionLabel);
+ const profileHtml=new Function('profileData','esc','COUNTRIES','CURRENCIES','currencyLabel','membershipCard','membershipLicense','navIcon','countryOptions','currencyOptionLabel',get('profile')+';return profile();')(profileData,x=>String(x),COUNTRIES,CURRENCIES,currencyLabel,()=>'',null,()=>'',countryOptions,currencyOptionLabel);
  for(const c of COUNTRIES)assert(profileHtml.includes(`value="${c.name}"`));
  const current={name:'Ingreso COP',date:'2026-10-01',amountMinor:50000000,currency:'COP'},list=[current];let callback,saved=false;
  const inputs={'#rName':{value:'Ingreso COP actualizado'},'#rAmount':{value:'500.000,01'},'#rDate':{value:'2026-10-01'},'#modalWrap':{classList:{add(){}}}};
@@ -42,7 +42,10 @@ for(const path of ['app-v4.js','annual-demo-app.js']){
 for(const c of CURRENCIES){const n=Number.MAX_SAFE_INTEGER;assert.equal(parseMinor(inputMinor(n,c,'España'),c,'España'),n);assert(formatMinor(-1,c,'España').includes('-'));}
 console.log('currency integration: both apps keep original currency when editing, render all country options, isolate dashboard data, preserve maximum safe integer and negative-display precision PASS');
 
-for(const code of ['GB','CH','NO','JP','NZ','GQ','PL','CZ','SE'])assert(!COUNTRIES.some(x=>x.code===code));
-assert.equal(searchCountries('Estados Unidos')[0].code,'US');assert.equal(searchCountries('EEUU')[0].code,'US');assert.equal(searchCountries('canada')[0].code,'CA');assert(searchCountries('euro').every(x=>x.currency==='EUR'));assert(countryLabel(countryInfo('US')).includes('🇺🇸 Estados Unidos · USD — DÓLAR'));
+for(const code of ['CH','NO','JP','NZ','GQ','PL','CZ','SE'])assert(!COUNTRIES.some(x=>x.code===code));
+assert.equal(searchCountries('Estados Unidos')[0].code,'US');assert.equal(searchCountries('EEUU')[0].code,'US');assert.equal(searchCountries('canada')[0].code,'CA');assert(searchCountries('euro').every(x=>x.currency==='EUR'));assert.equal(countryLabel(countryInfo('US')),'Estados Unidos · USD');assert.equal(currencyLabel('USD'),'USD · dólar');assert.equal(searchCountries('Inglaterra')[0].code,'GB');
 assert(countryOptions('Colombia','Estados Unidos').includes('value="Colombia" selected'));assert(countryOptions('Colombia','Estados Unidos').includes('Estados Unidos'));assert(countryOptions('Colombia','zzzz').includes('No hay países'));assert(countryOptions('Suiza').includes('Selecciona tu país'));
 console.log('country picker: euro-only Europe, Latin America and requested destinations; flags, concise labels, accent-insensitive search, EEUU alias and stable selection PASS');
+
+import {pickerChoice} from './profile-pickers.js';
+for(const x of COUNTRIES){assert(pickerChoice(x.name,true).includes('assets/flags/'+x.code.toLowerCase()+'.png'));assert(fs.readFileSync('assets/flags/'+x.code.toLowerCase()+'.png').subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10])));}assert(pickerChoice('USD',false).includes('assets/flags/us.png'));assert(pickerChoice('GBP',false).includes('assets/flags/gb.png'));assert(pickerChoice('USD',false).includes('USD · dólar'));console.log('profile pickers: actual local image flags, short labels, England and photo markup PASS');

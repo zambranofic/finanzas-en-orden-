@@ -4,16 +4,17 @@ const ALL_COUNTRIES = Object.freeze([{"code": "EC", "name": "Ecuador", "currency
 const LATIN_CODES = new Set('AR BO BR BZ CL CO CR CU DO EC SV GT HN MX NI PA PY PE PR UY VE HT GY SR'.split(' '));
 const EXTRA_COUNTRIES = [{code:'HT',name:'Haití',currency:'HTG',locale:'fr-HT'},{code:'GY',name:'Guyana',currency:'GYD',locale:'en-GY'},{code:'SR',name:'Surinam',currency:'SRD',locale:'nl-SR'}];
 const CATALOG = Object.freeze([...ALL_COUNTRIES,...EXTRA_COUNTRIES]);
-export const COUNTRIES = Object.freeze(CATALOG.filter(x=>x.currency==='EUR'||LATIN_CODES.has(x.code)||['CA','AU','US'].includes(x.code)).sort((a,b)=>a.name.localeCompare(b.name,'es')));
+export const COUNTRIES = Object.freeze(CATALOG.filter(x=>x.currency==='EUR'||LATIN_CODES.has(x.code)||['CA','AU','US','GB'].includes(x.code)).sort((a,b)=>a.name.localeCompare(b.name,'es')));
 export const CURRENCY_MINOR_UNITS = Object.freeze(Object.fromEntries([...new Set(CATALOG.map(x=>x.currency))].map(c=>[c,['CLP','PYG','ISK','XAF','JPY'].includes(c)?0:2])));
 export const CURRENCIES = Object.freeze([...new Set(COUNTRIES.map(x=>x.currency))].sort());
 export function countryInfo(country){return CATALOG.find(x=>x.name===country||x.code===country)||CATALOG.find(x=>x.code==='EC')}
 export function minorDigits(c){if(!(c in CURRENCY_MINOR_UNITS))throw Error('Moneda no admitida');return CURRENCY_MINOR_UNITS[c]}
-const SIMPLE_NAMES = {USD:'DÓLAR',EUR:'EURO',CAD:'DÓLAR CANADIENSE',AUD:'DÓLAR AUSTRALIANO',BRL:'REAL',ARS:'PESO ARGENTINO',BOB:'BOLIVIANO',BZD:'DÓLAR BELICEÑO',CLP:'PESO CHILENO',COP:'PESO COLOMBIANO',CRC:'COLÓN',CUP:'PESO CUBANO',DOP:'PESO DOMINICANO',GTQ:'QUETZAL',HNL:'LEMPIRA',NIO:'CÓRDOBA',MXN:'PESO MEXICANO',PYG:'GUARANÍ',PEN:'SOL',UYU:'PESO URUGUAYO',VES:'BOLÍVAR',HTG:'GOURDE',GYD:'DÓLAR GUYANÉS',SRD:'DÓLAR SURINAMÉS'};
+const SIMPLE_NAMES = {USD:'DÓLAR',GBP:'LIBRA',EUR:'EURO',CAD:'DÓLAR CANADIENSE',AUD:'DÓLAR AUSTRALIANO',BRL:'REAL',ARS:'PESO ARGENTINO',BOB:'BOLIVIANO',BZD:'DÓLAR BELICEÑO',CLP:'PESO CHILENO',COP:'PESO COLOMBIANO',CRC:'COLÓN',CUP:'PESO CUBANO',DOP:'PESO DOMINICANO',GTQ:'QUETZAL',HNL:'LEMPIRA',NIO:'CÓRDOBA',MXN:'PESO MEXICANO',PYG:'GUARANÍ',PEN:'SOL',UYU:'PESO URUGUAYO',VES:'BOLÍVAR',HTG:'GOURDE',GYD:'DÓLAR GUYANÉS',SRD:'DÓLAR SURINAMÉS'};
 export function flag(code){return /^[A-Z]{2}$/.test(code)?String.fromCodePoint(...[...code].map(c=>127397+c.charCodeAt(0))):''}
-export function currencyLabel(c){return c+' — '+(SIMPLE_NAMES[c]||new Intl.DisplayNames(['es'],{type:'currency'}).of(c).toLocaleUpperCase('es'))}
-export function currencyOptionLabel(c){const representative=c==='EUR'?'EU':c==='USD'?'US':COUNTRIES.find(x=>x.currency===c)?.code;return flag(representative||'')+' '+currencyLabel(c)}
-export function countryLabel(x){return flag(x.code)+' '+x.name+' · '+currencyLabel(x.currency)}
+export function currencyLabel(c){return c+' · '+(SIMPLE_NAMES[c]||new Intl.DisplayNames(['es'],{type:'currency'}).of(c)).toLocaleLowerCase('es')}
+export function currencyFlagCode(c){return c==='EUR'?'EU':c==='USD'?'US':c==='GBP'?'GB':COUNTRIES.find(x=>x.currency===c)?.code||''}
+export function currencyOptionLabel(c){return currencyLabel(c)}
+export function countryLabel(x){return (x.code==='GB'?'Reino Unido (Inglaterra)':x.name)+' · '+x.currency}
 const normalizeSearch=x=>String(x).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
 export function searchCountries(query=''){const q=normalizeSearch(query);return COUNTRIES.filter(x=>normalizeSearch(countryLabel(x)+' '+x.code+(x.code==='US'?' USA EEUU EE.UU.':'' )).includes(q))}
 export function countryOptions(selected,query=''){

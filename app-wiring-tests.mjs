@@ -35,7 +35,7 @@ for(const file of ['index.html','demo-anual.html']){const html=fs.readFileSync(n
 const extrasBinding=app.split('\n').find(line=>line.startsWith('function bindExtras(){'));
 let editedIndex, cashType;
 const editors=[{dataset:{i:'0'}},{dataset:{i:'2'}}],cashButtons=[{dataset:{cash:'collection'}},{dataset:{cash:'cashPayment'}}];
-const controls=vm.createContext({$:()=>null,$$:()=>[],openRecordModal:i=>{editedIndex=i},openCashModal:t=>{cashType=t}});
+const controls=vm.createContext({bindProfilePickers:()=>{},$:()=>null,$$:()=>[],openRecordModal:i=>{editedIndex=i},openCashModal:t=>{cashType=t}});
 vm.runInContext(app.split('\n').find(line=>line.startsWith('function bindFoundation(){')),controls);
 vm.runInContext(app.split('\n').find(line=>line.startsWith('function bindBusinessDaily(){')),controls);
 vm.runInContext(app.split('\n').find(line=>line.startsWith('function bindCalendar(){')),controls);

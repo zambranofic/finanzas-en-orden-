@@ -170,3 +170,14 @@ Las opciones muestran bandera, país, código ISO y denominación breve en mayú
 Las banderas son caracteres Unicode en el selector nativo y su apariencia depende del sistema operativo. Se conserva el país escrito y el código ISO como identificación accesible. Revisión visual móvil continúa pendiente; no se declara validada por renderizar únicamente el HTML en pruebas.
 
 Validación: las 24 suites de npm test pasan. Pruebas nuevas verifican inclusiones/exclusiones, etiquetas, búsqueda de Estados Unidos/EEUU y Canadá sin tilde, filtro euro, selección estable y ausencia de resultados. Se mantienen 270 casos exactos de importes para los 54 países y los tests de aislamiento/edición de registros.
+
+
+## Ajuste de banderas reales, Reino Unido y foto de perfil — 1 octubre 2026
+
+La lista vigente incluye Reino Unido (identificado también como Inglaterra en la búsqueda): 55 países y 25 monedas. Europa continúa restringida a EUR, con la excepción explícitamente solicitada de Reino Unido/GBP.
+
+Se sustituyen las banderas Unicode por imágenes PNG locales pequeñas, descargadas de flagcdn.com y alojadas en el propio sitio. El selector visual muestra una bandera real en cada fila y selección. Las etiquetas monetarias son breves: USD · dólar, EUR · euro, GBP · libra, CAD · dólar canadiense. País muestra bandera, nombre y código monetario. Los selectores nativos permanecen ocultos como modelo de datos, mientras los controles visibles incluyen botón, lista con roles accesibles, selección por teclado/flechas/Enter/Escape y cierre al salir. Búsqueda y sugerencia automática de moneda conservan la lógica anterior.
+
+Foto de perfil: marco redondeado suave, bordes y sombra discretos, iniciales legibles antes de cargar foto, imagen con object-fit:cover y adaptación a oscuro/móvil. Botón Añadir mi foto/Cambiar foto y ayuda JPG/PNG/WebP hasta 2 MB según la restricción real del almacenamiento. No cambia el backend de avatares, permisos o cuentas.
+
+Verificación: pruebas del motor, aislamiento y edición de importes, países/opciones de perfil y archivos de bandera. Revisión visual de móvil y navegación de los nuevos selectores en navegador pendiente mientras CUA permanece desconectado. No se declara esa revisión completada.
