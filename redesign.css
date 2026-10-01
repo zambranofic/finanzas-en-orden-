@@ -200,4 +200,16 @@ a.primary{text-decoration:none}
 @media(max-width:1050px) and (min-width:761px){[data-theme=dark] .brand .mark:before{filter:grayscale(1) invert(1);mix-blend-mode:screen}}
 
 /* Inicio PC: el período del resumen siempre visible. */
-.homeMonth{display:block;margin-top:3px;font-size:13px;color:var(--muted);text-transform:capitalize}
+.homeMonth{display:block;margin-top:3px;font-size:13px;color:var(--muted)}
+
+.homeMonth:first-letter{text-transform:uppercase}
+.foundationSurvival progress{appearance:none;-webkit-appearance:none;border:0;border-radius:99px;overflow:hidden;background:var(--surface2)}
+.foundationSurvival progress::-webkit-progress-bar{background:var(--surface2);border-radius:99px}
+.foundationSurvival progress::-webkit-progress-value{background:#318466;border-radius:99px}
+.foundationSurvival progress::-moz-progress-bar{background:#318466;border-radius:99px}
+[data-theme=dark] .foundationSurvival progress::-webkit-progress-value{background:#7dd5ad}
+[data-theme=dark] .foundationSurvival progress::-moz-progress-bar{background:#7dd5ad}
+[data-theme=dark] .fundChart text{fill:var(--muted)}
+[data-theme=dark] .fundChart path[stroke],[data-theme=dark] .fundChart circle{stroke:#7dd5ad}
+[data-theme=dark] .fundChart circle{fill:#7dd5ad}
+[data-theme=dark] .fundChart path[fill="#e8f6ef"]{fill:rgba(125,213,173,.08)}

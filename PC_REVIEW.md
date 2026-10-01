@@ -21,10 +21,22 @@ Ajustes preparados:
 - Mes del resumen visible.
 - Cobertura con coma decimal en español.
 
-Pendiente antes de cerrar Inicio:
-- Confirmar publicación y probar formulario rápido de ingreso.
-- Recarga/persistencia y revisión completa en claro/oscuro.
-- Cancelar formularios, botón cerrar y accesos restantes; revisión visual inferior.
-- Patrimonio neto se revisará en su pantalla; no se declara validado por abrir Activos.
+Validación posterior en navegador de la versión publicada:
+- Añadir ingreso abre el modal sobre Inicio; guardar USD 10 adicionales deja ingreso USD 1.010 y disponible USD 905,50, sin cambiar de pantalla.
+- Recarga conserva ingreso, gasto, ahorro y configuración.
+- Cancelar los cuatro formularios y cerrar gasto no modifica saldos.
+- Selector Personal/Negocio, calendario y perfil de cabecera responden.
+- Accesos Base, Capital futuro, Emergencia, gastos, deudas, guía y calendario responden.
+- Revisión visual en claro y oscuro realizada en PC; revisión móvil no realizada.
+
+Ajustes finales de legibilidad:
+- Mes con capitalización sólo en la primera letra.
+- Barra de progreso con bordes redondos y verde semántico, sin estilo nativo blanco.
+- Texto y puntos de la gráfica visibles en oscuro.
+
+Pendientes vinculados a otras pantallas:
+- Patrimonio abre Activos; revisar patrimonio neto al llegar a ese apartado.
+- Todos los accesos a ahorros llevan a Base financiera; valorar foco en el fondo concreto durante la revisión de Base.
+- Inicio validado en el caso ficticio descrito; no equivale a validar todos los flujos de Personal ni todos los tamaños de PC.
 
 Los registros QA se identifican como ficticios y sólo existen en el entorno de demostración.
