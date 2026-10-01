@@ -150,3 +150,9 @@ a.primary{text-decoration:none}
 .tourActions #tourSkip{padding:10px 0;background:transparent;color:var(--muted)}
 .tourActions #tourPrev[disabled]{display:none}
 @media(max-width:760px){.tourCard{padding:20px;border-radius:18px}.tourActions{display:grid;grid-template-columns:1fr}.tourActions>div{grid-row:1;display:flex;gap:10px}.tourActions>div button{flex:1}.tourActions #tourSkip{justify-self:center}.tourStep h2{font-size:21px!important}}
+
+
+/* Multidivisa: conserva códigos ISO y cantidades grandes en tarjetas y móvil. */
+.recordSummary strong,.cashSummary strong,.resultGrid strong,.profileMeta b,.amount,.metricRow b,.personalSummary strong,.fundCard strong{overflow-wrap:anywhere;min-width:0;font-variant-numeric:tabular-nums}
+.profileFormCard select{width:100%;min-width:0;max-width:100%}
+@media(max-width:600px){.recordSummary strong,.cashSummary strong,.personalSummary strong{font-size:clamp(1rem,5vw,1.7rem)}.recordRow .amount{max-width:52%}}

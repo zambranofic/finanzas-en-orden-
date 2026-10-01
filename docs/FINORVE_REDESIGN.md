@@ -139,3 +139,23 @@ El tutorial contextual ya no es un pendiente de implementación. Siguen pendient
 Tutorial principal publicado en producción desde `b7601bbfcf970a9084b6f02d90bacfb6a71c0c06` (despliegue READY `dpl_F1gja7j7WnNSFnoYP9e2ruX3LCk3`). Recorridos completos Personal/Negocio, Anterior, Terminar y Escape verificados en esa versión.
 
 Vercel rechazó el siguiente despliegue con `api-deployments-free-per-day`: más de 100 despliegues en 24 horas, intentar de nuevo en 24 horas. El refinamiento que devuelve explícitamente el foco a Siguiente después de cada paso está preparado y probado en la rama, pero NO está publicado. La documentación más reciente también espera publicación. La versión publicada mantiene el tutorial contextual y la navegación Tab contenida dentro del aviso comprobada en navegador. No se cambió de plan ni se alteraron protecciones para evitar el límite.
+
+
+
+## Multidivisa por país — 1 octubre 2026
+
+Implementación preparada: catálogo de 78 países y 47 monedas. Incluye todos los países hispanohablantes, Puerto Rico, los países europeos (también transcontinentales y Kosovo), Canadá, Brasil, Estados Unidos y otras ubicaciones. Bulgaria usa EUR desde 2026. Referencia de países y presentación: Unicode CLDR 49; precisión guardada: ISO 4217, diferenciada de los decimales habituales de visualización.
+
+- Selección de país sugiere moneda únicamente en apartados sin registros. Personal y Negocio pueden tener monedas distintas. La interfaz sigue en español.
+- Selector ordenado en español, etiquetas completas de moneda con código ISO; formato regional por país.
+- Importes enteros, precisión 0 o 2 según moneda. COP muestra enteros sin decimales y conserva los centavos cuando existen. Los formatos no pierden precisión incluso en el máximo entero seguro.
+- Parseo de importes según separadores regionales; grupos mal formados, exceso de decimales e importes fuera de rango se rechazan. No hay cotizaciones ni conversiones automáticas.
+- Dashboard, diagnóstico, escenarios y totales de caja excluyen monedas distintas. El historial muestra cada importe en su moneda original y conserva los índices originales para editar/eliminar correctamente. Edición conserva moneda y precisión originales.
+- Cambiar una moneda con datos pide confirmación explícita y explica que el historial no se convierte.
+- Sincronización guarda base_currency igual a la moneda original cuando fx_rate es 1; no etiqueta registros antiguos con la moneda nueva. Verificación de restricciones en Supabase mediante consulta de solo lectura: perfiles y movimientos aceptan códigos ISO de tres letras; sin migración ni cambios en permisos.
+- Demo anual incorpora los mismos ajustes, conserva almacenamiento aislado y sus registros de demostración. La membresía y el cobro en USD no cambian.
+- CSS para cantidades largas y selectores móviles; no cambia colores, marca o tipografía.
+
+Validación: currency-tests.mjs prueba los 78 países, 47 monedas, 390 casos de entrada/formato, importes máximos, rechazo de entradas inválidas según locale, aislamiento de saldos, fondos, calendario, resumen diario, perfil sin sobrescribir monedas con datos y edición real de handlers en ambas aplicaciones. Batería general npm test: las 24 suites pasan. Tras la última protección de fondos en otra moneda, se repitieron syntax checks y currency-tests.mjs con resultado correcto.
+
+Estado de entrega: código preparado y probado, publicación pendiente por límite gratuito de Vercel de 100 despliegues/24h observado en la sesión. Navegador CUA desconectado al intentar comprobar esta versión; revisión visual responsive y comprobación de guardado autenticado en producción pendientes. No se declara publicado ni visualmente validado. Campos adicionales de perfil (teléfono, identificación fiscal, nacimiento) siguen pendientes; este ajuste usa el campo de país existente, sin modificar datos personales ni esquema.

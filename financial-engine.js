@@ -1,6 +1,7 @@
 /* Finanzas en Orden V4 — motor financiero puro.
    Dinero: enteros en minor units. FX: entero escalado (1e8). Sin floats monetarios. */
-export const CURRENCY_MINOR_UNITS = { USD:2, EUR:2, GBP:2, MXN:2, COP:2, ARS:2, CLP:0, PEN:2, BRL:2, JPY:0 };
+import {CURRENCY_MINOR_UNITS} from './currency-utils.js';
+export {CURRENCY_MINOR_UNITS};
 export const FX_SCALE = 100000000;
 
 function assertInt(n,label='valor'){ if(!Number.isSafeInteger(n)) throw new Error(`${label} debe ser entero seguro`); return n; }
@@ -99,3 +100,4 @@ export function simulateBusiness(base,change){
   return {units,unitPriceMinor,unitVariableCostMinor,fixedCostsMinor,sales,variableCosts,result,closingCashMinor:openingCashMinor+result,breakEven:be,assumptions:{...change}};
 }
 export function businessDecisionImpact(before,after){ return {salesDelta:after.sales-before.sales,resultDelta:after.result-before.result,cashDelta:after.closingCashMinor-before.closingCashMinor,breakEvenUnitsDelta:(after.breakEven.units??0)-(before.breakEven.units??0)}; }
+
