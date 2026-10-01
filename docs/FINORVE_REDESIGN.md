@@ -8,7 +8,9 @@ Este documento conserva las decisiones del usuario del 1 de octubre de 2026. Una
 - Pendiente: revisión visual completa de todas las rutas, móvil y administración.
 - Implementado: Inicio Personal, gasto rápido con fijo/variable/hormiga, Base financiera y fondos independientes, supervivencia configurable (3–60 meses), aportes/retiradas, metas personalizadas y gráfica verde. Metadatos compatibles con Supabase; los registros anteriores permanecen sin asignar hasta revisión.
 - Verificado: npm test; prueba Supabase/RLS y JSON revertida; navegador de demostración con guardado/recarga de gasto, configuración 800×3=2400, aporte 1600 y retirada válida/rechazada.
-- Pendiente: recorridos de Negocio, calendarios, tutorial anclado, guía contextual completa y perfil ampliado. Revisión móvil real y recorrido autenticado en producción pendientes.
+- Implementado en Negocio: navegación Resumen / Anotar el día / Organizar; caja inicial; ventas/cobros a crédito; compras pagadas separadas del costo vendido; préstamos, aportes, retiros, capital e intereses; resumen editable sin duplicados; días explícitos sin movimiento; equilibrio estimado y gráfica verde. Iconos de navegación de línea fina unificados.
+- Verificado en esta etapa: pruebas financieras y de metadatos; SQL autenticado con licencia, registros de importe cero y configuración, revertido sin dejar fixtures.
+- Pendiente: revisión del recorrido diario en navegador, móvil real y cuenta de producción; calendarios/próximos pagos, saldos de deuda de negocio, reserva/metas, calculador opcional de productos, tutorial anclado, guía contextual completa y perfil ampliado.
 
 ## Reglas comunes
 
