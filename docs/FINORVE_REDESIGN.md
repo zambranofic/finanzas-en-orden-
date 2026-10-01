@@ -114,3 +114,21 @@ Referencia: muestra corregida Móvil y PC enviada por el usuario (tarjetas blanc
 - Estilos compartidos: sombras ligeras, bordes finos, botones con profundidad sutil y Geom. Aplicados también a los componentes existentes de Negocio.
 - Cálculos y registros conservados. No se añadieron saldos ni curvas ficticias para imitar los números de la referencia. La curva representa el historial del fondo cuando existen aportes asignados.
 - Verificado en publicación a 1348 px, en claro y oscuro; registro rápido abre el formulario. La adaptación CSS móvil está incluida; su comprobación visual sigue pendiente por la limitación del navegador indicada anteriormente.
+
+
+## Tutorial contextual — 1 octubre 2026 (estado actual)
+
+El recorrido antiguo centrado de cuatro pasos se sustituyó por avisos junto a la sección explicada. El objetivo es orientar sin exigir registros ficticios ni modificar importes.
+
+| Elemento | Estado |
+| --- | --- |
+| Personal | Construido: 10 pasos, resumen, registro rápido, tipos de gastos, supervivencia, emergencia, capital futuro, deudas, patrimonio, calendario y guía. Recorrido completo revisado en publicación de escritorio. |
+| Negocio | Construido: 8 pasos, resumen, totales diarios, otros movimientos y deuda, configuración/equilibrio, costos frente a gastos, caja, calendario y siguiente paso. Recorrido completo revisado en publicación de escritorio. |
+| Interacción | Anterior, Siguiente, Terminar y Salir; Escape; foco contenido dentro del diálogo; retorna a la pantalla desde donde comenzó. Se repite desde Ajustes > Ver recorrido. |
+| Diseño | Misma Geom, bordes redondeados, sombras suaves y botón azul; marco sobre el objetivo visible sin desenfocar la aplicación; flecha hacia el elemento. |
+| Pantallas estrechas | Posicionamiento probado automáticamente a 320/390/768/1348 px y alturas 500/844/936. Estas pruebas geométricas no equivalen a una certificación visual móvil; la revisión en ancho móvil y con dispositivo permanece pendiente. |
+| Datos | Solo se conserva la marca existente de tutorial completado. El recorrido navega y explica; no crea movimientos financieros. Validación browser realizada en la demostración ficticia. |
+
+Verificación: suite completa de pruebas superada; recorrido Personal/Negocio, retroceso, fin y Escape comprobados en navegador. Refinamiento adicional para devolver el foco a Siguiente después del cambio de sección.
+
+El tutorial contextual ya no es un pendiente de implementación. Siguen pendientes los campos de teléfono/fecha de nacimiento del perfil, la comprobación visual móvil/administrativa y los demás módulos funcionales indicados en el alcance anterior. El cobro real sigue aplazado.
