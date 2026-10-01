@@ -77,7 +77,7 @@ a.primary{text-decoration:none}
 .foundationSurvival .cardHead button{flex:none}
 .foundationSurvival .eyebrow{display:none}
 .foundationSurvival .fundAmount{margin:10px 0}
-.personalWelcome{display:grid;grid-template-columns:1.3fr .85fr .85fr auto;align-items:center;gap:16px 24px;padding:24px}
+.personalSummary{display:grid;grid-template-columns:1.3fr .85fr .85fr auto;align-items:center;gap:16px 24px;padding:24px}
 .personalBalance .sub,.welcomeMetric span{display:block;font-size:14px;color:var(--muted)}
 .personalBalance .fundAmount{font-size:30px;margin:2px 0;line-height:1.25}
 .welcomeMetric{border-left:1px solid var(--line);padding-left:22px}
@@ -112,10 +112,10 @@ a.primary{text-decoration:none}
 .homePlanGrid .moduleCard{padding:18px 14px;grid-template-columns:36px minmax(0,1fr) 10px;column-gap:12px}
 .homePlanGrid .moduleCard>span{width:36px;height:36px;border-radius:50%;background:var(--mint);color:var(--teal)}
 .homePlanGrid .moduleCard small{font-size:13px!important}
-@media(max-width:1200px){.personalWelcome{grid-template-columns:1.3fr 1fr 1fr}.welcomeActions{grid-column:1/-1}.homePlanGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:1200px){.personalSummary{grid-template-columns:1.3fr 1fr 1fr}.welcomeActions{grid-column:1/-1}.homePlanGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:1050px){.personalHomePattern{grid-template-columns:1fr}}
 @media(max-width:760px){
-.personalWelcome{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;padding:20px}
+.personalSummary{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;padding:20px}
 .personalBalance{grid-column:1/-1}
 .welcomeMetric{border-left:0;padding-left:0}
 .welcomeMetric:nth-child(3){border-left:1px solid var(--line);padding-left:16px}
