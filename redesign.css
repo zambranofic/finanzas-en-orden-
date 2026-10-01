@@ -169,3 +169,7 @@ a.primary{text-decoration:none}
 @media(max-width:600px){.profileIdentity .profileCard{align-items:center;gap:16px}.profileIdentity .profilePhoto{width:80px;height:80px;flex-basis:80px;border-radius:20px;font-size:25px}.profileAvatarImage{border-radius:19px}.flagPickerOptions{max-height:230px}.flagPickerButton,.flagPickerOptions button{font-size:13px}}
 
 [data-theme=dark] .profileIdentity .profilePhoto{background:linear-gradient(145deg,#303b4a,#253142);border-color:#3c4b60;color:#ceddef;box-shadow:0 5px 16px rgba(0,0,0,.12),inset 0 1px 0 rgba(255,255,255,.04)}
+
+/* Cabecera sin títulos duplicados ni botones ambiguos. */
+.headActions .headerProfile{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font:inherit;font-size:13px;font-weight:500;box-shadow:0 2px 5px rgba(25,45,75,.035)}.headActions .headerProfile svg{flex-shrink:0}.headActions .headerProfile:hover{background:var(--mint);color:var(--teal)}.headActions .headerProfile:focus-visible{outline:2px solid var(--teal);outline-offset:3px}.profileIntro p{margin:0}.profileIntro{align-items:center}
+@media(max-width:600px){.headActions .headerProfile{padding:10px;gap:6px;font-size:12px}.profileIntro{gap:14px;align-items:flex-start}}

@@ -181,3 +181,14 @@ Se sustituyen las banderas Unicode por imágenes PNG locales pequeñas, descarga
 Foto de perfil: marco redondeado suave, bordes y sombra discretos, iniciales legibles antes de cargar foto, imagen con object-fit:cover y adaptación a oscuro/móvil. Botón Añadir mi foto/Cambiar foto y ayuda JPG/PNG/WebP hasta 2 MB según la restricción real del almacenamiento. No cambia el backend de avatares, permisos o cuentas.
 
 Verificación: pruebas del motor, aislamiento y edición de importes, países/opciones de perfil y archivos de bandera. Revisión visual de móvil y navegación de los nuevos selectores en navegador pendiente mientras CUA permanece desconectado. No se declara esa revisión completada.
+
+
+## Claridad de cabecera y datos internos de membresía — 1 octubre 2026
+
+Se retira del perfil el título Mi perfil duplicado: permanece un único h1 en la cabecera; debajo quedan la descripción y Guardar cambios. La cabecera del perfil se identifica como TU CUENTA. Se sustituye el círculo F por un botón con icono de persona y texto Perfil, con nombre accesible Abrir mi perfil. Se elimina el botón circular de cambio de tema de la cabecera; Claro/Oscuro/Sistema permanece en Ajustes → Modo de color. La vinculación de eventos contempla que el botón antiguo ya no exista. Cambios compartidos por producción y demostración anual.
+
+También está preparado el cambio previo que retira la tabla Calendario de membresía con fechas de recordatorios de 30/15/7 días del perfil. Se conserva vencimiento, días restantes, tarifa y renovación manual; no se altera la programación interna de avisos.
+
+Validación: comprobación de la captura enviada por el usuario; app-wiring-tests, ui-quality-tests y currency-tests pasan; sintaxis de ambas aplicaciones comprobada. Comprobaciones directas confirman título único, botón de perfil identificable, tema en Ajustes y ausencia del control antiguo en las dos páginas. Revisión visual móvil en navegador pendiente.
+
+Estado de publicación: el despliegue del cambio de tabla 10b0c889 fue rechazado por el límite gratuito de Vercel (estado failure, enlace upgradeToPro=build-rate-limit). Esta modificación queda pendiente de publicación mientras siga ese límite. No se solicita cambio de plan ni se declara publicado sin confirmación.
