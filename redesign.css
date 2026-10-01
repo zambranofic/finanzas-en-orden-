@@ -330,3 +330,26 @@ header .eyebrow{color:var(--muted)}
 [data-theme=dark] .equilibriumProgress progress::-moz-progress-bar{background:#93ce78}
 @media(max-width:1050px){.businessHome{grid-template-columns:1fr}}
 @media(max-width:760px){.businessPeriodBar{align-items:flex-start;flex-wrap:wrap}.businessPeriodBar .field{width:100%}.businessWelcome{display:block;padding:18px}.businessWelcome .foundationActions{display:flex;flex-wrap:wrap;margin-top:16px}.businessKpis{gap:12px}.businessKpis .kpi{padding:16px;min-height:90px}.businessKpis .kpi strong{font-size:22px}.businessEquilibrium,.businessNext{padding:18px}.equilibriumNumbers strong{font-size:22px}}
+
+/* Equilibrio integrado: la misma tarjeta y gráfica lateral del panorama personal. */
+.businessEquilibriumIntegrated{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);min-height:254px;padding:20px 22px;gap:0;background:radial-gradient(ellipse at 88% 55%,#eff9ed 0%,transparent 64%),var(--surface);border-radius:16px;box-shadow:0 3px 14px rgba(25,35,50,.028);overflow:hidden}
+.businessEquilibriumIntegrated .fundHeroCopy h3{font-size:17px}
+.equilibriumCaption{display:block;font-size:12px;color:var(--muted);margin-bottom:3px}
+.businessEquilibriumIntegrated .fundHeroCopy p.sub{font-size:13px;line-height:1.5;margin:0}
+.businessEquilibriumIntegrated .fundHeroCopy p b{font-weight:500}
+.businessEquilibriumIntegrated .equilibriumCompactStatus{color:var(--muted)}
+.businessEquilibriumIntegrated .fundHeroVisual{align-self:stretch}
+.businessIntegratedChart text{fill:var(--muted)}
+.businessIntegratedChart .equilibriumTarget{stroke-width:.8;stroke-opacity:.5;stroke-dasharray:3 4}
+.equilibriumBadge{right:10px;font-size:11px;padding:3px 8px}
+.equilibriumExplanation{grid-column:1/-1;font-size:12px;color:var(--muted);margin-top:6px}
+.equilibriumExplanation summary{cursor:pointer;padding:4px 0;list-style:none;min-height:30px;display:flex;align-items:center;gap:6px}
+.equilibriumExplanation summary::-webkit-details-marker{display:none}
+.equilibriumExplanation summary:after{content:'›';font-size:16px}
+.equilibriumExplanation[open] summary:after{transform:rotate(90deg)}
+.equilibriumExplanation summary:focus-visible{outline:2px solid var(--teal);outline-offset:3px;border-radius:6px}
+.equilibriumExplanation p{font-size:13px;line-height:1.5;margin:6px 0 0}
+.businessHome .businessNext{border-radius:16px;box-shadow:0 3px 14px rgba(25,35,50,.028)}
+[data-theme=dark] .businessEquilibriumIntegrated{background:var(--surface);box-shadow:0 3px 14px rgba(0,0,0,.08)}
+@media(max-width:760px){.businessEquilibriumIntegrated{padding:18px;min-height:246px}.businessEquilibriumIntegrated .fundHeroCopy .fundAmount{font-size:27px}}
+@media(max-width:359px){.businessEquilibriumIntegrated{grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr)}.businessEquilibriumIntegrated .fundHeroCopy .fundAmount{font-size:23px}.equilibriumBadge{right:6px;font-size:10px;padding:3px 6px}}

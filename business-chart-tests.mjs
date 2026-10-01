@@ -12,8 +12,8 @@ const historic=businessSummary(b,'2026-09','USD',businessPeriodEnd('2026-09',s.a
 for(const file of ['app-v4.js','annual-demo-app.js']){
  const source=fs.readFileSync(file,'utf8'),start=source.indexOf('function businessSalesChart('),end=source.indexOf('\nfunction businessDashboard()',start),code=source.slice(start,end)+';return businessSalesChart(target);';
  const render=(points,target=482759)=>new Function('businessSalesSeries','records','businessPeriod','currency','localDateKey','moneyMinor','esc','businessPeriodLabel','target',code)(()=>points,{business:b},()=> '2026-10',()=> 'USD',()=>s.asOf,n=>String(n),String,()=> 'octubre de 2026',target);
- assert(render([]).includes('No hay ventas registradas'));
- assert(render(october).includes('singleDaySales'));assert(render(october).includes('value="9"'));assert(!render(october).includes('<svg'));
- assert(render(september).includes('equilibriumLine'));assert(render(september).includes('value="100"'));assert(render(september).includes('243 %'));assert(!render(september,null).includes('<progress'));
+ assert(render([]).includes('La gráfica aparecerá'));
+ assert(render(october).includes('9 % del umbral'));assert(render(october).includes('1 día de ventas registrado'));assert(!render(october).includes('<path'));assert(render(october).includes('<circle'));
+ assert(render(september).includes('fundHeroLine'));assert(render(september).includes('243 % del umbral'));assert(!render(september).includes('<progress'));assert(!render(september,null).includes('equilibriumBadge'));
 }
 console.log('PASS: all 13 periods, historical cash cutoff, 24-day sales curve, visible single-day progress, no data and currency isolation.');
