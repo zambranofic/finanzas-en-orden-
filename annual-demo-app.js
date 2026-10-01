@@ -26,7 +26,7 @@ const navs={personal:[['home','⌂','Inicio'],['movements','◉','Movimientos'],
 const personal={income:4850,expenses:3120,savings:650,debt:350,assets:18400,totalDebt:6200};
 const business={sales:12500,collections:10800,costs:4300,expenses:3100,debtPayments:650,cash:6420};
 const systemTheme=()=>window.matchMedia?.('(prefers-color-scheme: dark)').matches?'dark':'light';
-function applyTheme(){const resolved=state.theme==='system'?systemTheme():state.theme;document.documentElement.dataset.theme=resolved;document.documentElement.dataset.themePreference=state.theme;const meta=document.querySelector('meta[name=theme-color]');if(meta)meta.content=resolved==='dark'?'#071f1d':'#f3f6f4'}
+function applyTheme(){const resolved=state.theme==='system'?systemTheme():state.theme;document.documentElement.dataset.theme=resolved;document.documentElement.dataset.themePreference=state.theme;const meta=document.querySelector('meta[name=theme-color]');if(meta)meta.content=resolved==='dark'?'#15181d':'#fafbfc'}
 applyTheme();
 window.matchMedia?.('(prefers-color-scheme: dark)').addEventListener?.('change',()=>{if(state.theme==='system')applyTheme()});
 function historySnapshot(){return {finorve:true,section:state.section,mode:state.mode}}
