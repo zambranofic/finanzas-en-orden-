@@ -1,0 +1,70 @@
+# FINORVE — alcance aprobado y orden de implementación
+
+Este documento conserva las decisiones del usuario del 1 de octubre de 2026. Una propuesta visual no significa que una función esté implementada. Actualizar los estados después de comprobar el recorrido real.
+
+## Estado de esta entrega
+
+- Implementado: capa visual compartida blanca, azul #0593ED, bordes suaves, Geom, botones legibles, navegación móvil flotante, logotipo y favicon aprobados, indicador de carga discreto con movimiento reducido.
+- Pendiente: revisión visual completa de todas las rutas, móvil y administración.
+- Pendiente: recorridos nuevos y modelos de datos que se detallan abajo. Las rutas actuales siguen disponibles durante la migración.
+
+## Reglas comunes
+
+Conservar acceso, recuperación de contraseña, datos, aislamiento por usuario, sincronización, membresías, renovaciones, avisos de correo y respaldos. No ejecutar cobros reales en esta etapa. Mantener servicios gratuitos. No reemplazar el logotipo por una reinterpretación ni cambiar el diseño aprobado. Geom regular/medium/semibold; blanco, negro, azul; sombras discretas, tarjetas claras, iconos finos. No usar lavanda como fondo de la aplicación.
+
+Diseñar para personas mayores o sin conocimientos técnicos: texto visible junto al icono, controles grandes, lenguaje corriente, ejemplos junto al campo, categorías sugeridas más «Otro», teclado y contraste. Una acción recomendada cada vez. Conservar el formulario si falla el guardado; permitir editar sin duplicar. Mostrar información faltante en vez de inventar cifras. Las simulaciones y proyecciones deben indicar supuestos.
+
+## Personal — pendiente de implementar/verificar
+
+- Inicio: ingresos, gastos y disponible; acción rápida «Apuntar gasto» y «Añadir ahorro».
+- Gastos fijos, variables y hormiga: importe, concepto, categoría, fecha de hoy editable, categorías recientes. Hormiga se muestra por separado y no se suma dos veces dentro de variables.
+- Base financiera: supervivencia con objetivo de 3, 6 o más meses de gastos esenciales mensuales; emergencia con aportes progresivos, retiradas e historial; vacaciones, formación y objetivos personalizados.
+- Capital futuro: inversión, negocios u otros proyectos. Sugerirlo después de alcanzar tres meses de supervivencia y avanzar en emergencia, sin bloquearlo.
+- Deudas: saldo, interés, plazo, cuota y próximo vencimiento; separar amortización e intereses.
+- Patrimonio: activos menos deudas; evitar sumar dos veces el ahorro incluido en un activo o saldo.
+- Mi guía: reglas gratuitas para excesos semanales/mensuales de variables y hormiga respecto a una referencia válida, efecto sobre objetivos y una próxima acción. No dar por ciertos datos desconocidos ni garantizar fechas.
+- Gráfica verde en Inicio y Base financiera: evolución real del fondo de supervivencia, objetivo, cobertura en meses y restante. Puede bajar cuando hay retiradas. Ejemplo de referencia: gastos esenciales 800/mes, objetivo 2400, saldo 1600, cobertura 2 meses, restante 800. No son datos predeterminados de usuarios.
+- Gastos recurrentes: programar y confirmar pago; no contabilizar lo previsto como dinero gastado.
+
+## Negocio — pendiente de implementar/verificar
+
+Tres entradas principales: Resumen, Anotar el día y Organizar. No es un sistema de punto de venta ni exige venta por venta.
+
+- Inicio progresivo: actividad, saldo inicial de caja/banco y fecha; el saldo inicial no es una venta.
+- Resumen: efectivo disponible, próximos pagos, resultado cuando hay datos suficientes y una siguiente acción.
+- Anotar el día: fecha, total cobrado, mercancía/materiales pagados, otros pagos. Opción para ventas pendientes de cobro y otros movimientos: préstamo, aporte, retiro del dueño, cuota e impuestos. Guardar totales del día sin duplicarlos al editar.
+- Distinguir «Sin registrar», «Guardado» y «Sin movimientos» confirmado. Un día sin datos no equivale a cero.
+- Costos: mercancía, materiales, empaques y Otro. Gastos: alquiler, luz/agua, administración, publicidad y Otro. Explicar y preguntar en casos ambiguos como transporte o salarios; adaptar sugerencias por actividad.
+- Separar ventas de cobros, compras pagadas de costo de lo vendido, efectivo de ganancia. Si falta costo vendido/inventario, mostrar ganancia pendiente o estimada con su supuesto. No exigir inventario por producto para registrar un total del período.
+- Organizar: deudas, próximos pagos, reserva, metas y herramientas opcionales.
+- Próximos pagos: vista inicial de siete días. Confirmar importe, fecha y cuenta; enlazar o crear un movimiento una sola vez. No registrar automáticamente un pago previsto.
+- Deudas: saldo, capital, intereses y fechas. Préstamos recibidos y capital amortizado no son ventas/gastos operativos.
+- Aportes y retiros del dueño separados; si se enlazan con Personal, no duplicar ingresos.
+- Reserva del negocio: 3–6 meses de gastos fijos; obligaciones esenciales adicionales visibles. Una transferencia a reserva no es un gasto.
+- Metas: equipos, inventario, expansión y objetivos personalizados.
+- Productos/precios opcionales: costo unitario, comisiones y precio; distinguir margen sobre precio de recargo sobre costo. No crear ventas al usar el calculador.
+- Punto de equilibrio: gastos fijos / margen de contribución. Usar ventas y mezcla real o margen estimado explícito. No confundir cobros con ventas ni todo lo vendido por encima del umbral con ganancia.
+- Gráfica verde en Resumen: ventas acumuladas frente al umbral mensual, porcentaje y restante. Detalle con ingresos y costos que se cruzan. Ejemplo de referencia: umbral 3000, ventas 2400, 80%, faltan 600; no insertar como dato real.
+- Proyecciones opcionales con días registrados, período comparable y supuestos; no convertir días sin registrar en cero.
+
+## Calendario de cada modo — pendiente
+
+Acceso en cabecera y lateral de PC; enlace desde próximos movimientos en Inicio. Móvil: mes compacto y lista debajo. PC: mes y lista del día al lado. Selección manual del día, añadir y editar, estado y categoría visibles.
+
+Verde entradas, azul pagos/gastos, morado ahorros/reserva, naranja pendiente, siempre con texto/icono. Mostrar ingresos extra, gastos fijos/variables/hormiga, ahorros, cuotas, registros diarios de negocio y vencimiento de membresía según el modo. Lo previsto no modifica saldos. Una confirmación de pago no crea duplicados. Diferencia entradas/salidas no se etiqueta ganancia. Fechas coherentes con la zona local.
+
+## Perfil y ayuda — pendiente de verificar/completar
+
+Foto personal; nombre obligatorio; correo con confirmación segura de cambios; celular; nacimiento válido y privado. Guardado y errores visibles. Membresía anual y aviso persistente de renovación.
+
+Borrar registros financieros de Personal o de Negocio por separado, con confirmación explícita del alcance; conservar perfil y otro modo. No confundir con eliminar la cuenta. Simulación de al menos un año de cada modo en entorno aislado, sin mezclar ejemplos y datos reales. Ya existe demo anual: revisar integración con el nuevo diseño.
+
+Tutorial elegido: versión 2, explicación anclada al botón/área real, resaltado, fondo atenuado y tarjeta con puntero; no tapar el control ni salir de la pantalla. Atrás, Siguiente y Omitir; sin avance automático. Explicar gastos, base financiera, ahorros, capital futuro, deudas y patrimonio; recorrido propio para Negocio. Guardar finalización por usuario/modo y repetir desde Ayuda.
+
+## Validación y pendientes operativos
+
+Comprobar cálculos, altas/ediciones/borrados, persistencia al recargar, aislamiento de usuarios y separación entre modos; caja/beneficio, capital/interés, transferencias y pagos pendientes. Probar formulario vacío, errores de guardado, accesibilidad, PC/móvil y administración.
+
+Mantener pendientes anteriores: entrega automática de un aviso real de vencimiento elegible; custodia independiente de la contraseña del respaldo; recuperación completa en un entorno nuevo incluyendo autenticación/proveedores/DNS; protección del checkout de prueba frente a cobros de prueba no deseados. El cobro real se dejó para más adelante.
+
+Orden: diseño común → gastos rápidos y Base financiera → registro diario y Resumen del negocio → calendarios → perfil/tutorial/guía → revisión integral. No marcar terminado por una maqueta o una prueba parcial.
