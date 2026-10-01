@@ -27,6 +27,7 @@ const extrasBinding=app.split('\n').find(line=>line.startsWith('function bindExt
 let editedIndex, cashType;
 const editors=[{dataset:{i:'0'}},{dataset:{i:'2'}}],cashButtons=[{dataset:{cash:'collection'}},{dataset:{cash:'cashPayment'}}];
 const controls=vm.createContext({$:()=>null,$$:()=>[],openRecordModal:i=>{editedIndex=i},openCashModal:t=>{cashType=t}});
+vm.runInContext(app.split('\n').find(line=>line.startsWith('function bindFoundation(){')),controls);
 vm.runInContext(extrasBinding,controls);
 assert.doesNotThrow(()=>vm.runInContext('bindExtras()',controls),'every view must bind even without edit buttons');
 controls.$=selector=>selector==='.editRecord'?editors[0]:null;
