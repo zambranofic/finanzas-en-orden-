@@ -272,3 +272,8 @@ a.primary{text-decoration:none}
 /* El fondo general permanece gris neutro; el verde pertenece a la gráfica. */
 main{background:var(--bg)}
 header .eyebrow{color:var(--muted)}
+.balanceAmount{display:flex;align-items:center;gap:10px;min-width:0}
+.balanceAmount .fundAmount{min-width:0}
+.balanceVisibility{display:inline-grid;place-items:center;flex-shrink:0;width:44px;height:44px;min-height:44px;padding:0;border:0;background:transparent;color:var(--muted);border-radius:50%;cursor:pointer}
+.balanceVisibility:hover,.balanceVisibility[aria-pressed=true]{background:var(--surface2);color:var(--ink)}
+.balanceVisibility .navIcon{width:20px;height:20px}
