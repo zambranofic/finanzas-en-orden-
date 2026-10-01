@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import {monthDays,calendarEvents,confirmReminder,upcomingEvents} from './calendar-events.js';
+import {personalMonth} from './financial-engine.js';
+import {movementMetadata} from './personal-foundation.js';
+assert.equal(monthDays('2026-10').offset,3);assert.equal(monthDays('2028-02').dates.length,29);assert.throws(()=>monthDays('2026-13'));
+const r={name:'Alquiler',date:'2026-10-15',amountMinor:0,currency:'USD',calendarRole:'reminder',eventId:'r1',eventType:'expense',plannedMinor:80000,expenseClass:'fixed'};
+const bucket={reminder:[r],income:[{date:'2026-10-01',amountMinor:100000,currency:'USD'}]};
+assert.equal(calendarEvents(bucket,'personal','USD').filter(x=>x.planned).length,1);assert.equal(personalMonth(bucket,'2026-10').available,100000);
+let paid=confirmReminder(bucket,'r1','personal','USD',75000,'2026-10-15');assert.equal(personalMonth(paid,'2026-10').available,25000);assert.equal(calendarEvents(paid,'personal','USD').filter(x=>x.planned).length,0);paid=confirmReminder(paid,'r1','personal','USD',75000,'2026-10-15');assert.equal(paid.expense.length,1);assert.equal(bucket.expense,undefined);
+assert.equal(upcomingEvents(bucket,'personal','USD','2026-10-10').length,1);assert.equal(calendarEvents(bucket,'personal','EUR').length,0);
+const encoded=JSON.parse(JSON.stringify(movementMetadata(r,'reminder')));assert.equal(encoded.calendarRole,'reminder');assert.equal(encoded.plannedMinor,80000);
+const business={sale:[{date:'2026-10-01',amountMinor:100,currency:'USD',dailyRecordId:'d'}],cost:[{date:'2026-10-01',amountMinor:30,currency:'USD',dailyRecordId:'d'}],collection:[{date:'2026-10-01',amountMinor:0,currency:'USD',dailyField:'anchor',dailyRecordId:'d'},{date:'2026-10-01',amountMinor:100,currency:'USD',dailyRecordId:'d'}]};assert.equal(calendarEvents(business,'business','USD').length,2);
+console.log('calendar: Monday grid, leap years, currencies, scheduled amounts excluded, paid once and daily duplication protection PASS');
