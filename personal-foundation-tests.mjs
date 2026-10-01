@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import {expenseBreakdown,fundBalance,fundHistory,withdrawalAllowed,survivalSummary,movementMetadata} from './personal-foundation.js';
+const expenses=[{date:'2026-10-01',amountMinor:5000,expenseClass:'variable',currency:'USD'},{date:'2026-10-02',amountMinor:500,expenseClass:'ant',currency:'USD'},{date:'2026-10-02',amountMinor:2000,currency:'USD'},{date:'2026-09-02',amountMinor:7000,expenseClass:'fixed'},{date:'2026-10-02',amountMinor:9000,currency:'EUR'}];
+assert.deepEqual(expenseBreakdown(expenses,'2026-10','USD'),{fixed:0,variable:5000,ant:500,unclassified:2000,total:7500});
+const rows=[{date:'2026-07-01',amountMinor:120000,fundId:'survival'},{date:'2026-08-01',amountMinor:40000,fundId:'survival'},{date:'2026-09-01',amountMinor:20000,fundId:'survival',direction:'withdraw'},{date:'2026-09-01',amountMinor:10000,fundId:'emergency'},{date:'2026-09-01',amountMinor:50000},{date:'2026-12-01',amountMinor:10000,fundId:'survival'}];
+assert.equal(fundBalance(rows,'survival','USD','2026-10-01'),140000);
+assert.deepEqual(fundHistory(rows,'survival','USD','2026-10-01').map(x=>x.balance),[120000,160000,140000]);
+assert.deepEqual(survivalSummary({essentialMonthlyMinor:80000,targetMonths:3},160000),{balance:160000,target:240000,coverage:2,remaining:80000,progress:67});
+assert.equal(survivalSummary(null,0).target,null);
+assert.equal(withdrawalAllowed(rows,{date:'2026-06-01',amountMinor:1,fundId:'survival',direction:'withdraw'},'USD'),false);
+assert.equal(withdrawalAllowed(rows,{date:'2026-10-01',amountMinor:140001,fundId:'survival',direction:'withdraw'},'USD'),false);
+assert.equal(withdrawalAllowed(rows,{date:'2026-10-01',amountMinor:140000,fundId:'survival',direction:'withdraw'},'USD'),true);
+assert.equal(withdrawalAllowed(rows,{...rows[0],amountMinor:10000},'USD',0),true);
+assert.equal(withdrawalAllowed(rows,{...rows[0],amountMinor:1000},'USD',0),true);
+assert.deepEqual(movementMetadata({expenseClass:'ant',fundId:'custom',targetMonths:6,essentialMonthlyMinor:120000},'goal'),{direction:undefined,entityId:undefined,entityType:'goal',expenseClass:'ant',fundId:'custom',targetMonths:6,essentialMonthlyMinor:120000});
+console.log('personal-foundation: mutually exclusive expenses, unassigned legacy data, currencies, withdrawals, coverage and metadata PASS');
