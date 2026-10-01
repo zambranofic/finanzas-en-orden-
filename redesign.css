@@ -194,3 +194,7 @@ a.primary{text-decoration:none}
 [data-theme=dark] .syncStatus{background:var(--surface2);border-color:var(--line);color:var(--muted)}
 [data-theme=dark] .bootSkeleton:after{background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent)}
 [data-theme=dark] .field input:focus,[data-theme=dark] .field select:focus,[data-theme=dark] .field textarea:focus{border-color:#76c6fa;box-shadow:0 0 0 3px rgba(5,147,237,.15)}
+
+/* Marca sobre superficies oscuras: usa la transparencia del wordmark aprobado. */
+.authVisualBrand .mark:before,.onboardingAside .brand .mark:before,[data-theme=dark] .brand .mark:before{filter:brightness(0) invert(1);background-color:transparent;border-radius:0}
+@media(max-width:1050px) and (min-width:761px){[data-theme=dark] .brand .mark:before{filter:grayscale(1) invert(1);mix-blend-mode:screen}}
