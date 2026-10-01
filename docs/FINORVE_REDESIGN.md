@@ -84,3 +84,22 @@ Actualización visual: retirada la franja verde de la demostración; solo se con
 - Cabecera distribuida en dos filas a 760 px o menos: selector y acciones arriba, título debajo; botones táctiles de 44 px y variante estrecha para 320 px. Se limita el tamaño intrínseco de las columnas del calendario.
 - Comprobaciones: sintaxis de ambos scripts y suite npm test completa aprobadas, incluyendo cambio Personal → Negocio → Personal y rechazo de modo desconocido. Publicación de producción confirmada por Vercel.
 - Pendiente: comprobación visual y de desbordamiento en viewport móvil real. El navegador de revisión disponible permanece en 1348 px incluso al solicitar un popup de 390 px; no se presenta su captura de escritorio como una prueba móvil.
+
+
+## Revisión visual transversal — 1 octubre 2026
+
+Se revisó la interfaz publicada de demostración con datos ficticios, en un navegador de escritorio de 1348 px. Esta revisión visual no sustituye la validación financiera, de pagos ni de permisos.
+
+| Área | Evidencia y estado |
+| --- | --- |
+| Personal | Inicio claro/oscuro, Base financiera, Movimientos, Ingresos, Gastos, Deudas, Decisiones y Diagnóstico inspeccionados. Ahorro y activos comparten componentes revisados; su recorrido individual completo queda pendiente. |
+| Negocio | Resumen, Anotar el día, Organizar, Historial de caja y calendario inspeccionados. Formularios de configuración abiertos sin guardar. Ventas/costos/gastos históricos comparten la lista revisada; falta su recorrido individual completo. |
+| Cuenta | Perfil, preferencias, membresía informativa, Ajustes y tutorial actual inspeccionados. |
+| Correcciones publicadas | Etiquetas completas en acciones principales y de caja; filas de cifras separadas; tarjetas de ahorro adaptables; navegación vuelve al comienzo; iconos de línea consistentes; formularios con títulos en singular; textos auxiliares y campos más legibles; tablas y tarjetas con límites de ancho; selector Personal/Negocio también disponible en ancho intermedio. |
+| Identidad | Logotipo aprobado conservado. Favicon de la demostración actualizado al mismo de la entrada principal. Tipografía Geom cargada en la revisión. |
+| Móvil y tableta | CSS revisado y corregido, sin certificación visual: el navegador disponible permanece en 1348 px y no permite cambiar el viewport. Debe verificarse a 320/360/390/768/1024 px, incluyendo selector de área, teclado, listas, formularios, menú inferior y calendario. |
+| Administración y acceso | Interfaz administrativa y recorridos de acceso/recuperación no certificados en esta revisión. |
+| Pendientes del producto | Mantener los pendientes anteriores: tutorial contextual, teléfono/fecha de nacimiento en perfil, inteligencia financiera completa y módulos de deuda/reserva según alcance. Diagnóstico sin registros debe revisarse para evitar mensajes que sugieran estabilidad financiera con datos insuficientes. |
+| Cobro | Sigue aplazado por instrucción del usuario; no se realizaron pagos ni renovaciones. |
+
+Validación técnica: sintaxis de ambas aplicaciones y pruebas de navegación, cableado de interfaz y calidad visual automatizada superadas. Las capturas corresponden a la aplicación real, no a maquetas nuevas.
