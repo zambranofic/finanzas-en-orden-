@@ -10,7 +10,7 @@ Este documento conserva las decisiones del usuario del 1 de octubre de 2026. Una
 - Verificado: npm test; prueba Supabase/RLS y JSON revertida; navegador de demostración con guardado/recarga de gasto, configuración 800×3=2400, aporte 1600 y retirada válida/rechazada.
 - Implementado en Negocio: navegación Resumen / Anotar el día / Organizar; caja inicial; ventas/cobros a crédito; compras pagadas separadas del costo vendido; préstamos, aportes, retiros, capital e intereses; resumen editable sin duplicados; días explícitos sin movimiento; equilibrio estimado y gráfica verde. Iconos de navegación de línea fina unificados.
 - Verificado en esta etapa: pruebas financieras y de metadatos; SQL autenticado con licencia, registros de importe cero y configuración, revertido sin dejar fixtures. Recorrido de demostración en navegador: caja inicial 400, gastos fijos 1200, margen 40% → equilibrio 3000; cobros 1000 con 200 anteriores y 300 ventas a crédito → ventas 1100. Edición, costo vendido 350, pagos 450+100, deuda 50+10, préstamo 300, aporte 100, retiro 40 → caja 1150, resultado parcial 640, un solo día tras recarga. Revisión visual PC en claro y oscuro.
-- Pendiente: móvil real y cuenta de producción; calendarios/próximos pagos, saldos de deuda de negocio, reserva/metas, calculador opcional de productos, tutorial anclado, guía contextual completa y perfil ampliado.
+- Pendiente: móvil real y cuenta de producción; recurrencias y agenda de deuda automática, saldos de deuda de negocio, reserva/metas, calculador opcional de productos, tutorial anclado, guía contextual completa y perfil ampliado.
 
 ## Reglas comunes
 
@@ -51,7 +51,9 @@ Tres entradas principales: Resumen, Anotar el día y Organizar. No es un sistema
 - Gráfica verde en Resumen: ventas acumuladas frente al umbral mensual, porcentaje y restante. Detalle con ingresos y costos que se cruzan. Ejemplo de referencia: umbral 3000, ventas 2400, 80%, faltan 600; no insertar como dato real.
 - Proyecciones opcionales con días registrados, período comparable y supuestos; no convertir días sin registrar en cero.
 
-## Calendario de cada modo — pendiente
+## Calendario de cada modo — implementado parcialmente
+
+Implementado: mes seleccionable y lista del día; colores con texto; registros reales de ambos modos; recordatorios manuales y confirmación única de pago/cobro/aporte; próximos siete días; vencimiento de membresía. Pendiente: recorridos reales en móvil y cuenta autenticada, recurrencias y conexión automática de cuotas de deuda.
 
 Acceso en cabecera y lateral de PC; enlace desde próximos movimientos en Inicio. Móvil: mes compacto y lista debajo. PC: mes y lista del día al lado. Selección manual del día, añadir y editar, estado y categoría visibles.
 
@@ -72,3 +74,5 @@ Comprobar cálculos, altas/ediciones/borrados, persistencia al recargar, aislami
 Mantener pendientes anteriores: entrega automática de un aviso real de vencimiento elegible; custodia independiente de la contraseña del respaldo; recuperación completa en un entorno nuevo incluyendo autenticación/proveedores/DNS; protección del checkout de prueba frente a cobros de prueba no deseados. El cobro real se dejó para más adelante.
 
 Orden: diseño común → gastos rápidos y Base financiera → registro diario y Resumen del negocio → calendarios → perfil/tutorial/guía → revisión integral. No marcar terminado por una maqueta o una prueba parcial.
+
+Actualización visual: retirada la franja verde de la demostración; solo se conserva una etiqueta discreta de datos ficticios.
