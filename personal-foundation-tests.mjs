@@ -1,3 +1,4 @@
+import {personalMonth} from './financial-engine.js';
 import assert from 'node:assert/strict';
 import {expenseBreakdown,fundBalance,fundHistory,withdrawalAllowed,survivalSummary,movementMetadata} from './personal-foundation.js';
 const expenses=[{date:'2026-10-01',amountMinor:5000,expenseClass:'variable',currency:'USD'},{date:'2026-10-02',amountMinor:500,expenseClass:'ant',currency:'USD'},{date:'2026-10-02',amountMinor:2000,currency:'USD'},{date:'2026-09-02',amountMinor:7000,expenseClass:'fixed'},{date:'2026-10-02',amountMinor:9000,currency:'EUR'}];
@@ -14,3 +15,6 @@ assert.equal(withdrawalAllowed(rows,{...rows[0],amountMinor:10000},'USD',0),true
 assert.equal(withdrawalAllowed(rows,{...rows[0],amountMinor:1000},'USD',0),true);
 assert.deepEqual(movementMetadata({expenseClass:'ant',fundId:'custom',targetMonths:6,essentialMonthlyMinor:120000},'goal'),{direction:undefined,entityId:undefined,entityType:'goal',expenseClass:'ant',fundId:'custom',targetMonths:6,essentialMonthlyMinor:120000});
 console.log('personal-foundation: mutually exclusive expenses, unassigned legacy data, currencies, withdrawals, coverage and metadata PASS');
+
+assert.equal(movementMetadata({direction:'withdraw'},'saving').direction,'withdrawal');
+assert.equal(personalMonth({saving:[{date:'2026-10-01',amountMinor:10000,direction:'deposit'},{date:'2026-10-01',amountMinor:3000,direction:movementMetadata({direction:'withdraw'},'saving').direction}]},'2026-10').netSavings,7000);
