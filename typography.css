@@ -1,0 +1,8 @@
+/* Shared FINORVE typography for the app, access and checkout pages. */
+@import url('https://fonts.googleapis.com/css2?family=Geom:wght@400;500;600&display=swap');
+:root{--font-ui:'Geom',sans-serif}
+html,body,button,input,select,textarea{font-family:var(--font-ui)}
+body{font-weight:400}
+h1,h2,h3{font-weight:500}
+b,strong{font-weight:600}
+button,input,select,textarea{font:inherit}
