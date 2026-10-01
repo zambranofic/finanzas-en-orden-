@@ -369,3 +369,23 @@ header.dashboardHomeHeader{display:grid;grid-template-columns:minmax(0,1fr) auto
 
 /* Legacy labels use the same calm, readable treatment as the approved UI. */
 .eyebrow,.authKicker,.pill,.triadCard small,.recordSummary small,.decisionContext small,.diagnosticMetrics small,.profileMeta small,.cashSummary small,.resultGrid small,.adminOpsCard small,.breakEvenStatus small,.resultMargin small{font-size:13px;font-weight:500;letter-spacing:0;line-height:1.45;text-transform:none}
+
+/* Shared balance card: identical hierarchy in Personal and Business. */
+.dashboardBalanceCard.personalSummary,.dashboardBalanceCard.businessWelcome{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px 24px;align-items:center;padding:22px 24px;border-radius:16px;box-shadow:0 3px 14px rgba(25,35,50,.028)}
+.summaryMain{display:flex;align-items:center;gap:16px;min-width:0}
+.summaryIcon{display:grid;place-items:center;width:48px;height:48px;flex-shrink:0;border:1px solid var(--line);border-radius:15px;background:var(--mint);color:var(--teal);box-shadow:0 2px 6px rgba(25,35,50,.035)}
+.summaryIcon .navIcon{width:25px;height:25px}
+.summaryCopy{min-width:0}.summaryHeading{display:flex;align-items:center;flex-wrap:wrap;gap:8px 16px}
+.dashboardBalanceCard .summaryHeading h2{font-size:17px;line-height:1.4;margin:0;color:var(--ink);font-weight:500}
+.summaryDate{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:12px;line-height:1.4;background:var(--surface2);padding:4px 8px;border-radius:7px;white-space:nowrap}
+.summaryDate .navIcon{width:14px;height:14px}
+.dashboardBalanceCard .balanceAmount{margin-top:6px;gap:8px;flex-wrap:wrap}
+.dashboardBalanceCard .fundAmount{font-size:30px;line-height:1.25;margin:0;font-weight:600;overflow-wrap:anywhere}
+.summarySide{display:grid;gap:14px;justify-items:end;min-width:0}.summaryMetrics{display:flex;gap:24px;align-items:center}
+.summaryMetrics .welcomeMetric{border:0;padding:0;min-width:0}.summaryMetrics .welcomeMetric span{display:flex;align-items:center;gap:6px;font-size:13px}.summaryMetrics .welcomeMetric .navIcon{width:15px;height:15px}.summaryMetrics .welcomeMetric strong{font-size:18px;margin-top:3px}
+.dashboardBalanceCard .welcomeActions{grid-column:auto;display:flex;gap:10px;margin:0}.dashboardBalanceCard .welcomeActions button{font-size:13px;min-height:44px;padding:10px 14px;gap:7px}
+.dashboardBalanceCard .summaryDetail{grid-column:1/-1;display:flex;align-items:center;gap:10px;border-top:1px solid var(--line);padding-top:12px;margin:0;min-width:0}
+.summaryDetail>span{display:flex;flex-shrink:0}.summaryDetail .navIcon{width:17px;height:17px;color:var(--muted)}.summaryDetail p{margin:0;color:var(--muted);font-size:13px;line-height:1.5}.summaryDetail .textAction{min-height:32px;padding:0 5px}
+[data-theme=dark] .dashboardBalanceCard{box-shadow:0 3px 14px rgba(0,0,0,.08)}
+@media(max-width:1200px){.dashboardBalanceCard.personalSummary,.dashboardBalanceCard.businessWelcome{grid-template-columns:1fr}.summarySide{grid-template-columns:1fr auto;align-items:center;justify-items:stretch}.summarySide>.welcomeActions{justify-content:flex-end}.summarySide>.welcomeActions:only-child{grid-column:1/-1;justify-content:flex-start}}
+@media(max-width:760px){.dashboardBalanceCard.personalSummary,.dashboardBalanceCard.businessWelcome{padding:18px;gap:16px}.summaryMain{align-items:flex-start;gap:12px}.summaryIcon{width:42px;height:42px;border-radius:13px}.summaryHeading{gap:6px;align-items:flex-start;flex-direction:column}.dashboardBalanceCard .fundAmount{font-size:clamp(24px,6vw,30px)}.summarySide{grid-template-columns:1fr;gap:16px}.summaryMetrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.dashboardBalanceCard .welcomeActions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%}.dashboardBalanceCard .welcomeActions button{white-space:normal;min-width:0;padding:10px 8px}.dashboardBalanceCard .summaryDetail{align-items:flex-start}.summaryDetail>span{padding-top:2px}}
