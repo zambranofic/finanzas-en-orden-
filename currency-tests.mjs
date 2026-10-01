@@ -49,3 +49,14 @@ console.log('country picker: euro-only Europe, Latin America and requested desti
 
 import {pickerChoice} from './profile-pickers.js';
 for(const x of COUNTRIES){assert(pickerChoice(x.name,true).includes('assets/flags/'+x.code.toLowerCase()+'.png'));assert(fs.readFileSync('assets/flags/'+x.code.toLowerCase()+'.png').subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10])));}assert(pickerChoice('USD',false).includes('assets/flags/us.png'));assert(pickerChoice('GBP',false).includes('assets/flags/gb.png'));assert(pickerChoice('USD',false).includes('USD · dólar'));console.log('profile pickers: actual local image flags, short labels, England and photo markup PASS');
+
+// A click on a label must stay inside its picker even after refresh replaces that label.
+const pickerSource=fs.readFileSync('profile-pickers.js','utf8');
+const outsideHandler=pickerSource.split("root.addEventListener('click',")[1].split(',{signal});')[0];
+let closes=0;const wrap={},picker={wrap,close(){closes++}};
+const handleOutside=new Function('pickers','return '+outsideHandler)([picker]);
+const detachedLabel={id:''};
+handleOutside({target:detachedLabel,composedPath:()=>[detachedLabel,wrap]});assert.equal(closes,0);
+handleOutside({target:{id:''},composedPath:()=>[{}]});assert.equal(closes,1);
+handleOutside({target:{id:'pfCountrySearch'},composedPath:()=>[{}]});assert.equal(closes,1);
+console.log('picker click regression: refreshed labels remain open; outside clicks close; search remains open PASS');

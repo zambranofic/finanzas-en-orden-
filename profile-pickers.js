@@ -28,5 +28,5 @@ export function bindProfilePickers(root=document){
  root.querySelector('#pfCountrySearch')?.setAttribute('aria-controls','pfCountryOptions');
  root.addEventListener('change',e=>{if(['pfCountry','pfPCurrency','pfBCurrency'].includes(e.target.id))pickers.forEach(p=>p.refresh())},{signal});
  root.addEventListener('input',e=>{if(e.target.id==='pfCountrySearch'){const p=pickers.find(x=>x.id==='pfCountry');p?.refresh();if(e.target.value.trim())p?.open()}},{signal});
- root.addEventListener('click',e=>{for(const p of pickers)if(!p.wrap.contains(e.target)&&e.target.id!=='pfCountrySearch')p.close()},{signal});
+ root.addEventListener('click',e=>{for(const p of pickers)if(!e.composedPath().includes(p.wrap)&&e.target.id!=='pfCountrySearch')p.close()},{signal});
 }
