@@ -29,6 +29,7 @@ const editors=[{dataset:{i:'0'}},{dataset:{i:'2'}}],cashButtons=[{dataset:{cash:
 const controls=vm.createContext({$:()=>null,$$:()=>[],openRecordModal:i=>{editedIndex=i},openCashModal:t=>{cashType=t}});
 vm.runInContext(app.split('\n').find(line=>line.startsWith('function bindFoundation(){')),controls);
 vm.runInContext(app.split('\n').find(line=>line.startsWith('function bindBusinessDaily(){')),controls);
+vm.runInContext(app.split('\n').find(line=>line.startsWith('function bindCalendar(){')),controls);
 vm.runInContext(extrasBinding,controls);
 assert.doesNotThrow(()=>vm.runInContext('bindExtras()',controls),'every view must bind even without edit buttons');
 controls.$=selector=>selector==='.editRecord'?editors[0]:null;
