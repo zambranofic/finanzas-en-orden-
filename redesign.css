@@ -426,3 +426,39 @@ header.compactPageHeader:not(.dashboardHomeHeader){display:flex;align-items:cent
 .compactPageHeader #pageEyebrow[hidden]{display:none}.compactPageHeader #pageTitle{font-size:26px;line-height:1.2;margin:0;letter-spacing:-.025em}.compactPageHeader .headerTitle{min-width:0}.compactPageHeader .headActions{margin-left:auto;flex-shrink:0}
 #content>.sectionHead.pageIntro{display:flex;align-items:center;justify-content:space-between;gap:12px 20px;margin:0 0 18px;padding:0;min-width:0}.pageIntro>div{min-width:0}.pageIntro p{margin:0;font-size:14px!important;line-height:1.5;color:var(--muted)}.pageIntro>button{flex-shrink:0}
 @media(max-width:760px){header.compactPageHeader:not(.dashboardHomeHeader){gap:12px;padding-bottom:12px;margin-bottom:12px}.compactPageHeader #pageTitle{font-size:23px}.compactPageHeader .headerTitle{flex:1;order:2}.compactPageHeader .headActions{order:3}.compactPageHeader .mobileModePicker{flex-basis:100%;order:1}.compactPageHeader .mobileModePicker select{width:132px}#content>.sectionHead.pageIntro{flex-wrap:wrap;margin-bottom:16px;gap:12px}.pageIntro p{font-size:13px!important}}
+
+/* Daily business entry follows the dashboard card and icon system. */
+.businessDayEditor{padding:24px}
+.businessDayEditor .businessDayDate{align-items:center;gap:14px;padding-bottom:20px;border-bottom:1px solid var(--line)}
+.businessDayEditor .businessDayDate .field{min-width:180px;margin:0}
+.businessDayEditor .businessDayDate .field label{font-size:13px}
+.businessDayEditor .businessDayDate>button{align-self:end;margin-bottom:0}
+.businessDayEditor .dayStatus{margin-left:auto;padding:8px 12px;border:1px solid var(--line);border-radius:20px;font-size:12px;background:var(--bg)}
+.businessDayHint{display:flex;gap:10px;align-items:flex-start;margin:18px 0 22px;color:var(--muted)}
+.businessDayHint>.navIcon{width:17px;height:17px;flex-shrink:0;margin-top:2px}
+.businessDayHint p{margin:0;font-size:13px;line-height:1.5}
+.businessDayEditor .businessDayFields{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:0 0 24px}
+.dayAmountCard{min-width:0;border:1px solid var(--line);border-radius:18px;padding:20px;background:var(--bg)}
+.dayAmountHeading{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.dayAmountHeading h3{margin:0;font-size:16px;font-weight:500;line-height:1.3}
+.dayAmountCard .field{margin:0}
+.dayAmountCard .field label{font-size:13px;line-height:1.5;min-height:39px;display:block}
+.dayAmountCard .field input{font-size:24px;font-weight:500;padding:14px;min-width:0;width:100%;background:var(--surface)}
+.dayAmountCard .field small{display:block;margin-top:12px;font-size:12px;line-height:1.5;min-height:54px;color:var(--muted)}
+.businessDayEditor .businessDetails{border:1px solid var(--line);border-radius:16px;padding:0;margin:12px 0;background:var(--surface)}
+.businessDayEditor .businessDetails summary{list-style:none;display:flex;align-items:center;gap:14px;padding:16px 18px;font-size:14px;border-radius:16px}
+.businessDayEditor .businessDetails summary::-webkit-details-marker{display:none}
+.dayOptionCopy{display:flex;flex-direction:column;gap:5px;flex:1;min-width:0}
+.dayOptionCopy b{font-weight:500;line-height:1.4}.dayOptionCopy small{color:var(--muted);font-size:12px;line-height:1.4}
+.dayOptionChevron{font-size:24px;color:var(--muted);transition:transform .15s}
+.businessDetails[open] .dayOptionChevron{transform:rotate(90deg)}
+.businessDayEditor .businessDetails>.formGrid,.businessDayEditor .businessDetails>.field{margin:0;padding:6px 18px 20px}
+.daySaveFooter{display:flex;align-items:center;justify-content:space-between;gap:20px;border-top:1px solid var(--line);padding-top:22px;margin-top:24px}
+.daySaveFooter>p{margin:0;font-size:15px;font-weight:500}.daySaveFooter>p small{display:block;margin-top:5px;color:var(--muted);font-size:12px;font-weight:400}
+.daySaveFooter .foundationActions{margin:0;gap:10px}
+#businessDaySaved:empty{display:none}
+.dayHistoryHeading{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.dayHistoryHeading h3{margin:0;font-size:17px}.dayHistoryHeading p{margin:5px 0 0;font-size:13px;color:var(--muted)}
+.dayHistory>.list{max-height:360px;overflow:auto}
+@media(max-width:1100px){.businessDayEditor .businessDayFields{grid-template-columns:1fr}.dayAmountCard .field label,.dayAmountCard .field small{min-height:0}.dayAmountHeading{margin-bottom:14px}}
+@media(max-width:760px){.businessDayEditor{padding:18px}.businessDayEditor .businessDayDate .summaryIcon{display:none}.businessDayEditor .dayStatus{margin-left:0}.dayAmountCard{padding:16px}.daySaveFooter{flex-direction:column;align-items:stretch}.daySaveFooter .foundationActions{display:grid;grid-template-columns:1fr}.businessDayEditor .businessDetails summary{padding:14px;gap:10px}}
