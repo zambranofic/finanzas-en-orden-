@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {businessDebtSummary} from './business-debt.js';
+import {businessDebtSummary,groupBusinessDebtHistory} from './business-debt.js';
 import {upsertDaily,DAILY_FIELDS} from './business-daily.js';
 import {movementMetadata} from './personal-foundation.js';
 import {buildReviewScenario} from './review-scenario.js';
@@ -18,3 +18,8 @@ assert.equal(businessDebtSummary({collection:[{...cfg,openingDebtMinor:0}]},'USD
 s=businessDebtSummary({...b,collection:[{...cfg,openingDebtMinor:Number.MAX_SAFE_INTEGER},...b.collection.filter(x=>x.cashRole!=='openingConfig')]},'USD','2026-02-28');assert.equal(s.overflow,true);assert.equal(s.remaining,null);
 const demo=buildReviewScenario('2026-10-01');s=businessDebtSummary(demo.records.business,'USD','2026-09-30');assert.equal(s.opening,1200000);assert.equal(s.paid,360000);assert.equal(s.remaining,840000);assert.equal(s.progress,30);assert.equal(businessDebtSummary(demo.records.business,'USD','2026-10-01').remaining,837000);
 console.log('business debt: baseline, loans, principal vs interest, cutoff, currency, edit replacement, persistence, overpayment, overflow and annual demo PASS');
+
+const groups=groupBusinessDebtHistory(businessDebtSummary(demo.records.business,'USD','2026-09-30').history);
+assert.equal(groups.length,12);assert.equal(groups[0].month,'2026-09');assert.equal(groups[0].days.length,1,'capital and interest share one payment row');assert.equal(groups[0].paid,34500);assert.equal(groups[0].days[0].principal,30000);assert.equal(groups[0].days[0].interest,4500);assert.equal(groups[0].days[0].editable,true);
+const mixed=groupBusinessDebtHistory([{date:'2026-02-02',kind:'principal',amountMinor:20000,dailyRecordId:'day'},{date:'2026-02-02',kind:'interest',amountMinor:3000,dailyRecordId:'day'},{date:'2026-02-02',kind:'loan',amountMinor:10000,dailyRecordId:'day'},{date:'2026-02-01',kind:'interest',amountMinor:1000}]);assert.equal(mixed[0].paid,24000,'loans are not payments');assert.equal(mixed[0].loans,10000);assert.equal(mixed[0].days.length,2);assert.equal(mixed[0].days[1].editable,false,'legacy records keep their existing cash history editor');assert.equal(groupBusinessDebtHistory([]).length,0);
+console.log('debt history: monthly grouping, combined principal/interest, loans excluded from paid total, editable daily records and empty state PASS');
