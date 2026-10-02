@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {businessDebtSummary,groupBusinessDebtHistory} from './business-debt.js';
+import {businessDebtSummary,groupBusinessDebtHistory,businessDebtSeries} from './business-debt.js';
 import {upsertDaily,DAILY_FIELDS} from './business-daily.js';
 import {movementMetadata} from './personal-foundation.js';
 import {buildReviewScenario} from './review-scenario.js';
@@ -23,3 +23,12 @@ const groups=groupBusinessDebtHistory(businessDebtSummary(demo.records.business,
 assert.equal(groups.length,12);assert.equal(groups[0].month,'2026-09');assert.equal(groups[0].days.length,1,'capital and interest share one payment row');assert.equal(groups[0].paid,34500);assert.equal(groups[0].days[0].principal,30000);assert.equal(groups[0].days[0].interest,4500);assert.equal(groups[0].days[0].editable,true);
 const mixed=groupBusinessDebtHistory([{date:'2026-02-02',kind:'principal',amountMinor:20000,dailyRecordId:'day'},{date:'2026-02-02',kind:'interest',amountMinor:3000,dailyRecordId:'day'},{date:'2026-02-02',kind:'loan',amountMinor:10000,dailyRecordId:'day'},{date:'2026-02-01',kind:'interest',amountMinor:1000}]);assert.equal(mixed[0].paid,24000,'loans are not payments');assert.equal(mixed[0].loans,10000);assert.equal(mixed[0].days.length,2);assert.equal(mixed[0].days[1].editable,false,'legacy records keep their existing cash history editor');assert.equal(groupBusinessDebtHistory([]).length,0);
 console.log('debt history: monthly grouping, combined principal/interest, loans excluded from paid total, editable daily records and empty state PASS');
+
+let series=businessDebtSeries(demo.records.business,'USD','2026-09-30');
+assert.equal(series.points[0].balance,1200000);assert.equal(series.points.at(-1).balance,840000);assert.equal(series.points.at(-1).closing,true);assert.equal(series.points.filter(p=>p.principal).length,12);
+series=businessDebtSeries(b,'USD','2026-02-28');assert.equal(series.points[1].balance,80000);assert.equal(series.points[1].principal,30000);assert.equal(series.points[1].loans,10000);assert.equal(series.points.length,3,'same-day changes are aggregated and the latest balance extends to the cutoff');
+const interestOnly=upsertDaily({collection:[cfg]},'2026-02-02','USD',{...input,principal:0,loanReceived:0});series=businessDebtSeries(interestOnly,'USD','2026-02-28');assert.equal(series.hasMovements,false);assert.equal(series.points.length,1);assert.equal(series.points[0].balance,100000);
+assert.ok(businessDebtSeries({},'USD','2026-02-28').issue);assert.ok(businessDebtSeries(b,'USD','2026-01-31').issue);
+let sequence=upsertDaily({collection:[cfg]},'2026-02-02','USD',{...input,principal:0,loanReceived:30000});sequence=upsertDaily(sequence,'2026-02-03','USD',{...input,principal:20000,loanReceived:0});series=businessDebtSeries(sequence,'USD','2026-02-28');assert.deepEqual(series.points.map(p=>p.balance),[100000,130000,110000,110000]);
+let invalid=upsertDaily({collection:[cfg]},'2026-02-02','USD',{...input,principal:120000,loanReceived:0});invalid=upsertDaily(invalid,'2026-02-03','USD',{...input,principal:0,loanReceived:30000});assert.equal(businessDebtSummary(invalid,'USD','2026-02-28').remaining,10000);assert.ok(businessDebtSeries(invalid,'USD','2026-02-28').issue,'an intermediate negative balance is flagged even when later loans make the final balance positive');
+console.log('debt chart: annual evolution, date/currency cutoff, same-day aggregation, interest-only, unconfigured state, loan increases and invalid intermediate balances PASS');
