@@ -22,7 +22,7 @@ export function buildReviewScenario(asOf=new Date().toISOString().slice(0,10)){
  p.goal=[];
  for(const [fundId,name,target] of [['survival','Supervivencia',360000],['emergency','Emergencia',150000],['future','Capital futuro',200000],['vacation','Vacaciones',100000],['training','Formación',60000]])add('goal',name,target,s.months[0]+'-01',{fundId,entityId:'demo-goal-'+fundId,...(fundId==='survival'?{essentialMonthlyMinor:120000,targetMonths:3}:{})});
  let business=Object.fromEntries(Object.keys(s.records.business).map(k=>[k,[]]));
- business.collection.push({name:'Configuración · Librería Horizonte',amountMinor:0,date:s.months[0]+'-01',currency:'USD',entityType:'collection',demo:true,cashRole:'openingConfig',openingCashMinor:400000,startDate:s.months[0]+'-01',activity:'Librería Horizonte · demostración',fixedMonthlyMinor:280000,contributionMarginBp:5800});
+ business.collection.push({name:'Configuración · Librería Horizonte',amountMinor:0,date:s.months[0]+'-01',currency:'USD',entityType:'collection',demo:true,cashRole:'openingConfig',openingCashMinor:400000,openingDebtMinor:1200000,debtStartDate:s.months[0]+'-01',startDate:s.months[0]+'-01',activity:'Librería Horizonte · demostración',fixedMonthlyMinor:280000,contributionMarginBp:5800});
  const split=(total,i,n)=>Math.floor(total/n)+(i<total%n?1:0);
  let previousReceivable=0;
  base.expectations.forEach((e,j)=>{

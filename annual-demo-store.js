@@ -2,7 +2,7 @@ import {buildReviewScenario} from './review-scenario.js';
 const KEY='finorve-annual-simulation-v2';
 const VERSION='review-year-v2';
 if(localStorage.getItem('annual-demo:seed-version')!==VERSION){localStorage.removeItem('annual-demo:finorve-pending-sync');localStorage.setItem('annual-demo:feo-mode','personal');localStorage.setItem('annual-demo:seed-version',VERSION);}
-const read=()=>{try{return JSON.parse(localStorage.getItem(KEY))||buildReviewScenario()}catch{return buildReviewScenario()}};
+const read=()=>{let data;try{data=JSON.parse(localStorage.getItem(KEY))||buildReviewScenario()}catch{data=buildReviewScenario()}const c=data.records?.business?.collection?.find(x=>x.cashRole==='openingConfig'&&x.currency==='USD'&&x.demo===true);if(c&&c.openingDebtMinor===undefined){c.openingDebtMinor=1200000;c.debtStartDate=c.startDate}return data};
 export const acceptAuthFromUrl=()=>null;
 export const currentUser=async()=>({id:'fictional-annual-simulation',email:''});
 export const myLicense=async()=>({status:'active',expires_at:'2099-12-31T05:00:00Z',annual_price_minor:2900,annual_currency:'USD'});
