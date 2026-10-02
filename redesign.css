@@ -420,3 +420,9 @@ header.dashboardHomeHeader{display:grid;grid-template-columns:minmax(0,1fr) auto
 .businessHome>.businessNext{display:flex;flex-direction:column;min-width:0}.businessNext>button{align-self:flex-start;margin-top:auto}.businessNext .guideBadge{align-self:flex-start}
 .personalHomePattern>.homeFunds{grid-template-rows:auto minmax(0,1fr)}.personalHomePattern>.homeOverview{grid-template-rows:minmax(0,1fr) auto}.homeFundGrid>.fundPreview{align-self:stretch}
 @media(max-width:1050px){.personalHomePattern>.homeFunds,.personalHomePattern>.homeOverview{grid-template-rows:auto auto}.businessNext>button{margin-top:8px}}
+
+/* One page title; the introductory row keeps only guidance and actions. */
+header.compactPageHeader:not(.dashboardHomeHeader){display:flex;align-items:center;justify-content:space-between;gap:16px;padding-bottom:12px;margin-bottom:14px}
+.compactPageHeader #pageEyebrow[hidden]{display:none}.compactPageHeader #pageTitle{font-size:26px;line-height:1.2;margin:0;letter-spacing:-.025em}.compactPageHeader .headerTitle{min-width:0}.compactPageHeader .headActions{margin-left:auto;flex-shrink:0}
+#content>.sectionHead.pageIntro{display:flex;align-items:center;justify-content:space-between;gap:12px 20px;margin:0 0 18px;padding:0;min-width:0}.pageIntro>div{min-width:0}.pageIntro p{margin:0;font-size:14px!important;line-height:1.5;color:var(--muted)}.pageIntro>button{flex-shrink:0}
+@media(max-width:760px){header.compactPageHeader:not(.dashboardHomeHeader){gap:12px;padding-bottom:12px;margin-bottom:12px}.compactPageHeader #pageTitle{font-size:23px}.compactPageHeader .headerTitle{flex:1;order:2}.compactPageHeader .headActions{order:3}.compactPageHeader .mobileModePicker{flex-basis:100%;order:1}.compactPageHeader .mobileModePicker select{width:132px}#content>.sectionHead.pageIntro{flex-wrap:wrap;margin-bottom:16px;gap:12px}.pageIntro p{font-size:13px!important}}
